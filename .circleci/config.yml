@@ -4,11 +4,17 @@ executors:
   dotnet-core-sdk:
     docker:
     - image: mcr.microsoft.com/dotnet/core/sdk:3.1
+      auth:
+        username: $DOCKER_LOGIN
+        password: $DOCKER_ACCESSTOKEN
   docker-publisher:
     environment:
       IMAGE_NAME: openftth/api-gateway
     docker:
       - image: circleci/buildpack-deps:stretch
+        auth:
+          username: $DOCKER_LOGIN
+          password: $DOCKER_ACCESSTOKEN
 
 jobs:
   build-app:
@@ -75,16 +81,19 @@ workflows:
   build-test-upload_image:
     jobs:
       - build-app:
+          context: docker
           filters:
             tags:
               only: /.*/
       - test-app:
+          context: docker
           requires:
             - build-app
           filters:
             tags:
               only: /.*/
       - build-docker-image:
+          context: docker
           requires:
             - test-app
           filters:
