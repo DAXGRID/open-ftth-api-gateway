@@ -15,6 +15,14 @@ executors:
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_ACCESSTOKEN
+  alpine-git:
+    environment:
+      IMAGE_NAME: openftth/api-gateway
+    docker:
+    - image: alpine/git
+      auth:
+        username: $DOCKER_LOGIN
+        password: $DOCKER_ACCESSTOKEN
 
 jobs:
   build-app:
@@ -77,6 +85,35 @@ jobs:
            docker push $IMAGE_NAME:latest
            docker push $IMAGE_NAME:$IMAGE_TAG
 
+  update-helm-chart:
+    executor: alpine-git
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d4:20:c4:24:87:f4:29:f5:af:8a:08:04:cc:dd:f2:3c"
+      - run:
+          name: key-scan
+          command: ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run:
+          name: git clone open-ftth-chart
+          command: git clone git@github.com:DAXGRID/open-ftth-chart.git
+      - run:
+          name: package and push
+          command: |
+             apk add bash
+             IMAGE_TAG_NO_V=${CIRCLE_TAG:1}
+             cd ./open-ftth-chart
+             git config user.email "admin@dax.dk"
+             git config user.name "dax-bot"
+             sed -i "/appVersion:.*/c\appVersion: \"$IMAGE_TAG_NO_V\"" ./openftth/charts/api-gateway/Chart.yaml
+             sed -i "/  tag:.*/c\  tag: v$IMAGE_TAG_NO_V" ./openftth/charts/api-gateway/values.yaml
+             CHART_VERSION="$(./scripts/increment-chart-number.sh "$(grep -w '^version:' ./openftth/Chart.yaml)" bug)"
+             sed -i "/^version:.*/c\version: $CHART_VERSION" ./openftth/Chart.yaml
+             git add .
+             git commit -m "upgrades $IMAGE_NAME to version $CHART_VERSION"
+             git push
+
 workflows:
   build-test-upload_image:
     jobs:
@@ -105,6 +142,15 @@ workflows:
           context: docker
           requires:
            - build-docker-image
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - update-helm-chart:
+          context: docker
+          requires:
+           - docker-publish-image
           filters:
             tags:
               only: /^v.*/
