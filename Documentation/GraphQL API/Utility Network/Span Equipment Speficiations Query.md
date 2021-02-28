@@ -26,7 +26,7 @@ query {
           "category": "Conduit",
           "name": "Ø40 5x10",
           "description": "ø40 mm Multirør 5x10",
-          "deprecated": "False",
+          "deprecated": false,
           "manufacturerRefs": [
             "47e87d16-a1f0-488a-8c3e-cb3a4f3e8926",
             "fd457db0-ad32-444c-9946-a9e5e8a14d17"
@@ -37,7 +37,7 @@ query {
           "category": "Conduit",
           "name": "Ø40 6x10",
           "description": "ø40 mm Multirør 6x10",
-          "deprecated": "False",
+          "deprecated": false
           "manufacturerRefs": [
             "47e87d16-a1f0-488a-8c3e-cb3a4f3e8926",
             "fd457db0-ad32-444c-9946-a9e5e8a14d17"
@@ -48,7 +48,7 @@ query {
           "category": "Conduit",
           "name": "Ø32 3x10",
           "description": "ø32 mm Multirør 3x10",
-          "deprecated": "False",
+          "deprecated": false,
           "manufacturerRefs": [
             "47e87d16-a1f0-488a-8c3e-cb3a4f3e8926",
             "fd457db0-ad32-444c-9946-a9e5e8a14d17"
@@ -59,7 +59,7 @@ query {
           "category": "Conduit",
           "name": "Ø50 10x10",
           "description": "ø50 mm Multirør 5x10 + 12x7 color",
-          "deprecated": "False",
+          "deprecated": false,
           "manufacturerRefs": [
             "47e87d16-a1f0-488a-8c3e-cb3a4f3e8926",
             "fd457db0-ad32-444c-9946-a9e5e8a14d17"
@@ -70,7 +70,7 @@ query {
           "category": "Conduit",
           "name": "Ø50 10x10",
           "description": "ø50 mm Multirør 10x10",
-          "deprecated": "False",
+          "deprecated": false,
           "manufacturerRefs": [
             "47e87d16-a1f0-488a-8c3e-cb3a4f3e8926",
             "fd457db0-ad32-444c-9946-a9e5e8a14d17"

@@ -48,7 +48,7 @@ Hereafter it sends a PlaceSpanEquipmentInRouteNetwork command to the Utility Net
   "data": {
     "spanEquipment": {
       "placSpanEquipmentInRouteNetwork": {
-        "isSuccess": "True",
+        "isSuccess": true,
         "errorCode": null,
         "errorMessage": null
       }
@@ -64,7 +64,7 @@ Hereafter it sends a PlaceSpanEquipmentInRouteNetwork command to the Utility Net
   "data": {
     "spanEquipment": {
       "placSpanEquipmentInRouteNetwork": {
-        "isSuccess": "False",
+        "isSuccess": false,
         "errorCode": "INVALID_SPAN_EQUIPMENT_ALREADY_EXISTS",
         "errorMessage": "INVALID_SPAN_EQUIPMENT_ALREADY_EXISTS: A span equipment with id: 6d7b267e-8908-4f98-a5e1-f17582e8af8d already exists."
       }
