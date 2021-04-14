@@ -37,8 +37,12 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                 description: "Retrieve all span equipment specifications.",
                 resolve: context =>
                 {
-                    var queryResult = queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications, Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications()).Result;
+                    var userContext = context.UserContext as GraphQLUserContext;
+                    var username = userContext.User?.Claims.FirstOrDefault(x => x.Type == "preferred_username").Value;
 
+                    logger.LogError($"username: {username}");
+
+                    var queryResult = queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications, Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications()).Result;
                     return queryResult.Value.OrderBy(s => s.Description);
                 }
             );

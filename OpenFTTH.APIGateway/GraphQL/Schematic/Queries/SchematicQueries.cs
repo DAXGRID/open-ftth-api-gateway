@@ -7,7 +7,6 @@ using OpenFTTH.CQRS;
 using OpenFTTH.Schematic.API.Queries;
 using OpenFTTH.Schematic.Business.IO;
 using System;
-using System.Linq;
 
 namespace OpenFTTH.APIGateway.GraphQL.Schematic.Queries
 {
@@ -19,7 +18,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Queries
 
             Field<DiagramType>(
                 "buildDiagram",
-                arguments: 
+                arguments:
                 new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
                 new QueryArgument<StringGraphType> { Name = "exportToGeoJsonFilename" }
                 ),
@@ -53,8 +52,6 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Queries
                     return getDiagramQueryResult.Value.Diagram;
                 }
            );
-
         }
-
     }
 }
