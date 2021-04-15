@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using GraphQL.Authorization;
 
@@ -11,5 +12,7 @@ namespace OpenFTTH.APIGateway
     {
         /// <inheritdoc />
         public ClaimsPrincipal User { get; set; }
+
+        public string Username => User?.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value;
     }
 }

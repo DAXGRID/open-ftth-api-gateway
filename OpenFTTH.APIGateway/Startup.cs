@@ -44,14 +44,15 @@ namespace OpenFTTH.APIGateway
 {
     public class Startup
     {
-        readonly string AllowedOrigins = "_myAllowSpecificOrigins";
+        private readonly string AllowedOrigins = "_myAllowSpecificOrigins";
+        private readonly IWebHostEnvironment _env;
+        public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -77,13 +78,13 @@ namespace OpenFTTH.APIGateway
                 .CreateLogger();
 
             services.AddLogging(loggingBuilder =>
-                {
-                    var logger = new LoggerConfiguration()
-                        .ReadFrom.Configuration(configuration)
-                        .CreateLogger();
+            {
+                var logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
 
-                    loggingBuilder.AddSerilog(dispose: true);
-                });
+                loggingBuilder.AddSerilog(dispose: true);
+            });
 
             // Auth
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -101,12 +102,16 @@ namespace OpenFTTH.APIGateway
                         RequireSignedTokens = true,
                     };
                     _.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
-                    _.RequireHttpsMetadata = false;
+                    _.RequireHttpsMetadata = _env.IsProduction();
                 });
+
+            if (_env.IsProduction())
+            {
+                services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
+            }
 
             // GraphQL stuff
             services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
-            services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("AuthPolicy", p => p.RequireClaim("role", "Admin")));
 
             services.AddGraphQL((options, provider) =>
             {
@@ -174,7 +179,6 @@ namespace OpenFTTH.APIGateway
                 AppDomain.CurrentDomain.Load("OpenFTTH.Work.Business")
             };
 
-
             // Setup the event store
             services.AddSingleton<IEventStore>(e =>
                     new PostgresEventStore(
@@ -229,6 +233,7 @@ namespace OpenFTTH.APIGateway
             }
 
             app.UseCors(AllowedOrigins);
+
             app.UseAuthentication();
 
             app.UseWebSockets();
