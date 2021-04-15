@@ -102,7 +102,7 @@ namespace OpenFTTH.APIGateway
                         RequireSignedTokens = true,
                     };
                     _.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
-                    _.RequireHttpsMetadata = _env.IsProduction();
+                    _.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
                 });
 
             if (_env.IsProduction())
