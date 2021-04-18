@@ -236,7 +236,10 @@ namespace OpenFTTH.APIGateway
 
             app.UseAuthentication();
 
-            app.UseWebSockets();
+            app.UseWebSockets(new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(30)
+            });
 
             app.UseGraphQLWebSockets<OpenFTTHSchema>("/graphql");
 
