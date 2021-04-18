@@ -28,7 +28,6 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                 ),
                 Subscriber = new EventStreamResolver<Diagram>(context =>
                 {
-
                     if (!Guid.TryParse(context.Arguments["routeNetworkElementId"].ToString(), out Guid routeNetworkElementId))
                     {
                         context.Errors.Add(new ExecutionError("Wrong value for guid"));

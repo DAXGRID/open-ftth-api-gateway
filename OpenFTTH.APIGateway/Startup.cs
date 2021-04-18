@@ -2,6 +2,7 @@
 using DAX.EventProcessing.Dispatcher;
 using DAX.EventProcessing.Dispatcher.Topos;
 using GraphQL.Server;
+using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Server.Ui.Voyager;
@@ -14,8 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using OpenFTTH.APIGateway.Auth;
 using OpenFTTH.APIGateway.CoreTypes;
@@ -38,7 +41,10 @@ using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 using OpenFTTH.Work.Business.InMemTestImpl;
 using Serilog;
 using System;
+using System.IO;
+using System.IO.Pipelines;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway
 {
@@ -90,7 +96,7 @@ namespace OpenFTTH.APIGateway
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, _ =>
                 {
-                    _.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    _.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateAudience = true,
                         ValidAudience = "account",
@@ -105,10 +111,13 @@ namespace OpenFTTH.APIGateway
                     _.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
                 });
 
-            if (_env.IsProduction())
-            {
-                services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
-            }
+            services.AddHttpContextAccessor();
+            services.AddTransient<IOperationMessageListener, AuthenticationListener>();
+
+            // if (_env.IsProduction())
+            // {
+            services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
+            //}
 
             // GraphQL stuff
             services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
