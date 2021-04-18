@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http;
+using System.Linq;
 
 namespace OpenFTTH.APIGateway.Auth
 {
@@ -53,36 +54,22 @@ namespace OpenFTTH.APIGateway.Auth
 
         public Task BeforeHandleAsync(MessageHandlingContext context)
         {
-            if (context.Message.Type == MessageType.GQL_CONNECTION_INIT)
+            if (MessageType.GQL_CONNECTION_INIT.Equals(context.Message?.Type))
             {
-                var payload = context.Message.Payload as JObject;
-
-                if (payload != null && payload.ContainsKey("Authorization"))
+                var payload = context.Message?.Payload;
+                if (payload != null)
                 {
-                    var token = payload.Value<string>("Authorization");
+                    var authorizationTokenObject = ((JObject)payload)["Authorization"];
 
-                    // Save the user to the http context
-                    try
+                    if (authorizationTokenObject != null)
                     {
-                        var user = ValidateCurrentToken(token);
-                        _httpContextAccessor.HttpContext.User = user;
-                    }
-                    catch
-                    {
-                        return context.Terminate();
+                        var token = authorizationTokenObject.ToString().Replace("Bearer ", string.Empty);
+                        _httpContextAccessor.HttpContext.User = ValidateCurrentToken(token);
                     }
                 }
             }
 
-            // Always insert the http context user into the message handling context properties
-            // Note: any IDisposable item inside the properties bag will be disposed after this message is handled!
-            //  So do not insert such items here, but use something like 'context[PRINCIPAL_KEY] = [...]'
-            context.Properties[PRINCIPAL_KEY] = _httpContextAccessor.HttpContext?.User;
-
-            if (_httpContextAccessor.HttpContext?.User == null || !_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-            {
-                return context.Terminate();
-            }
+            context.Properties["GraphQLUserContext"] = new GraphQLUserContext() { User = _httpContextAccessor.HttpContext.User };
 
             return Task.CompletedTask;
         }

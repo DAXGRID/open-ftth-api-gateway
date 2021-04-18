@@ -1,5 +1,6 @@
 ﻿using GraphQL;
 using GraphQL.Resolvers;
+using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Types;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
@@ -28,6 +29,15 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                 ),
                 Subscriber = new EventStreamResolver<Diagram>(context =>
                 {
+                    var messageHandlingContext = context.UserContext.As<MessageHandlingContext>();
+                    var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
+
+                    if (!graphQLUserContext.User.Identity.IsAuthenticated)
+                    {
+                        context.Errors.Add(new ExecutionError("Not authorized"));
+                        return null;
+                    }
+
                     if (!Guid.TryParse(context.Arguments["routeNetworkElementId"].ToString(), out Guid routeNetworkElementId))
                     {
                         context.Errors.Add(new ExecutionError("Wrong value for guid"));
