@@ -2,7 +2,9 @@
 using GraphQL.Resolvers;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Types;
+using Microsoft.Extensions.Options;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Types;
+using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
 using System;
 
@@ -11,10 +13,12 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
     public class SchematicUpdatedSubscription
     {
         private readonly SchematicDiagramObserver _schematicDiagramObserver;
+        private readonly AuthSetting _authSetting;
 
-        public SchematicUpdatedSubscription(SchematicDiagramObserver schematicDiagramObserver)
+        public SchematicUpdatedSubscription(SchematicDiagramObserver schematicDiagramObserver, IOptions<AuthSetting> authSetting)
         {
             _schematicDiagramObserver = schematicDiagramObserver;
+            _authSetting = authSetting.Value;
         }
 
         public void AddFields(ObjectGraphType objectGraphType)
@@ -32,7 +36,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                     var messageHandlingContext = context.UserContext.As<MessageHandlingContext>();
                     var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
 
-                    if (!graphQLUserContext.User.Identity.IsAuthenticated)
+                    if (_authSetting.Enable && !graphQLUserContext.User.Identity.IsAuthenticated)
                     {
                         context.Errors.Add(new ExecutionError("Not authorized"));
                         return null;
