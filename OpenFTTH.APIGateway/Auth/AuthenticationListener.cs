@@ -3,39 +3,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using Newtonsoft.Json.Linq;
-using GraphQL.Server.Transports.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http;
-using System.Linq;
+using OpenFTTH.APIGateway.Settings;
+using Microsoft.Extensions.Options;
 
 namespace OpenFTTH.APIGateway.Auth
 {
     public class AuthenticationListener : IOperationMessageListener
     {
-        public static readonly string PRINCIPAL_KEY = "User";
-
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IUserContextBuilder _builder;
+        private readonly AuthSetting _authSetting;
+        private readonly HttpClient _httpClient;
 
-        public AuthenticationListener(IHttpContextAccessor contextAccessor, IUserContextBuilder builder)
+        public AuthenticationListener(IHttpContextAccessor contextAccessor,
+                                      IOptions<AuthSetting> authSetting,
+                                      HttpClient httpClient)
         {
             _httpContextAccessor = contextAccessor;
-            _builder = builder;
+            _authSetting = authSetting.Value;
+            _httpClient = httpClient;
         }
 
-        public ClaimsPrincipal ValidateCurrentToken(string token)
+        public async Task<ClaimsPrincipal> RetrieveIdentityPrincipal(string token)
         {
-            var myIssuer = "http://auth.openftth.local/auth/realms/openftth";
-
-            var httpClient = new HttpClient();
-            var t = new ConfigurationManager<OpenIdConnectConfiguration>($"{myIssuer}/.well-known/openid-configuration",
+            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{_authSetting.Host}/.well-known/openid-configuration",
                                                                          new OpenIdConnectConfigurationRetriever(),
-                                                                         new HttpDocumentRetriever(httpClient) { RequireHttps = false });
+                                                                         new HttpDocumentRetriever(_httpClient) { RequireHttps = _authSetting.RequireHttps });
 
-            var result = t.GetConfigurationAsync().Result;
+            var result = await configurationManager.GetConfigurationAsync();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
@@ -43,10 +42,9 @@ namespace OpenFTTH.APIGateway.Auth
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidIssuer = myIssuer,
-                ValidAudience = "account",
-                IssuerSigningKeys = result.SigningKeys
-
+                ValidIssuer = _authSetting.Host,
+                ValidAudience = _authSetting.Audience,
+                IssuerSigningKeys = result.SigningKeys,
             }, out SecurityToken validatedToken);
 
             return claimsPrincipal;
@@ -64,7 +62,7 @@ namespace OpenFTTH.APIGateway.Auth
                     if (authorizationTokenObject != null)
                     {
                         var token = authorizationTokenObject.ToString().Replace("Bearer ", string.Empty);
-                        _httpContextAccessor.HttpContext.User = ValidateCurrentToken(token);
+                        _httpContextAccessor.HttpContext.User = RetrieveIdentityPrincipal(token).Result;
                     }
                 }
             }

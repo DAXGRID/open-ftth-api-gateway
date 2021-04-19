@@ -18,7 +18,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using OpenFTTH.APIGateway.Auth;
 using OpenFTTH.APIGateway.CoreTypes;
@@ -41,23 +40,18 @@ using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 using OpenFTTH.Work.Business.InMemTestImpl;
 using Serilog;
 using System;
-using System.IO;
-using System.IO.Pipelines;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway
 {
     public class Startup
     {
         private readonly string AllowedOrigins = "_myAllowSpecificOrigins";
-        private readonly IWebHostEnvironment _env;
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _env = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -113,11 +107,12 @@ namespace OpenFTTH.APIGateway
 
             services.AddHttpContextAccessor();
             services.AddTransient<IOperationMessageListener, AuthenticationListener>();
+            services.AddHttpClient<IOperationMessageListener, AuthenticationListener>();
 
-            // if (_env.IsProduction())
-            // {
-            services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
-            //}
+            if (configuration.GetSection("Auth").GetValue<bool>("Enable"))
+            {
+                services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
+            }
 
             // GraphQL stuff
             services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
@@ -149,6 +144,9 @@ namespace OpenFTTH.APIGateway
 
             services.Configure<GeoDatabaseSetting>(databaseSettings =>
                             Configuration.GetSection("GeoDatabase").Bind(databaseSettings));
+
+            services.Configure<GeoDatabaseSetting>(authSettings =>
+                            Configuration.GetSection("Auth").Bind(authSettings));
 
             // Web stuff
             services.AddRazorPages();
