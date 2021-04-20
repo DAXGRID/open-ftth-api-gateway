@@ -145,7 +145,7 @@ namespace OpenFTTH.APIGateway
             services.Configure<GeoDatabaseSetting>(databaseSettings =>
                             Configuration.GetSection("GeoDatabase").Bind(databaseSettings));
 
-            services.Configure<GeoDatabaseSetting>(authSettings =>
+            services.Configure<AuthSetting>(authSettings =>
                             Configuration.GetSection("Auth").Bind(authSettings));
 
             // Web stuff
