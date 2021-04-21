@@ -93,7 +93,7 @@ namespace OpenFTTH.APIGateway
                     _.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateAudience = true,
-                        ValidAudience = "account",
+                        ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
                         ValidateIssuer = true,
                         ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
                         ValidateIssuerSigningKey = true,
