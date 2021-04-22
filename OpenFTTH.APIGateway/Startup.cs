@@ -186,6 +186,9 @@ namespace OpenFTTH.APIGateway
                 AppDomain.CurrentDomain.Load("OpenFTTH.Work.Business")
             };
 
+            // Adds controllers
+            services.AddConnections();
+
             // Setup the event store
             services.AddSingleton<IEventStore>(e =>
                     new PostgresEventStore(
@@ -240,8 +243,14 @@ namespace OpenFTTH.APIGateway
             }
 
             app.UseCors(AllowedOrigins);
+            app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.UseWebSockets(new WebSocketOptions
             {
