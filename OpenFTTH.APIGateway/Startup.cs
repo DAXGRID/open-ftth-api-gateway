@@ -39,6 +39,7 @@ using OpenFTTH.RouteNetwork.Business.RouteElements.EventHandling;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 using OpenFTTH.Work.Business.InMemTestImpl;
 using Serilog;
+using Serilog.Events;
 using Serilog.Formatting.Compact;
 using System;
 using System.Reflection;
@@ -265,6 +266,8 @@ namespace OpenFTTH.APIGateway
             {
                 var logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(configuration)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
                     .Enrich.FromLogContext()
                     .WriteTo.Console(new CompactJsonFormatter())
                     .CreateLogger();
@@ -287,5 +290,3 @@ namespace OpenFTTH.APIGateway
         }
     }
 }
-
-
