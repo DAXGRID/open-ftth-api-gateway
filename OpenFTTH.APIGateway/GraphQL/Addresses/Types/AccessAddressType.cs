@@ -1,9 +1,4 @@
 ﻿using GraphQL.Types;
-using OpenFTTH.Address.API.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
 {
@@ -13,7 +8,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
         {
             Field(x => x.Id, type: typeof(IdGraphType)).Description("Internal Address Id");
             Field(x => x.ExternalId, type: typeof(IdGraphType)).Description("External Address Id");
-            Field(x => x.HouseHumber, type: typeof(StringGraphType)).Description("HouseHumber");
+            Field(x => x.HouseNumber, type: typeof(StringGraphType)).Description("HouseNumber");
             Field(x => x.PostDistrictCode, type: typeof(StringGraphType)).Description("PostDistrictCode");
             Field(x => x.PostDistrict, type: typeof(StringGraphType)).Description("PostDistrict");
             Field(x => x.RoadCode, type: typeof(StringGraphType)).Description("RoadCode");

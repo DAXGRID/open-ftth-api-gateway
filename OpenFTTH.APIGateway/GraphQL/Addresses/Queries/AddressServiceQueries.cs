@@ -28,7 +28,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             Field<ListGraphType<NearestAddressSearchHitType>>(
                 "nearestAccessAddresses",
-                arguments: 
+                arguments:
                 new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "routeNodeId" },
                     new QueryArgument<FloatGraphType> { Name = "x" },
@@ -48,7 +48,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     {
                         var nodeCoord = GetNodeCoordinates(routeNodeId, queryDispatcher);
 
-                        if (nodeCoord == (0,0))
+                        if (nodeCoord == (0, 0))
                         {
                             context.Errors.Add(new ExecutionError($"Could not find a route node with id: {routeNodeId}"));
                             return null;
@@ -81,7 +81,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                         return MapToGraphQLAddressHits(result.Value);
                     }
 
-                  
+
                 }
            );
         }
@@ -159,7 +159,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
             {
                 Id = searchAccessAddress.Id,
                 ExternalId = searchAccessAddress.ExternalId,
-                HouseHumber = searchAccessAddress.HouseHumber,
+                HouseNumber = searchAccessAddress.HouseNumber,
                 PostDistrictCode = searchAccessAddress.PostDistrictCode,
                 PostDistrict = searchAccessAddress.PostDistrict,
                 RoadCode = searchAccessAddress.RoadCode,

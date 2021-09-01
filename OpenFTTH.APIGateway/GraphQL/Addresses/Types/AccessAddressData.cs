@@ -1,8 +1,6 @@
 ﻿using OpenFTTH.Address.API.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
 {
@@ -13,7 +11,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
         public double Ywgs { get; init; }
         public double Xetrs { get; init; }
         public double Yetrs { get; init; }
-        public string? HouseHumber { get; init; }
+        public string? HouseNumber { get; init; }
         public string? PostDistrictCode { get; init; }
         public string? PostDistrict { get; init; }
         public Guid? ExternalId { get; init; }
