@@ -19,6 +19,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.TotalLength, type: typeof(FloatGraphType)).Description("Length in meters");
             Field(x => x.RouteSegmentIds, type: typeof(ListGraphType<IdGraphType>)).Description("Route network segment ids of the span segment traversal");
             Field(x => x.RouteSegmentGeometries, type: typeof(ListGraphType<StringGraphType>)).Description("Route network segment geometries of the span segment traversal");
+            Field(x => x.HopSeqNo, type: typeof(IntGraphType)).Description("Sequence number of the hop");
         }
     }
 }
