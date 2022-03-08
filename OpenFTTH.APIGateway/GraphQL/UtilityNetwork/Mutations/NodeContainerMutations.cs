@@ -8,8 +8,8 @@ using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.UtilityGraphService.API.Commands;
@@ -116,39 +116,39 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                  }
            );
 
-           Field<CommandResultType>(
-                "updateProperties",
-                description: "Mutation that can be used to change the node container specification and/or manufacturer",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
-                    new QueryArgument<IdGraphType> { Name = "specificationId" },
-                    new QueryArgument<IdGraphType> { Name = "manufacturerId" }
-                ),
-                resolve: context =>
-                {
-                    var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
+            Field<CommandResultType>(
+                 "updateProperties",
+                 description: "Mutation that can be used to change the node container specification and/or manufacturer",
+                 arguments: new QueryArguments(
+                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
+                     new QueryArgument<IdGraphType> { Name = "specificationId" },
+                     new QueryArgument<IdGraphType> { Name = "manufacturerId" }
+                 ),
+                 resolve: context =>
+                 {
+                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
 
-                    var correlationId = Guid.NewGuid();
+                     var correlationId = Guid.NewGuid();
 
-                    var userContext = context.UserContext as GraphQLUserContext;
-                    var userName = userContext.Username;
+                     var userContext = context.UserContext as GraphQLUserContext;
+                     var userName = userContext.Username;
 
-                    // TODO: Get from work manager
-                    var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
+                     // TODO: Get from work manager
+                     var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
 
-                    var commandUserContext = new UserContext(userName, workTaskId);
+                     var commandUserContext = new UserContext(userName, workTaskId);
 
-                    var updateCmd = new UpdateNodeContainerProperties(correlationId, commandUserContext, nodeContainerId)
-                    {
-                        SpecificationId = context.HasArgument("specificationId") ? context.GetArgument<Guid>("specificationId") : null,
-                        ManufacturerId = context.HasArgument("manufacturerId") ? context.GetArgument<Guid>("manufacturerId") : null,
-                    };
+                     var updateCmd = new UpdateNodeContainerProperties(correlationId, commandUserContext, nodeContainerId)
+                     {
+                         SpecificationId = context.HasArgument("specificationId") ? context.GetArgument<Guid>("specificationId") : null,
+                         ManufacturerId = context.HasArgument("manufacturerId") ? context.GetArgument<Guid>("manufacturerId") : null,
+                     };
 
-                    var updateResult = commandDispatcher.HandleAsync<UpdateNodeContainerProperties, Result>(updateCmd).Result;
+                     var updateResult = commandDispatcher.HandleAsync<UpdateNodeContainerProperties, Result>(updateCmd).Result;
 
-                    return new CommandResult(updateResult);
-                }
-            );
+                     return new CommandResult(updateResult);
+                 }
+             );
 
 
             Field<CommandResultType>(
@@ -235,6 +235,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
              arguments: new QueryArguments(
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentSpecificationId" },
+                 new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "manufacturerId" },
                  new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "numberOfEquipments" },
                  new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "startSequenceNumber" },
                  new QueryArgument<NonNullGraphType<TerminalEquipmentNamingMethodEnumType>> { Name = "terminalEquipmentNamingMethod" },
@@ -246,6 +247,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
              {
                  var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                  var terminalEquipmentSpecificationId = context.GetArgument<Guid>("terminalEquipmentSpecificationId");
+                 var manufacturerId = context.GetArgument<Guid>("manufacturerId");
                  var numberOfEquipments = context.GetArgument<int>("numberOfEquipments");
                  var startSequenceNumber = context.GetArgument<int>("startSequenceNumber");
                  var terminalEquipmentNamingMethod = context.GetArgument<TerminalEquipmentNamingMethodEnum>("terminalEquipmentNamingMethod");
@@ -270,8 +272,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                  var userContext = context.UserContext as GraphQLUserContext;
                  var userName = userContext.Username;
 
-                  // TODO: Get from work manager
-                  var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
+                 // TODO: Get from work manager
+                 var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
 
                  var commandUserContext = new UserContext(userName, workTaskId);
 
@@ -288,7 +290,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                  )
                  {
                      AddressInfo = addressInfo,
-                     SubrackPlacementInfo = subrackPlacementInfo
+                     SubrackPlacementInfo = subrackPlacementInfo,
+                     ManufacturerId = manufacturerId
                  };
 
                  var removeResult = commandDispatcher.HandleAsync<PlaceTerminalEquipmentInNodeContainer, Result>(placeEquipmentInNodeContainer).Result;
