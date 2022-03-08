@@ -171,8 +171,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                        return null;
                    }
 
-
-                   var terminalEquipment = equipmentQueryResult.Value.SpanEquipment.First();
+                   var terminalEquipment = equipmentQueryResult.Value.TerminalEquipment.First();
 
                    return terminalEquipment;
                }
@@ -188,8 +187,8 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
              {
                  var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
 
-                   // Get equipment information
-                   var equipmentQueryResult = queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                 // Get equipment information
+                 var equipmentQueryResult = queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
                      new GetEquipmentDetails(new EquipmentIdList() { spanEquipmentOrSegmentId })
                  ).Result;
 
@@ -275,7 +274,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
                         return null;
                     }
-    
+
                     var nodeContainer = getNodeContainerResult.Value;
 
                     if (nodeContainer.Racks == null || !nodeContainer.Racks.Any(r => r.Id == rackId))
@@ -371,7 +370,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     if (connectivityQueryResult.IsFailed)
                     {
                         foreach (var error in connectivityQueryResult.Errors)
-                          context.Errors.Add(new ExecutionError(error.Message));
+                            context.Errors.Add(new ExecutionError(error.Message));
 
                         return null;
                     }
