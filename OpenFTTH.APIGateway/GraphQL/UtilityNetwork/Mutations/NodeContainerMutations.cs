@@ -235,7 +235,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
              arguments: new QueryArguments(
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentSpecificationId" },
-                 new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "manufacturerId" },
+                 new QueryArgument<IdGraphType> { Name = "manufacturerId" },
                  new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "numberOfEquipments" },
                  new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "startSequenceNumber" },
                  new QueryArgument<NonNullGraphType<TerminalEquipmentNamingMethodEnumType>> { Name = "terminalEquipmentNamingMethod" },
@@ -247,7 +247,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
              {
                  var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                  var terminalEquipmentSpecificationId = context.GetArgument<Guid>("terminalEquipmentSpecificationId");
-                 var manufacturerId = context.GetArgument<Guid>("manufacturerId");
+                 var manufacturerId = context.GetArgument<Guid?>("manufacturerId");
                  var numberOfEquipments = context.GetArgument<int>("numberOfEquipments");
                  var startSequenceNumber = context.GetArgument<int>("startSequenceNumber");
                  var terminalEquipmentNamingMethod = context.GetArgument<TerminalEquipmentNamingMethodEnum>("terminalEquipmentNamingMethod");
