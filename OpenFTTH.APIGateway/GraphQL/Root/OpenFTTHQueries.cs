@@ -1,4 +1,4 @@
-﻿using GraphQL.Authorization;
+﻿using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Queries;
@@ -32,6 +32,5 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
 
             Field<AddressServiceQueries>("addressService", resolve: context => new { });
         }
-
     }
 }

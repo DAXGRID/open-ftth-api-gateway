@@ -33,7 +33,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                 ),
                 Subscriber = new EventStreamResolver<Diagram>(context =>
                 {
-                    var messageHandlingContext = context.UserContext.As<MessageHandlingContext>();
+                    var messageHandlingContext = (MessageHandlingContext)context.UserContext;
                     var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
 
                     if (_authSetting.Enable && !graphQLUserContext.User.Identity.IsAuthenticated)
@@ -42,12 +42,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                         return null;
                     }
 
-                    if (!Guid.TryParse(context.Arguments["routeNetworkElementId"].ToString(), out Guid routeNetworkElementId))
-                    {
-                        context.Errors.Add(new ExecutionError("Wrong value for guid"));
-                        return null;
-                    }
-
+                    var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     return _schematicDiagramObserver.WhenDiagramNeedsUpdate(routeNetworkElementId);
                 }),
             });

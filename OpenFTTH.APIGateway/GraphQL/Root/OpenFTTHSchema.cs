@@ -6,15 +6,17 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
 {
     public class OpenFTTHSchema : Schema
     {
-        public OpenFTTHSchema(IServiceProvider serviceProvider, OpenFTTHQueries queries, OpenFTTHSubscriptions subscriptions, OpenFTTHMutations mutations) : base(serviceProvider)
+        public OpenFTTHSchema(
+            IServiceProvider serviceProvider,
+            OpenFTTHQueries queries,
+            OpenFTTHSubscriptions subscriptions,
+            OpenFTTHMutations mutations)
+            : base(serviceProvider)
         {
             Query = queries;
-
             Subscription = subscriptions;
-
             Mutation = mutations;
-
-            RegisterType<RouteNetworkEditOperationOccuredEventType>();
+            RegisterType(typeof(RouteNetworkEditOperationOccuredEventType));
         }
     }
 }

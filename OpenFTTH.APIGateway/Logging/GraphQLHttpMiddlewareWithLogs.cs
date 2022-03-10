@@ -1,11 +1,8 @@
 ﻿using GraphQL.Server.Transports.AspNetCore;
-using GraphQL.Server.Transports.AspNetCore.Common;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,9 +16,8 @@ namespace OpenFTTH.APIGateway.Logging
         public GraphQLHttpMiddlewareWithLogs(
             ILogger<GraphQLHttpMiddleware<TSchema>> logger,
             RequestDelegate next,
-            PathString path,
             IGraphQLRequestDeserializer requestDeserializer)
-            : base(next, path, requestDeserializer)
+            : base(next, requestDeserializer)
         {
             _logger = logger;
         }
@@ -31,9 +27,11 @@ namespace OpenFTTH.APIGateway.Logging
             if (requestExecutionResult.Result.Errors != null)
             {
                 if (requestExecutionResult.IndexInBatch.HasValue)
-                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s) in batch [{Index}]: {Errors}", requestExecutionResult.Elapsed, requestExecutionResult.IndexInBatch, requestExecutionResult.Result.Errors);
+                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s) in batch [{Index}]: {Errors}",
+                                     requestExecutionResult.Elapsed, requestExecutionResult.IndexInBatch, requestExecutionResult.Result.Errors);
                 else
-                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s): {Errors}", requestExecutionResult.Elapsed, requestExecutionResult.Result.Errors);
+                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s): {Errors}",
+                                     requestExecutionResult.Elapsed, requestExecutionResult.Result.Errors);
             }
             else
                 _logger.LogDebug("GraphQL execution successfully completed in {Elapsed}", requestExecutionResult.Elapsed);
@@ -43,8 +41,8 @@ namespace OpenFTTH.APIGateway.Logging
 
         protected override CancellationToken GetCancellationToken(HttpContext context)
         {
-            // custom CancellationToken example 
-            var cts = CancellationTokenSource.CreateLinkedTokenSource(base.GetCancellationToken(context), new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+            var cts = CancellationTokenSource.CreateLinkedTokenSource(
+                base.GetCancellationToken(context), new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
             return cts.Token;
         }
     }

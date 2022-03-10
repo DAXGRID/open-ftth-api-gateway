@@ -3,10 +3,8 @@ using GraphQL.Resolvers;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Types;
 using Microsoft.Extensions.Options;
-using OpenFTTH.APIGateway.GraphQL.Schematic.Types;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
 using OpenFTTH.APIGateway.Settings;
-using OpenFTTH.Schematic.API.Model.DiagramLayout;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
 using System;
 
@@ -36,7 +34,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
                 ),
                 Subscriber = new EventStreamResolver<TerminalEquipmentAZConnectivityViewModel>(context =>
                 {
-                    var messageHandlingContext = context.UserContext.As<MessageHandlingContext>();
+                    var messageHandlingContext = (MessageHandlingContext)context.UserContext;
                     var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
 
                     if (_authSetting.Enable && !graphQLUserContext.User.Identity.IsAuthenticated)
@@ -45,15 +43,17 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
                         return null;
                     }
 
-                    if (!Guid.TryParse(context.Arguments["routeNodeId"].ToString(), out Guid routeNodeId))
+                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
+                    if (routeNodeId == Guid.Empty)
                     {
-                        context.Errors.Add(new ExecutionError("Wrong value for guid"));
+                        context.Errors.Add(new ExecutionError($"nameof(routeNodeId) guid cannot be empty."));
                         return null;
                     }
 
-                    if (!Guid.TryParse(context.Arguments["terminalEquipmentOrRackId"].ToString(), out Guid terminalEquipmentOrRackId))
+                    var terminalEquipmentOrRackId = context.GetArgument<Guid>("terminalEquipmentOrRackId");
+                    if (terminalEquipmentOrRackId == Guid.Empty)
                     {
-                        context.Errors.Add(new ExecutionError("Wrong value for guid"));
+                        context.Errors.Add(new ExecutionError($"{nameof(terminalEquipmentOrRackId)} guid cannot be empty."));
                         return null;
                     }
 

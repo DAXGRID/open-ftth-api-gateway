@@ -1,11 +1,9 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
 COPY ./*sln ./
-
 COPY ./OpenFTTH.APIGateway/*.csproj ./OpenFTTH.APIGateway/
 COPY ./OpenFTTH.APIGateway.IntegrationTests/*.csproj ./OpenFTTH.APIGateway.IntegrationTests/
-
 COPY ./OpenFTTH.Work.API/*.csproj ./OpenFTTH.Work.API/
 COPY ./OpenFTTH.Work.Business/*.csproj ./OpenFTTH.Work.Business/
 COPY ./OpenFTTH.Work.Tests/*.csproj ./OpenFTTH.Work.Tests/
@@ -17,7 +15,7 @@ WORKDIR /app/OpenFTTH.APIGateway
 RUN dotnet publish -c Release -o out --packages ./packages
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
 COPY --from=build-env /app/OpenFTTH.APIGateway/out .

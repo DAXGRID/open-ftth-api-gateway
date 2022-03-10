@@ -1,11 +1,10 @@
-﻿using GraphQL.Authorization;
+﻿using GraphQL;
 using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations;
 using OpenFTTH.APIGateway.GraphQL.Work.Mutations;
 
 namespace OpenFTTH.APIGateway.GraphQL.Root
 {
-
     public class OpenFTTHMutations : ObjectGraphType
     {
         public OpenFTTHMutations()
@@ -23,5 +22,4 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
             Field<TestDataMutations>("testData", resolve: context => new { });
         }
     }
-
 }

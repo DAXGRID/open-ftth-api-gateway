@@ -1,6 +1,4 @@
-﻿using MediatR;
-using OpenFTTH.CQRS;
-using System;
+﻿using OpenFTTH.CQRS;
 
 namespace OpenFTTH.Work.API.Queries
 {
