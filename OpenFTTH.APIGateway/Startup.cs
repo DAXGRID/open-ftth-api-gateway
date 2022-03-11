@@ -104,9 +104,6 @@ namespace OpenFTTH.APIGateway
                 services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
             }
 
-            // GraphQL stuff
-            services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
-
             MicrosoftDI.GraphQLBuilderExtensions.AddGraphQL(services)
                 .AddSubscriptionDocumentExecuter()
                 .AddServer(true)
