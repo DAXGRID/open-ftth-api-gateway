@@ -42,7 +42,7 @@ namespace OpenFTTH.APIGateway.Logging
         protected override CancellationToken GetCancellationToken(HttpContext context)
         {
             var cts = CancellationTokenSource.CreateLinkedTokenSource(
-                base.GetCancellationToken(context), new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+                base.GetCancellationToken(context), new CancellationTokenSource(TimeSpan.FromSeconds(15)).Token);
             return cts.Token;
         }
     }
