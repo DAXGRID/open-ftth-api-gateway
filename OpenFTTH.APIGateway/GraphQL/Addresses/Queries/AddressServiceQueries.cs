@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 {
@@ -28,7 +29,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             Description = "GraphQL API for querying address information";
 
-            Field<ListGraphType<NearestAddressSearchHitType>>(
+            FieldAsync<ListGraphType<NearestAddressSearchHitType>>(
                 "nearestAccessAddresses",
                 arguments:
                 new QueryArguments(
@@ -39,7 +40,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     new QueryArgument<IntGraphType> { Name = "srid" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "maxHits" }
                 ),
-                resolve: context =>
+                resolve: async (context) =>
                 {
                     double x = context.GetArgument<double>("x");
                     double y = context.GetArgument<double>("y");
@@ -50,7 +51,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
                     if (routeNodeId != Guid.Empty)
                     {
-                        var nodeCoord = GetNodeCoordinates(routeNodeId, queryDispatcher);
+                        var nodeCoord = await GetNodeCoordinates(routeNodeId, queryDispatcher).ConfigureAwait(false);
 
                         if (nodeCoord == (0, 0))
                         {
@@ -60,7 +61,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
                         var getAddressInfoQuery = new GetAddressInfo(nodeCoord.Item1, nodeCoord.Item2, 25832, maxHits);
 
-                        var result = queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).Result;
+                        var result = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery);
 
                         if (result.IsFailed)
                         {
@@ -72,13 +73,12 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     }
                     else if (spanEquipmentOrSegmentId != Guid.Empty)
                     {
-                        var segmentEnd = GetSpanSegmentEndCoordinate(spanEquipmentOrSegmentId, queryDispatcher);
+                        var segmentEnd = await GetSpanSegmentEndCoordinate(spanEquipmentOrSegmentId, queryDispatcher).ConfigureAwait(false);
 
                         // Find address near the from span equipment end
                         var getAddressInfoQuery = new GetAddressInfo(segmentEnd.Item1, segmentEnd.Item2, 25832, maxHits);
 
-                        var getAddressInfoQueryResult = queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).Result;
-
+                        var getAddressInfoQueryResult = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).ConfigureAwait(false);
                         if (getAddressInfoQueryResult.IsFailed)
                         {
                             context.Errors.Add(new ExecutionError(getAddressInfoQueryResult.Errors.First().Message));
@@ -91,7 +91,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     {
                         var getAddressInfoQuery = new GetAddressInfo(x, y, srid, maxHits);
 
-                        var result = queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).Result;
+                        var result = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).ConfigureAwait(false);
 
                         if (result.IsFailed)
                         {
@@ -101,41 +101,37 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
                         return MapToGraphQLAddressHits(result.Value);
                     }
-
-
                 }
            );
         }
 
-        private (double, double) GetNodeCoordinates(Guid nodeId, IQueryDispatcher queryDispatcher)
+        private async Task<(double, double)> GetNodeCoordinates(Guid nodeId, IQueryDispatcher queryDispatcher)
         {
-
-            var routeNodeQueryResult = queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
+            var routeNodeQueryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
                   new GetRouteNetworkDetails(new OpenFTTH.RouteNetwork.API.Model.RouteNetworkElementIdList() { nodeId })
                   {
                       RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
                   }
-              ).Result;
+            ).ConfigureAwait(false);
 
             if (routeNodeQueryResult.IsSuccess)
             {
                 var etrsCoord = ConvertPointGeojsonToCoordArray(routeNodeQueryResult.Value.RouteNetworkElements.First().Coordinates);
-
                 return (etrsCoord[0], etrsCoord[1]);
             }
             else
                 return (0, 0);
         }
 
-        private (double, double) GetSpanSegmentEndCoordinate(Guid spanSegmentId, IQueryDispatcher queryDispatcher)
+        private async Task<(double, double)> GetSpanSegmentEndCoordinate(Guid spanSegmentId, IQueryDispatcher queryDispatcher)
         {
             // Query span equipment
-            var equipmentQueryResult = queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+            var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
                 new GetEquipmentDetails(new EquipmentIdList() { spanSegmentId })
                 {
                     EquipmentDetailsFilter = new EquipmentDetailsFilterOptions { IncludeRouteNetworkTrace = true }
                 }
-            ).Result;
+            ).ConfigureAwait(false);
 
             if (equipmentQueryResult.IsFailed)
             {
@@ -150,7 +146,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
             Guid spanEquipmentInterestId = equipmentQueryResult.Value.SpanEquipment.First().WalkOfInterestId;
 
             // Query route network
-            var routeNetworkQueryResult = queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
+            var routeNetworkQueryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
                       new GetRouteNetworkDetails(new InterestIdList() { spanEquipmentInterestId })
                       {
                           RouteNetworkElementFilter = new RouteNetworkElementFilterOptions()
@@ -159,7 +155,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                           },
                           RelatedInterestFilter = RelatedInterestFilterOptions.None
                       }
-                  ).Result;
+            ).ConfigureAwait(false);
 
             if (routeNetworkQueryResult.IsFailed)
             {
@@ -173,32 +169,25 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             var lastNodeInSpanSegment = routeNetworkElementIds.Last();
 
-            var coord = GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher);
+            var coord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher).ConfigureAwait(false);
 
             _logger.LogInformation($"Address search info: Get coordinate of span segment: {spanSegmentId} in span equipment: {equipmentQueryResult.Value.SpanEquipment.First().Name} {equipmentQueryResult.Value.SpanEquipment.First().Id} Route node id: {lastNodeInSpanSegment} successfully returned: x={coord.Item1} y={coord.Item2}");
-
 
             return coord;
         }
 
         private double[] ConvertPointGeojsonToCoordArray(string geojson)
         {
-            List<double> result = new();
-
             var geojsonSplit = geojson.Replace("[", "").Replace("]", "").Split(',');
-
-            foreach (var coord in geojsonSplit)
-            {
-                result.Add(Double.Parse(coord, CultureInfo.InvariantCulture));
-            }
-
-            if (result.Count != 2)
+            if (geojsonSplit.Length != 2)
                 throw new ApplicationException($"Expected point geojson, but got: '{geojson}'");
 
-            return result.ToArray();
+            var result = new double[2];
+            result[0] = Double.Parse(geojsonSplit[0], CultureInfo.InvariantCulture);
+            result[1] = Double.Parse(geojsonSplit[1], CultureInfo.InvariantCulture);
+
+            return result;
         }
-
-
 
         private List<NearestAddressSearchHit> MapToGraphQLAddressHits(GetAddressInfoResult addressQueryResult)
         {
