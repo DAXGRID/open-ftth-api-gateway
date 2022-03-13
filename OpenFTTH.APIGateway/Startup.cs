@@ -9,7 +9,6 @@ using GraphQL.SystemReactive;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -110,8 +109,9 @@ namespace OpenFTTH.APIGateway
                 .AddSchema<OpenFTTHSchema>()
                 .ConfigureExecution(options =>
                 {
+                    options.EnableMetrics = false;
                     var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
-                    options.UnhandledExceptionDelegate = ctx => logger.LogError("{Error} occurred", ctx.OriginalException.Message);
+                    options.UnhandledExceptionDelegate = ctx => logger.LogError("Unhandled Exception GraphQL: {Error} occurred", ctx.OriginalException.Message);
                 })
                 .AddSystemTextJson()
                 .AddWebSockets()
