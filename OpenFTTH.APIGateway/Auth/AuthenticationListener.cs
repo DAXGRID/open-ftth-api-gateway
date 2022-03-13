@@ -1,15 +1,15 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
-using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Net.Http;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using OpenFTTH.APIGateway.Settings;
-using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.Auth
 {
@@ -30,9 +30,10 @@ namespace OpenFTTH.APIGateway.Auth
 
         public async Task<ClaimsPrincipal> RetrieveIdentityPrincipal(string token)
         {
-            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{_authSetting.Host}/.well-known/openid-configuration",
-                                                                         new OpenIdConnectConfigurationRetriever(),
-                                                                         new HttpDocumentRetriever(_httpClient) { RequireHttps = _authSetting.RequireHttps });
+            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                $"{_authSetting.Host}/.well-known/openid-configuration",
+                new OpenIdConnectConfigurationRetriever(),
+                new HttpDocumentRetriever(_httpClient) { RequireHttps = _authSetting.RequireHttps });
 
             var result = await configurationManager.GetConfigurationAsync();
 
