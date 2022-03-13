@@ -5,18 +5,16 @@ using OpenFTTH.APIGateway.Conversion;
 using OpenFTTH.APIGateway.IntegrationTests.TestData;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
-using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
-using OpenFTTH.Schematic.API.Queries;
 using OpenFTTH.TestData;
-using OpenFTTH.UtilityGraphService.API.Commands;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.API.Queries;
 using OpenFTTH.UtilityGraphService.Business.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions.Ordering;
 
@@ -43,7 +41,7 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
 
 
         [Fact, Order(10)]
-        public async void PlaceCableFromHH1_to_HH11_ThroughConduitThenDirectyInRouteNetwork()
+        public async Task PlaceCableFromHH1_to_HH11_ThroughConduitThenDirectyInRouteNetwork()
         {
             var utilityNetwork = _eventStore.Projections.Get<UtilityNetworkProjection>();
 
@@ -109,7 +107,7 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
 
 
         [Fact, Order(11)]
-        public async void PlaceCableFromCO1_to_HH11_FirstThroughRouteNetworkDirectlyThenThroughConduit()
+        public async Task PlaceCableFromCO1_to_HH11_FirstThroughRouteNetworkDirectlyThenThroughConduit()
         {
             var utilityNetwork = _eventStore.Projections.Get<UtilityNetworkProjection>();
 
@@ -176,7 +174,7 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
 
 
         [Fact, Order(12)]
-        public async void PlaceCableFromHH1_to_HH11_ThroughConnectedConduit()
+        public async Task PlaceCableFromHH1_to_HH11_ThroughConnectedConduit()
         {
             var utilityNetwork = _eventStore.Projections.Get<UtilityNetworkProjection>();
 
@@ -246,7 +244,7 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
         }
 
         [Fact, Order(1000)]
-        public async void RunConversion()
+        public void RunConversion()
         {
             var utilityNetwork = _eventStore.Projections.Get<UtilityNetworkProjection>();
 
@@ -259,14 +257,9 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
                 Port = "5432"
             };
 
-
             var importer = new CableSpanEquipmentImporter(_loggerFactory.CreateLogger<ConduitSpanEquipmentImporter>(), _eventStore, dbSettings, _commandDispatcher, _queryDispatcher);
 
             //importer.Run();
-
-
         }
-
     }
-
 }

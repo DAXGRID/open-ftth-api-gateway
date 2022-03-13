@@ -4,6 +4,7 @@ using OpenFTTH.UtilityGraphService.API.Commands;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.Test
 {
@@ -45,7 +46,7 @@ namespace OpenFTTH.APIGateway.Test
         private Guid Multi_Ø50_5x10_12_7_MultiColor = Guid.Parse("36f0deaf-0d77-4cae-be06-1e6e0cf84ae2");
         private Guid Multi_Ø50_5x10_12_7_BlueYellow = Guid.Parse("dc83bdd3-142b-49ff-8a80-d8d7e1d794b3");
         private Guid Multi_Ø50_5x10_12_7_GreenWhite = Guid.Parse("2fe1a566-6477-4f24-b7df-e242bd6c7d7d");
-        
+
         public void Run()
         {
             // Manufacturer
@@ -73,30 +74,30 @@ namespace OpenFTTH.APIGateway.Test
             AddSpecification(new SpanStructureSpecification(Ø110_Orange, "Conduit", "Ø110", "Orange") { OuterDiameter = 40 });
 
             // Span Equipment Specifications
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø32_3x10, "Conduit", "Ø32 3x10", 
-                new SpanStructureTemplate(Ø32_Orange,1,1, 
-                    new SpanStructureTemplate[] { 
+            AddSpecification(new SpanEquipmentSpecification(Multi_Ø32_3x10, "Conduit", "Ø32 3x10",
+                new SpanStructureTemplate(Ø32_Orange, 1, 1,
+                    new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_Yellow, 2, 2, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_White, 2, 3, Array.Empty<SpanStructureTemplate>())
                     })
-                ) 
-            { 
+                )
+            {
                 Description = "ø32 mm Multirør 3x10",
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
 
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_5x10, "Conduit", "Ø40 5x10", 
-                new SpanStructureTemplate(Ø40_Orange,1,1, 
-                    new SpanStructureTemplate[] { 
+            AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_5x10, "Conduit", "Ø40 5x10",
+                new SpanStructureTemplate(Ø40_Orange, 1, 1,
+                    new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_Yellow, 2, 2, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_White, 2, 3, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_Green, 2, 4, Array.Empty<SpanStructureTemplate>()),
                         new SpanStructureTemplate(Ø10_Black, 2, 5, Array.Empty<SpanStructureTemplate>())
                     })
-                ) 
-            { 
+                )
+            {
                 Description = "ø40 mm Multirør 5x10",
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
@@ -159,7 +160,7 @@ namespace OpenFTTH.APIGateway.Test
 
         }
 
-        private async void AddSpecification(SpanEquipmentSpecification spec)
+        private async Task AddSpecification(SpanEquipmentSpecification spec)
         {
             var cmd = new AddSpanEquipmentSpecification(Guid.NewGuid(), new UserContext("test", Guid.Empty), spec);
             var cmdResult = await _commandDispatcher.HandleAsync<AddSpanEquipmentSpecification, Result>(cmd);
@@ -168,7 +169,7 @@ namespace OpenFTTH.APIGateway.Test
                 throw new ApplicationException(cmdResult.Errors.First().Message);
         }
 
-        private async void AddSpecification(SpanStructureSpecification spec)
+        private async Task AddSpecification(SpanStructureSpecification spec)
         {
             var cmd = new AddSpanStructureSpecification(Guid.NewGuid(), new UserContext("test", Guid.Empty), spec);
             var cmdResult = await _commandDispatcher.HandleAsync<AddSpanStructureSpecification, Result>(cmd);
@@ -177,15 +178,13 @@ namespace OpenFTTH.APIGateway.Test
                 throw new ApplicationException(cmdResult.Errors.First().Message);
         }
 
-        private async void AddManufacturer(Manufacturer manufacturer)
+        private async Task AddManufacturer(Manufacturer manufacturer)
         {
             var cmd = new AddManufacturer(Guid.NewGuid(), new UserContext("test", Guid.Empty), manufacturer);
             var cmdResult = await _commandDispatcher.HandleAsync<AddManufacturer, Result>(cmd);
 
             if (cmdResult.IsFailed)
                 throw new ApplicationException(cmdResult.Errors.First().Message);
-
         }
     }
 }
-
