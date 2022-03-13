@@ -6,7 +6,6 @@ using OpenFTTH.RouteNetwork.API.Queries;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using Typesense;
 
@@ -23,16 +22,17 @@ namespace OpenFTTH.APIGateway.Search
             _queryDispatcher = queryDispatcher;
         }
 
-        public Task<List<GlobalSearchHit>> Search(string searchString, int maxHits)
+        public async Task<List<GlobalSearchHit>> Search(string searchString, int maxHits)
         {
             List<GlobalSearchHit> searchResult = new();
 
-            var nodeSearchResult = SearchForNodes(searchString, maxHits).Result;
+            var nodeSearchResultTask = SearchForNodes(searchString, maxHits).ConfigureAwait(false);
+            var addressSearchResultTask = SearchForAddresses(searchString, maxHits).ConfigureAwait(false);
 
-            var addressSearchResult = SearchForAddresses(searchString, maxHits).Result;
+            var nodeSearchResult = await nodeSearchResultTask;
+            var addressSearchResult = await addressSearchResultTask;
 
             var halfMaxHits = (maxHits / 2);
-
             if (nodeSearchResult.Count > halfMaxHits)
             {
                 // Add half max hit of node hits to the final search result
@@ -55,9 +55,8 @@ namespace OpenFTTH.APIGateway.Search
                     break;
             }
 
-            return Task.FromResult(searchResult);
+            return searchResult;
         }
-
 
         private async Task<List<GlobalSearchHit>> SearchForAddresses(string searchString, int maxHits)
         {
@@ -70,7 +69,7 @@ namespace OpenFTTH.APIGateway.Search
                 QueryByWeights = "5,3,3,2"
             };
 
-            var searchResult = await _typesenseClient.Search<OfficialAccessAddressSearchHit>("Addresses", query);
+            var searchResult = await _typesenseClient.Search<OfficialAccessAddressSearchHit>("Addresses", query).ConfigureAwait(false);
 
             List<GlobalSearchHit> result = new();
 
@@ -89,11 +88,8 @@ namespace OpenFTTH.APIGateway.Search
             return result;
         }
 
-
         private async Task<List<GlobalSearchHit>> SearchForNodes(string searchString, int maxHits)
         {
-            List<GlobalSearchHit> result = new();
-
             var query = new SearchParameters
             {
                 Text = searchString,
@@ -103,28 +99,26 @@ namespace OpenFTTH.APIGateway.Search
                 NumberOfTypos = "0"
             };
 
-            var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query);
-
+            var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query).ConfigureAwait(false);
             RouteNetworkElementIdList routeNodeIds = new();
-
             foreach (var hit in searchResult.Hits)
             {
                 routeNodeIds.Add(hit.Document.Id);
             }
 
-            var routeNodeQueryResult = _queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
+            var routeNodeQueryResult = await _queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
                 new GetRouteNetworkDetails(routeNodeIds)
                 {
                     RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
                 }
-            ).Result;
+            ).ConfigureAwait(false);
 
+            List<GlobalSearchHit> result = new();
             if (routeNodeQueryResult.IsSuccess)
             {
                 foreach (var hit in searchResult.Hits)
                 {
                     var etrsCoord = ConvertPointGeojsonToCoordArray(routeNodeQueryResult.Value.RouteNetworkElements[hit.Document.Id].Coordinates);
-
                     var wgs84Coord = UTM32WGS84Converter.ConvertFromUTM32NToWGS84(etrsCoord[0], etrsCoord[1]);
 
                     var globalHit = new GlobalSearchHit(hit.Document.Id, "routeNode", hit.Document.Name, wgs84Coord[0], wgs84Coord[1], etrsCoord[0], etrsCoord[1]);
@@ -135,26 +129,22 @@ namespace OpenFTTH.APIGateway.Search
             return result;
         }
 
-        private double[] ConvertPointGeojsonToCoordArray(string geojson)
+        private static double[] ConvertPointGeojsonToCoordArray(string geojson)
         {
-            List<double> result = new();
-
             var geojsonSplit = geojson.Replace("[", "").Replace("]", "").Split(',');
-
-            foreach (var coord in geojsonSplit)
-            {
-                result.Add(Double.Parse(coord, CultureInfo.InvariantCulture));
-            }
-
-            if (result.Count != 2)
+            if (geojsonSplit.Length != 2)
                 throw new ApplicationException($"Expected point geojson, but got: '{geojson}'");
 
-            return result.ToArray();
+            var result = new double[2];
+            result[0] = Double.Parse(geojsonSplit[0], CultureInfo.InvariantCulture);
+            result[1] = Double.Parse(geojsonSplit[1], CultureInfo.InvariantCulture);
+
+            return result;
         }
 
         private static string GetAddressLabel(OfficialAccessAddressSearchHit address)
         {
-            string result = address.RoadNameHouseNumber + ", ";
+            var result = address.RoadNameHouseNumber + ", ";
 
             if (address.TownName != null)
                 result += address.TownName + ", ";
@@ -182,5 +172,4 @@ namespace OpenFTTH.APIGateway.Search
         public Guid Id { get; init; }
         public string Name { get; init; }
     }
-
 }

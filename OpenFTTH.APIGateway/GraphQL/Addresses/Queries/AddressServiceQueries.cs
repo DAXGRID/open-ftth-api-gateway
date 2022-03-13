@@ -2,10 +2,10 @@
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
-using OpenFTTH.Address.API.Model;
-using OpenFTTH.Address.API.Queries;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Types;
 using OpenFTTH.APIGateway.Util;
+using OpenFTTH.Address.API.Model;
+using OpenFTTH.Address.API.Queries;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 {
@@ -110,7 +109,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
         private (double, double) GetNodeCoordinates(Guid nodeId, IQueryDispatcher queryDispatcher)
         {
-            
+
             var routeNodeQueryResult = queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
                   new GetRouteNetworkDetails(new OpenFTTH.RouteNetwork.API.Model.RouteNetworkElementIdList() { nodeId })
                   {
@@ -155,7 +154,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                       new GetRouteNetworkDetails(new InterestIdList() { spanEquipmentInterestId })
                       {
                           RouteNetworkElementFilter = new RouteNetworkElementFilterOptions()
-                          { 
+                          {
                               IncludeCoordinates = true,
                           },
                           RelatedInterestFilter = RelatedInterestFilterOptions.None
