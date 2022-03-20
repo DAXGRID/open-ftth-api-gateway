@@ -16,13 +16,13 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Queries
         {
             Description = "GraphQL API for generating schematic diagrams";
 
-            Field<DiagramType>(
+            FieldAsync<DiagramType>(
                 "buildDiagram",
                 arguments:
                 new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
                 new QueryArgument<StringGraphType> { Name = "exportToGeoJsonFilename" }
                 ),
-                resolve: context =>
+                resolve: async context =>
                 {
                     if (!Guid.TryParse(context.GetArgument<string>("routeNetworkElementId"), out Guid routeNetworkElementId))
                     {
@@ -30,7 +30,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Queries
                         return null;
                     }
 
-                    var getDiagramQueryResult = queryDispatcher.HandleAsync<GetDiagram, Result<GetDiagramResult>>(new GetDiagram(routeNetworkElementId)).Result;
+                    var getDiagramQueryResult = await queryDispatcher.HandleAsync<GetDiagram, Result<GetDiagramResult>>(new GetDiagram(routeNetworkElementId));
 
                     if (getDiagramQueryResult.IsFailed)
                     {
