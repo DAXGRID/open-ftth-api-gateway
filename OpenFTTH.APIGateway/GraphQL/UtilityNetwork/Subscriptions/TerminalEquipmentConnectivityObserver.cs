@@ -71,7 +71,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
                 }
             }
         }
-        
+
         private TerminalEquipmentAZConnectivityViewModel GetTerminalEquipmentConnectivity(Guid routeNodeId, Guid terminalEquipmentOrRackId)
         {
             // We catch all execeptions to avoid Topos retrying (calling the message handler again and again)
@@ -83,7 +83,6 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
                 var connectivityQueryResult = _queryDispatcher.HandleAsync<GetTerminalEquipmentConnectivityView, Result<TerminalEquipmentAZConnectivityViewModel>>(
                     connectivityQuery
                 ).Result;
-
 
                 if (connectivityQueryResult.IsFailed)
                 {
