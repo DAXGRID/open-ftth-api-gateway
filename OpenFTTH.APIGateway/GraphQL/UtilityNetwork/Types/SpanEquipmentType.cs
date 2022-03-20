@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
-using OpenFTTH.APIGateway.GraphQL.Addresses.Types;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
@@ -23,49 +22,47 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.Description, type: typeof(StringGraphType)).Description("Long description");
             Field(x => x.MarkingInfo, type: typeof(MarkingInfoType)).Description("Text and color marking information");
             Field(x => x.AddressInfo, type: typeof(AddressInfoType)).Description("Address information such as access and unit address id");
-
             Field(x => x.SpecificationId, type: typeof(IdGraphType)).Description("Span equipment specification id");
             Field(x => x.ManufacturerId, type: typeof(IdGraphType)).Description("Span equipment manufacturer id");
-
             Field(x => x.IsCable, type: typeof(BooleanGraphType)).Description("True if span equipment is a cable. Otherwise it's a conduit.");
 
-
-            Field<SpanEquipmentSpecificationType>(
+            FieldAsync<SpanEquipmentSpecificationType>(
                name: "specification",
                description: "The specification used to create the span equipment",
-               resolve: context =>
+               resolve: async context =>
                {
-                   var queryResult = queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications, Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications()).Result;
+                   var queryResult = await queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications,
+                       Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications());
 
                    return queryResult.Value[context.Source.SpecificationId];
                }
             );
 
-            Field<ManufacturerType>(
+            FieldAsync<ManufacturerType>(
                 name: "manufacturer",
                 description: "The manufacturer of the span equipment",
-                resolve: context =>
+                resolve: async context =>
                 {
                     if (context.Source.ManufacturerId == null || context.Source.ManufacturerId == Guid.Empty)
                         return null;
 
-                    var queryResult = queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer()).Result;
+                    var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
 
                     return queryResult.Value[context.Source.ManufacturerId.Value];
                 }
             );
 
-            Field<ListGraphType<IdGraphType>>(
+            FieldAsync<ListGraphType<IdGraphType>>(
                 name: "routeSegmentIds",
                 description: "The route network walk of the span equipment",
-                resolve: context =>
+                resolve: async context =>
                 {
-                    var queryResult = queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
+                    var queryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
                         new GetRouteNetworkDetails(new InterestIdList() { context.Source.WalkOfInterestId })
                         {
                             RelatedInterestFilter = RelatedInterestFilterOptions.ReferencesFromRouteElementAndInterestObjects
                         }
-                    ).Result;
+                    );
 
                     if (queryResult.IsFailed)
                     {
@@ -85,7 +82,6 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                     return segmentIds;
                 }
             );
-
         }
     }
 }
