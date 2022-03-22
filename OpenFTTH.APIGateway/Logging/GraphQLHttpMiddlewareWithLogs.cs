@@ -2,6 +2,7 @@
 using GraphQL.Types;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,12 +27,11 @@ namespace OpenFTTH.APIGateway.Logging
         {
             if (requestExecutionResult.Result.Errors != null)
             {
+                var failedQuery = GetQueryWithParameters(requestExecutionResult);
                 if (requestExecutionResult.IndexInBatch.HasValue)
-                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s) in batch [{Index}]: {Errors}",
-                                     requestExecutionResult.Elapsed, requestExecutionResult.IndexInBatch, requestExecutionResult.Result.Errors);
+                    _logger.LogError(@$"GraphQL execution completed with error(s) in batch [{requestExecutionResult.IndexInBatch}]: {requestExecutionResult.Result.Errors}\n{failedQuery}");
                 else
-                    _logger.LogError("GraphQL execution completed in {Elapsed} with error(s): {Errors}",
-                                     requestExecutionResult.Elapsed, requestExecutionResult.Result.Errors);
+                    _logger.LogError($"GraphQL execution completed with error(s): {requestExecutionResult.Result.Errors}.\n{failedQuery}");
             }
             else
                 _logger.LogDebug("GraphQL execution successfully completed in {Elapsed}", requestExecutionResult.Elapsed);
@@ -44,6 +44,22 @@ namespace OpenFTTH.APIGateway.Logging
             var cts = CancellationTokenSource.CreateLinkedTokenSource(
                 base.GetCancellationToken(context), new CancellationTokenSource(TimeSpan.FromSeconds(15)).Token);
             return cts.Token;
+        }
+
+        private static string GetQueryWithParameters(GraphQLRequestExecutionResult requestExecutionResult)
+        {
+            var failedQuery = string.Empty;
+            if (requestExecutionResult.Request?.Inputs is not null)
+            {
+                var inputs = JsonConvert.SerializeObject(requestExecutionResult.Request.Inputs);
+                failedQuery = $"Inputs: {inputs}\nQuery/Mutation: {requestExecutionResult.Request.Query}";
+            }
+            else
+            {
+                failedQuery = $"Inputs: None\nQuery/Mutation: {requestExecutionResult.Request.Query}";
+            }
+
+            return failedQuery;
         }
     }
 }
