@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,25 +14,29 @@ namespace OpenFTTH.APIGateway.Logging
         where TSchema : ISchema
     {
         private readonly ILogger _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public GraphQLHttpMiddlewareWithLogs(
             ILogger<GraphQLHttpMiddleware<TSchema>> logger,
             RequestDelegate next,
+            IHttpContextAccessor httpContextAccessor,
             IGraphQLRequestDeserializer requestDeserializer)
             : base(next, requestDeserializer)
         {
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected override Task RequestExecutedAsync(in GraphQLRequestExecutionResult requestExecutionResult)
         {
             if (requestExecutionResult.Result.Errors != null)
             {
+                var username = _httpContextAccessor.HttpContext.User?.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "";
                 var failedQuery = GetQueryWithParameters(requestExecutionResult);
                 if (requestExecutionResult.IndexInBatch.HasValue)
-                    _logger.LogError(@$"GraphQL execution completed with error(s) in batch [{requestExecutionResult.IndexInBatch}]: {requestExecutionResult.Result.Errors}\n{failedQuery}");
+                    _logger.LogError(@$"User: {username} - GraphQL execution with error(s) in batch [{requestExecutionResult.IndexInBatch}]: {requestExecutionResult.Result.Errors}\n{failedQuery}");
                 else
-                    _logger.LogError($"GraphQL execution completed with error(s): {requestExecutionResult.Result.Errors}.\n{failedQuery}");
+                    _logger.LogError($"User: {username} - GraphQL execution with error(s): {requestExecutionResult.Result.Errors}.\n{failedQuery}");
             }
             else
                 _logger.LogDebug("GraphQL execution successfully completed in {Elapsed}", requestExecutionResult.Elapsed);
