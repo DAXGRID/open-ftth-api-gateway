@@ -22,27 +22,27 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.SpecificationId, type: typeof(IdGraphType)).Description("Terminal equipment specification id");
             Field(x => x.ManufacturerId, type: typeof(IdGraphType)).Description("Terminal equipment manufacturer id");
 
-            Field<TerminalEquipmentSpecificationType>(
+            FieldAsync<TerminalEquipmentSpecificationType>(
                name: "specification",
                description: "The specification used to create the terminal equipment",
-               resolve: context =>
+               resolve: async context =>
                {
-                   var queryResult = queryDispatcher.HandleAsync<GetTerminalEquipmentSpecifications, Result<LookupCollection<TerminalEquipmentSpecification>>>(
-                       new GetTerminalEquipmentSpecifications()).Result;
+                   var queryResult = await queryDispatcher.HandleAsync<GetTerminalEquipmentSpecifications, Result<LookupCollection<TerminalEquipmentSpecification>>>(
+                       new GetTerminalEquipmentSpecifications());
 
                    return queryResult.Value[context.Source.SpecificationId];
                }
             );
 
-            Field<ManufacturerType>(
+            FieldAsync<ManufacturerType>(
                 name: "manufacturer",
                 description: "The manufacturer of the terminal equipment",
-                resolve: context =>
+                resolve: async context =>
                 {
                     if (context.Source.ManufacturerId == null || context.Source.ManufacturerId == Guid.Empty)
                         return null;
 
-                    var queryResult = queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer()).Result;
+                    var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
 
                     return queryResult.Value[context.Source.ManufacturerId.Value];
                 }
@@ -76,8 +76,6 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                     }
                 }
             );
-
-          
         }
     }
 }
