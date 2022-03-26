@@ -16,35 +16,34 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.Id, type: typeof(IdGraphType)).Description("Master Resource Identifier UUID Property");
             Field(x => x.Name, type: typeof(StringGraphType)).Description("Short name");
             Field(x => x.Description, type: typeof(StringGraphType)).Description("Long description");
-
             Field(x => x.SpecificationId, type: typeof(IdGraphType)).Description("Span equipment specification id");
             Field(x => x.ManufacturerId, type: typeof(IdGraphType)).Description("Span equipment manufacturer id");
 
-            Field<NodeContainerSpecificationType>(
+            FieldAsync<NodeContainerSpecificationType>(
                name: "specification",
                description: "The specification used to create the node container",
-               resolve: context =>
+               resolve: async context =>
                {
-                   var queryResult = queryDispatcher.HandleAsync<GetNodeContainerSpecifications, Result<LookupCollection<NodeContainerSpecification>>>(new GetNodeContainerSpecifications()).Result;
+                   var queryResult = await queryDispatcher.HandleAsync<GetNodeContainerSpecifications, Result<LookupCollection<NodeContainerSpecification>>>(
+                       new GetNodeContainerSpecifications());
 
                    return queryResult.Value[context.Source.SpecificationId];
                }
             );
 
-            Field<ManufacturerType>(
+            FieldAsync<ManufacturerType>(
                 name: "manufacturer",
                 description: "The manufacturer of the node container",
-                resolve: context =>
+                resolve: async context =>
                 {
                     if (context.Source.ManufacturerId == null || context.Source.ManufacturerId == Guid.Empty)
                         return null;
 
-                    var queryResult = queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer()).Result;
+                    var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
 
                     return queryResult.Value[context.Source.ManufacturerId.Value];
                 }
             );
-           
         }
     }
 }
