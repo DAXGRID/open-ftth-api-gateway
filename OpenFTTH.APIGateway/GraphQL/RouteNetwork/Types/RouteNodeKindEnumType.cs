@@ -1,9 +1,5 @@
 ﻿using GraphQL.Types;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.Events.RouteNetwork.Infos;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types
 {

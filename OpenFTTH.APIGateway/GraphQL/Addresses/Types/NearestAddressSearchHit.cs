@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
+﻿namespace OpenFTTH.APIGateway.GraphQL.Addresses.Types
 {
     public class NearestAddressSearchHit
     {

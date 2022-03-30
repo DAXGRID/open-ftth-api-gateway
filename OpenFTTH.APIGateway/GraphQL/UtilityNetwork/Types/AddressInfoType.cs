@@ -1,15 +1,13 @@
 ﻿using FluentResults;
 using GraphQL;
 using GraphQL.Types;
-using OpenFTTH.Address.API.Queries;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Queries;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Types;
+using OpenFTTH.Address.API.Queries;
 using OpenFTTH.CQRS;
 using OpenFTTH.Events.Core.Infos;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
 {
@@ -28,7 +26,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                {
                    if (context.Source.AccessAddressId != null && context.Source.AccessAddressId != Guid.Empty)
                    {
-                       var getAddressInfoQuery = new GetAddressInfo(new Guid[] { context.Source.AccessAddressId.Value } );
+                       var getAddressInfoQuery = new GetAddressInfo(new Guid[] { context.Source.AccessAddressId.Value });
 
                        var result = queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).Result;
 
@@ -68,7 +66,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                           return null;
                       }
 
-                       // If no address is found with that id, just return null
+                      // If no address is found with that id, just return null
                       if (result.Value.UnitAddresses.Count != 1)
                       {
                           context.Errors.Add(new ExecutionError($"Problem find unit address with id {context.Source.UnitAddressId.Value} in address database. Expected one hit but gut {result.Value.UnitAddresses.Count}"));

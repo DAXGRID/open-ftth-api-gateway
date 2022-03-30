@@ -3,16 +3,10 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
-using OpenFTTH.RouteNetwork.API.Model;
-using OpenFTTH.RouteNetwork.API.Queries;
 using OpenFTTH.UtilityGraphService.API.Commands;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
-using OpenFTTH.UtilityGraphService.API.Queries;
 using OpenFTTH.UtilityGraphService.Business.Graph;
-using OpenFTTH.UtilityGraphService.Business.NodeContainers.Projections;
-using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Projections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +23,7 @@ namespace OpenFTTH.APIGateway.Conversion
         private UtilityNetworkProjection _utilityNetwork;
 
         private string _segmentToTerminalConnectionsTableName = "conversion.segment_to_terminal_connections";
-        
+
         public SegmentToTerminalConnectionsImporter(ILogger<SegmentToTerminalConnectionsImporter> logger, Guid workTaskId, IEventStore eventSTore, GeoDatabaseSetting geoDatabaseSettings, ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher) : base(geoDatabaseSettings)
         {
             _logger = logger;
@@ -69,7 +63,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
             foreach (var connection in connections)
             {
-             
+
                 var addConnectionResult = AddConnection(logCmd, connection);
 
                 if (addConnectionResult.IsSuccess)
@@ -82,7 +76,7 @@ namespace OpenFTTH.APIGateway.Conversion
                 }
 
             }
-        
+
         }
 
         private Result AddConnection(NpgsqlCommand logCmd, ConnectionForConversion connection)
@@ -122,7 +116,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
                         if (structure.Terminals.Length > terminalIndex.Item2)
                         {
-                           var terminalId = structure.Terminals[terminalIndex.Item2].Id;
+                            var terminalId = structure.Terminals[terminalIndex.Item2].Id;
 
                             connects.Add(new ConnectSpanSegmentToTerminalOperation(spanSegmentId, terminalId));
                         }
@@ -140,7 +134,7 @@ namespace OpenFTTH.APIGateway.Conversion
                 terminalIndexPos++;
             }
 
-            
+
 
             // ACT (do the connect between cable and equipment)
             var connectCmd = new ConnectSpanSegmentsWithTerminalsAtRouteNode(
@@ -156,7 +150,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
             return connectCmdResult;
         }
-           
+
         private List<ConnectionForConversion> LoadDataFromConversionDatabase()
         {
             var connectionsForConversions = LoadConnectionsToBeImportedFromDatabase();
@@ -213,7 +207,7 @@ namespace OpenFTTH.APIGateway.Conversion
             public Guid SpanEquipmentId { get; set; }
             public int[] SpanEquipmentIndexes { get; set; }
             public Guid TerminalEquipmentId { get; set; }
-            public (int,int)[] TerminalEquipmentIndexes { get; set; }
+            public (int, int)[] TerminalEquipmentIndexes { get; set; }
         }
 
         private class RelatedEquipmentInfo

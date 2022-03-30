@@ -3,15 +3,14 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
 using OpenFTTH.UtilityGraphService.API.Commands;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.API.Queries;
 using OpenFTTH.UtilityGraphService.Business.Graph;
-using OpenFTTH.UtilityGraphService.Business.NodeContainers.Projections;
 using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Projections;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace OpenFTTH.APIGateway.Conversion
         private UtilityNetworkProjection _utilityNetwork;
 
         private string _terminalEquipmentTableName = "conversion.terminal_equipment";
-        
+
 
         private Dictionary<string, TerminalEquipmentSpecification> _terminalEquipmentSpecByName = null;
 
@@ -97,7 +96,7 @@ namespace OpenFTTH.APIGateway.Conversion
                 }
             }
         }
-     
+
         private Result PlaceTerminalEquipment(NpgsqlCommand logCmd, TerminalEquipmentForConversion terminalEquipment, Guid specId, RelatedEquipmentInfo relatedInfo)
         {
             Guid correlationId = Guid.NewGuid();
@@ -116,7 +115,7 @@ namespace OpenFTTH.APIGateway.Conversion
                     return Result.Fail(new Error($"No container exists in node: {terminalEquipment.NodeId}"));
                 }
             }
-            
+
 
             var terminalEquipmentSpecificationId = GetTerminalEquipmentSpecificationIdFromName(terminalEquipment.Specification);
 

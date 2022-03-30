@@ -1,22 +1,13 @@
 ﻿using DAX.ObjectVersioning.Graph;
-using FluentResults;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
-using OpenFTTH.RouteNetwork.API.Model;
-using OpenFTTH.RouteNetwork.API.Queries;
 using OpenFTTH.Util;
-using OpenFTTH.UtilityGraphService.API.Commands;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
-using OpenFTTH.UtilityGraphService.API.Queries;
 using OpenFTTH.UtilityGraphService.Business.Graph;
-using OpenFTTH.UtilityGraphService.Business.NodeContainers.Projections;
-using OpenFTTH.UtilityGraphService.Business.TerminalEquipments;
 using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Projections;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -113,7 +104,7 @@ namespace OpenFTTH.APIGateway.Conversion
             return false;
         }
 
-     
+
     }
 }
 

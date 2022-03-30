@@ -1,6 +1,5 @@
 ﻿using GraphQL.DataLoader;
 using GraphQL.Types;
-using System;
 
 namespace OpenFTTH.APIGateway.CoreTypes
 {

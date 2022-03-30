@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OpenFTTH.APIGateway.Settings
+﻿namespace OpenFTTH.APIGateway.Settings
 {
     public class RemoteServicesSetting
     {

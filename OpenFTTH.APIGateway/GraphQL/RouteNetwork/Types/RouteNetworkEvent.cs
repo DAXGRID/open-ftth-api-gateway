@@ -1,10 +1,6 @@
 ﻿using GraphQL.DataLoader;
 using GraphQL.Types;
 using OpenFTTH.Events.RouteNetwork;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types
 {
     public class RouteNetworkEditOperationOccuredEventType : ObjectGraphType<RouteNetworkEditOperationOccuredEvent>

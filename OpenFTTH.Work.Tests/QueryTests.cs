@@ -1,6 +1,5 @@
 using OpenFTTH.Work.API.Queries;
 using OpenFTTH.Work.Business.InMemTestImpl;
-using System;
 using Xunit;
 
 namespace OpenFTTH.WorkService.Tests

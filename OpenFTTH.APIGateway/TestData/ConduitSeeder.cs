@@ -1,11 +1,9 @@
 ﻿using FluentResults;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Npgsql;
-using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.TestData;
@@ -17,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.TestData
 {
@@ -71,7 +68,7 @@ namespace OpenFTTH.APIGateway.TestData
                 _logger.LogInformation("No conversion_database_connection_string env variable specified. Will not seed database with conversion data");
             }
 
-            
+
         }
 
         private List<ConduitForConversion> LoadConduitsFromConversionDatabase()
@@ -182,7 +179,7 @@ namespace OpenFTTH.APIGateway.TestData
             public string ExternalSpec { get; set; }
             public List<Guid> SegmentIds = new List<Guid>();
 
-            public ConduitSpecInfo ConduitSpec { get; set;}
+            public ConduitSpecInfo ConduitSpec { get; set; }
 
             public ConduitForConversion(string externalId, string externalSpec, string segmentIds)
             {
@@ -277,7 +274,7 @@ namespace OpenFTTH.APIGateway.TestData
                 if (externalSpec == "40 mm tomt rør")
                     return new ConduitSpecInfo(TestSpecifications.Tomrør_Ø40_Orange);
 
-                
+
 
                 // flexrør
                 if (externalSpec.StartsWith("flexrør") || externalSpec == "oe 40 mm tomt rør")
@@ -407,7 +404,7 @@ namespace OpenFTTH.APIGateway.TestData
                     additionalStructureSpecs.Add(TestSpecifications.Ø10_White);
                 }
 
-                
+
                 // Ø110
 
                 if (spec.Contains("110-4x10-red"))

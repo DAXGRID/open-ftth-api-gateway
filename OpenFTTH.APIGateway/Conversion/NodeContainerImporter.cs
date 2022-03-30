@@ -1,11 +1,10 @@
 ﻿using FluentResults;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using OpenFTTH.APIGateway.GraphQL.Core.Model;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
@@ -31,7 +30,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
         private string _nodeContainerTableName = "conversion.node_containers";
         private string _connectivityTableName = "conversion.connectivity";
-        
+
 
         private Dictionary<string, NodeContainerSpecification> _nodeContainerSpecByName = null;
 

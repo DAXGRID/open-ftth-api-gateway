@@ -1,9 +1,7 @@
 ﻿using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.CQRS;
-using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
-using OpenFTTH.UtilityGraphService.API.Queries;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
 {

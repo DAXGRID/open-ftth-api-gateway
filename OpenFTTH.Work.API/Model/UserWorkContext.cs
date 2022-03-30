@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OpenFTTH.Work.API.Model
+﻿namespace OpenFTTH.Work.API.Model
 {
     public class UserWorkContext
     {

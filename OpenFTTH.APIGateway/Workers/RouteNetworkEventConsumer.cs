@@ -1,21 +1,14 @@
 using DAX.EventProcessing.Dispatcher;
-using FluentResults;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenFTTH.APIGateway.Conversion;
 using OpenFTTH.APIGateway.Settings;
-using OpenFTTH.APIGateway.TestData;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.RouteNetwork;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.RouteNetwork;
 using OpenFTTH.RouteNetwork.Business.RouteElements.EventHandling;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
-using OpenFTTH.TestData;
-using OpenFTTH.Util;
-using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
-using OpenFTTH.UtilityGraphService.API.Queries;
-using OpenFTTH.UtilityGraphService.Business.SpanEquipments;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -69,7 +62,8 @@ namespace OpenFTTH.APIGateway.Workers
                 if (String.IsNullOrEmpty(_kafkaSetting.RouteNetworkEventTopic))
                     throw new ApplicationException("RouteNetworkEventTopic Kafka app setting must be set!");
 
-                var toposConfig = _eventDispatcher.Config("route_network_event_" + Guid.NewGuid(), c => {
+                var toposConfig = _eventDispatcher.Config("route_network_event_" + Guid.NewGuid(), c =>
+                {
                     var kafkaConfig = c.UseKafka(_kafkaSetting.Server);
 
                     if (_kafkaSetting.CertificateFilename != null)
@@ -114,7 +108,7 @@ namespace OpenFTTH.APIGateway.Workers
                     }
                 }
 
-                
+
                 ((InMemRouteNetworkState)_routeNetworkState).FinishLoadMode();
                 _logger.LogInformation("Loading of initial route network state finished.");
 
@@ -145,7 +139,7 @@ namespace OpenFTTH.APIGateway.Workers
             {
                 _logger.LogError(ex, ex.Message);
             }
-                        
+
             await Task.CompletedTask;
         }
 

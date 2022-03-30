@@ -1,7 +1,5 @@
 ﻿using NetTopologySuite.Geometries;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OpenFTTH.Work.API.Model
 {
@@ -14,7 +12,7 @@ namespace OpenFTTH.Work.API.Model
         public Project Project { get; }
         public String Name { get; }
         public Geometry? Location { get; }
-        public String? AddressString { get; set;  }
+        public String? AddressString { get; set; }
         public string? WorkTaskType { get; set; }
         public string? InstallationId { get; set; }
         public string? CentralOfficeArea { get; set; }
@@ -23,7 +21,7 @@ namespace OpenFTTH.Work.API.Model
         public string? Technology { get; set; }
         public string? Status { get; set; }
 
-        
+
 
         public WorkTask(Guid mRID, Project project, string name, Geometry? location = null)
         {

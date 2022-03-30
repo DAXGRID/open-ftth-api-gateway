@@ -1,14 +1,4 @@
-﻿using OpenFTTH.CQRS;
-using OpenFTTH.Work.API;
-using OpenFTTH.Work.API.Mutations;
-using OpenFTTH.Work.API.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenFTTH.Work.Business.InMemTestImpl
+﻿namespace OpenFTTH.Work.Business.InMemTestImpl
 {
     /*
     /// <summary>

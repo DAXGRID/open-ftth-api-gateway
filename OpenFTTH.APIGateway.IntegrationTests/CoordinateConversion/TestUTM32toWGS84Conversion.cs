@@ -1,10 +1,6 @@
 ﻿using FluentAssertions;
 using OpenFTTH.APIGateway.Util;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OpenFTTH.APIGateway.IntegrationTests.CoordinateConversion
@@ -24,7 +20,7 @@ namespace OpenFTTH.APIGateway.IntegrationTests.CoordinateConversion
         [Fact]
         public void TestLineStringConverter()
         {
-            string[] lines = new string[] {"[[552000,6190000], [552001,6190001]]" , "[[552000,6190000], [552001,6190001]]" };
+            string[] lines = new string[] { "[[552000,6190000], [552001,6190001]]", "[[552000,6190000], [552001,6190001]]" };
 
             var result = UTM32WGS84Converter.ConvertGeoJsonLineStringsToWgs84(lines);
 

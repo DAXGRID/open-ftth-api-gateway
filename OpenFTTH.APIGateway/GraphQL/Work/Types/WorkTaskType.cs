@@ -1,13 +1,7 @@
 ﻿using GraphQL.Types;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenFTTH.APIGateway.CoreTypes;
 using OpenFTTH.Work.API.Model;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace OpenFTTH.APIGateway.GraphQL.Work.Types
 {
@@ -38,5 +32,5 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Types
         }
     }
 
-    
+
 }

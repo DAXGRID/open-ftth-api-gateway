@@ -1,9 +1,5 @@
 ﻿using OpenFTTH.CQRS;
 using OpenFTTH.Work.API.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace OpenFTTH.Work.API.Mutations
 {
     public class SetUserCurrentWorkTaskMutationResult : ICommand<SetUserCurrentWorkTaskMutationResult>

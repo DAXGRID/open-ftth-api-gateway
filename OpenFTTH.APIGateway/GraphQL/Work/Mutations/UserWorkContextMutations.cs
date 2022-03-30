@@ -2,7 +2,6 @@
 using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.Work.Types;
 using OpenFTTH.CQRS;
-using OpenFTTH.Work.API;
 using OpenFTTH.Work.API.Mutations;
 using System;
 
@@ -25,10 +24,10 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Mutations
                   new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "userName" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "workTaskId" }
               ),
-              resolve: context => 
+              resolve: context =>
               {
                   var userName = context.GetArgument<string>("userName");
-                  var workTaskId  = context.GetArgument<Guid>("workTaskId");
+                  var workTaskId = context.GetArgument<Guid>("workTaskId");
 
                   var mutationResult = this._commandDispatcher.HandleAsync<SetUserCurrentWorkTaskMutation, SetUserCurrentWorkTaskMutationResult>(new SetUserCurrentWorkTaskMutation(userName, workTaskId)).Result;
 
