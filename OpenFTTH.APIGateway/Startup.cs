@@ -111,7 +111,7 @@ namespace OpenFTTH.APIGateway
                 {
                     options.EnableMetrics = false;
                     var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
-                    options.UnhandledExceptionDelegate = ctx => logger.LogWarning("Unhandled Exception GraphQL: {Error} occurred", ctx.OriginalException.Message);
+                    options.UnhandledExceptionDelegate = ctx => logger.LogError($"Unhandled exception: {ctx.OriginalException.Message}, stacktrace: {ctx.OriginalException.StackTrace}.");
                 })
                 .AddSystemTextJson()
                 .AddWebSockets()
