@@ -1,11 +1,15 @@
 ﻿using FluentResults;
+using Newtonsoft.Json;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
+using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
+using OpenFTTH.UtilityGraphService.API.Queries;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Typesense;
 
@@ -24,46 +28,33 @@ namespace OpenFTTH.APIGateway.Search
 
         public async Task<List<GlobalSearchHit>> Search(string searchString, int maxHits)
         {
-            List<GlobalSearchHit> searchResult = new();
-
-            var nodeSearchResultTask = SearchForNodes(searchString, maxHits).ConfigureAwait(false);
-            var addressSearchResultTask = SearchForAddresses(searchString, maxHits).ConfigureAwait(false);
+            var nodeSearchResultTask = SearchForNodes(searchString, maxHits);
+            var equipmentsSearchResultTask = SearchForEquipments(searchString, maxHits);
+            var addressSearchResultTask = SearchForAddresses(searchString, maxHits);
 
             var nodeSearchResult = await nodeSearchResultTask;
+            var equipmentsSearchResult = await equipmentsSearchResultTask;
             var addressSearchResult = await addressSearchResultTask;
 
-            var halfMaxHits = (maxHits / 2);
-            if (nodeSearchResult.Count > halfMaxHits)
-            {
-                // Add half max hit of node hits to the final search result
-                for (int i = 0; i < halfMaxHits; i++)
-                    searchResult.Add(nodeSearchResult[i]);
-            }
-            else
-            {
-                // Add all node hits to the final search result
-                foreach (var nodeSearchHit in nodeSearchResult)
-                    searchResult.Add(nodeSearchHit);
-            }
+            List<GlobalSearchHit> searches = new();
+            searches.AddRange(nodeSearchResult);
+            searches.AddRange(equipmentsSearchResult);
 
-            // Top up with address hits
-            foreach (var addressSearchHit in addressSearchResult)
-            {
-                if (searchResult.Count < maxHits)
-                    searchResult.Add(addressSearchHit);
-                else
-                    break;
-            }
+            var result = searches
+                .OrderByDescending(x => x.TextMatch)
+                .ToList();
 
-            return searchResult;
+            // We put addreses on last because it's multi-field search and therefore has very high text match score.
+            if (result.Count() < maxHits)
+                result.AddRange(addressSearchResult.OrderByDescending(x => x.TextMatch));
+
+            return result.Take(maxHits).ToList();
         }
 
         private async Task<List<GlobalSearchHit>> SearchForAddresses(string searchString, int maxHits)
         {
-            var query = new SearchParameters
+            var query = new SearchParameters(searchString, "roadNameHouseNumber,postDistrictCode,postDistrictName,townName")
             {
-                Text = searchString,
-                QueryBy = "roadNameHouseNumber,postDistrictCode,postDistrictName,townName",
                 PerPage = maxHits.ToString(),
                 LimitHits = maxHits.ToString(),
                 QueryByWeights = "5,3,3,2"
@@ -80,7 +71,7 @@ namespace OpenFTTH.APIGateway.Search
 
                 var wgs84Coord = UTM32WGS84Converter.ConvertFromUTM32NToWGS84(xEtrs, yEtrs);
 
-                var globalHit = new GlobalSearchHit(hit.Document.Id, "accessAddress", GetAddressLabel(hit.Document), wgs84Coord[0], wgs84Coord[1], xEtrs, yEtrs);
+                var globalHit = new GlobalSearchHit(hit.Document.Id, "accessAddress", GetAddressLabel(hit.Document), wgs84Coord[0], wgs84Coord[1], xEtrs, yEtrs, hit.TextMatch);
 
                 result.Add(globalHit);
             }
@@ -90,16 +81,17 @@ namespace OpenFTTH.APIGateway.Search
 
         private async Task<List<GlobalSearchHit>> SearchForNodes(string searchString, int maxHits)
         {
-            var query = new SearchParameters
+            var query = new SearchParameters(searchString, "name")
             {
-                Text = searchString,
-                QueryBy = "name",
                 PerPage = maxHits.ToString(),
                 LimitHits = maxHits.ToString(),
                 NumberOfTypos = "0"
             };
 
             var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query).ConfigureAwait(false);
+            if (searchResult.Hits.Count == 0)
+                return new();
+
             RouteNetworkElementIdList routeNodeIds = new();
             foreach (var hit in searchResult.Hits)
             {
@@ -121,9 +113,111 @@ namespace OpenFTTH.APIGateway.Search
                     var etrsCoord = ConvertPointGeojsonToCoordArray(routeNodeQueryResult.Value.RouteNetworkElements[hit.Document.Id].Coordinates);
                     var wgs84Coord = UTM32WGS84Converter.ConvertFromUTM32NToWGS84(etrsCoord[0], etrsCoord[1]);
 
-                    var globalHit = new GlobalSearchHit(hit.Document.Id, "routeNode", hit.Document.Name, wgs84Coord[0], wgs84Coord[1], etrsCoord[0], etrsCoord[1]);
+                    var globalHit = new GlobalSearchHit(
+                        hit.Document.Id,
+                        "routeNode",
+                        hit.Document.Name,
+                        wgs84Coord[0],
+                        wgs84Coord[1],
+                        etrsCoord[0],
+                        etrsCoord[1],
+                        hit.TextMatch);
+
                     result.Add(globalHit);
                 }
+            }
+
+            return result;
+        }
+
+        private async Task<List<GlobalSearchHit>> SearchForEquipments(string searchString, int maxHits)
+        {
+            var query = new SearchParameters(searchString, "name")
+            {
+                PerPage = maxHits.ToString(),
+                LimitHits = maxHits.ToString(),
+                NumberOfTypos = "0"
+            };
+
+            var searchResult = await _typesenseClient.Search<EquipmentSearchHit>("equipments", query).ConfigureAwait(false);
+            if (searchResult.Hits.Count == 0)
+                return new();
+
+            EquipmentIdList equipmentIdList = new();
+            foreach (var hit in searchResult.Hits)
+            {
+                equipmentIdList.Add(hit.Document.Id);
+            }
+
+            var equipmentQueryResult = await _queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
+               new GetEquipmentDetails(equipmentIdList)
+            );
+
+            Result<GetEquipmentDetailsResult> nodeEquipmentResult = null;
+            if (equipmentQueryResult.IsSuccess)
+            {
+                EquipmentIdList nodeContainerIds = new();
+                foreach (var equipment in equipmentQueryResult.Value.TerminalEquipment)
+                {
+                    nodeContainerIds.Add(equipment.NodeContainerId);
+                }
+
+                nodeEquipmentResult = await _queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
+                  new GetEquipmentDetails(nodeContainerIds)
+                ).ConfigureAwait(false);
+            }
+            else
+            {
+                throw new Exception($"{nameof(equipmentQueryResult)} failed.");
+            }
+
+            RouteNetworkElementIdList routeNodeIds = new();
+            if (nodeEquipmentResult is not null && nodeEquipmentResult.IsSuccess)
+            {
+                foreach (var nodeEquipment in nodeEquipmentResult.Value.NodeContainers)
+                {
+                    routeNodeIds.Add(nodeEquipment.RouteNodeId);
+                }
+            }
+            else
+            {
+                throw new Exception($"{nameof(nodeEquipmentResult)} failed.");
+            }
+
+            var routeNodeQueryResult = await _queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
+                new GetRouteNetworkDetails(routeNodeIds)
+                {
+                    RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
+                }
+            ).ConfigureAwait(false);
+
+            List<GlobalSearchHit> result = new();
+            if (routeNodeQueryResult.IsSuccess)
+            {
+                foreach (var hit in searchResult.Hits)
+                {
+                    var nodeContainerId = equipmentQueryResult.Value.TerminalEquipment[hit.Document.Id].NodeContainerId;
+                    var routeNodeId = nodeEquipmentResult.Value.NodeContainers[nodeContainerId].RouteNodeId;
+                    var routeNode = routeNodeQueryResult.Value.RouteNetworkElements[routeNodeId];
+                    var etrsCoord = ConvertPointGeojsonToCoordArray(routeNode.Coordinates);
+                    var wgs84Coord = UTM32WGS84Converter.ConvertFromUTM32NToWGS84(etrsCoord[0], etrsCoord[1]);
+
+                    var globalHit = new GlobalSearchHit(
+                        routeNodeId,
+                        "routeNode",
+                        hit.Document.Name,
+                        wgs84Coord[0],
+                        wgs84Coord[1],
+                        etrsCoord[0],
+                        etrsCoord[1],
+                        hit.TextMatch);
+
+                    result.Add(globalHit);
+                }
+            }
+            else
+            {
+                throw new Exception($"{nameof(routeNodeQueryResult)} failed.");
             }
 
             return result;
@@ -169,7 +263,17 @@ namespace OpenFTTH.APIGateway.Search
 
     public record RouteNodeSearchHit
     {
+        [JsonProperty("Id")]
         public Guid Id { get; init; }
+        [JsonProperty("Name")]
+        public string Name { get; init; }
+    }
+
+    public record EquipmentSearchHit
+    {
+        [JsonProperty("id")]
+        public Guid Id { get; init; }
+        [JsonProperty("name")]
         public string Name { get; init; }
     }
 }

@@ -11,8 +11,9 @@ namespace OpenFTTH.APIGateway.Search
         public double Ywgs { get; }
         public double Xetrs { get; }
         public double Yetrs { get; }
+        public long TextMatch { get; }
 
-        public GlobalSearchHit(Guid id, string objectType, string label, double xwgs, double ywgs, double xetrs, double yetrs)
+        public GlobalSearchHit(Guid id, string objectType, string label, double xwgs, double ywgs, double xetrs, double yetrs, long textMatch)
         {
             Id = id;
             ObjectType = objectType;
@@ -21,6 +22,7 @@ namespace OpenFTTH.APIGateway.Search
             Ywgs = ywgs;
             Xetrs = xetrs;
             Yetrs = yetrs;
+            TextMatch = textMatch;
         }
     }
 }
