@@ -29,16 +29,16 @@ namespace OpenFTTH.APIGateway.Search
         public async Task<List<GlobalSearchHit>> Search(string searchString, int maxHits)
         {
             var nodeSearchResultTask = SearchForNodes(searchString, maxHits);
-            var equipmentsSearchResultTask = SearchForEquipments(searchString, maxHits);
+            //var equipmentsSearchResultTask = SearchForEquipments(searchString, maxHits);
             var addressSearchResultTask = SearchForAddresses(searchString, maxHits);
 
             var nodeSearchResult = await nodeSearchResultTask;
-            var equipmentsSearchResult = await equipmentsSearchResultTask;
+            //var equipmentsSearchResult = await equipmentsSearchResultTask;
             var addressSearchResult = await addressSearchResultTask;
 
             List<GlobalSearchHit> searches = new();
             searches.AddRange(nodeSearchResult);
-            searches.AddRange(equipmentsSearchResult);
+            //searches.AddRange(equipmentsSearchResult);
 
             var result = searches
                 .OrderByDescending(x => x.TextMatch)
