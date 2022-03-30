@@ -235,14 +235,9 @@ namespace OpenFTTH.APIGateway
 
                 config.ApiKey = typesenseSetting.ApiKey;
                 config.Nodes = new List<Node>
-                   {
-                        new Node
-                        {
-                            Host = typesenseSetting.Host,
-                            Port = typesenseSetting.Port,
-                            Protocol = "http"
-                        }
-                    };
+                {
+                    new Node(typesenseSetting.Host, typesenseSetting.Port, "http")
+                };
             });
 
             // Address service
