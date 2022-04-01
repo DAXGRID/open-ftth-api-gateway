@@ -296,8 +296,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
 
                     return new CommandResult(removeResult);
                 }
-           );
-
+            );
 
             FieldAsync<CommandResultType>(
                "updateRackProperties",
@@ -307,7 +306,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" },
                    new QueryArgument<IdGraphType> { Name = "specificationId" },
                    new QueryArgument<StringGraphType> { Name = "name" },
-                   new QueryArgument<IntGraphType> { Name = "heighInUnits" }
+                   new QueryArgument<IntGraphType> { Name = "heightInUnits" }
                ),
                resolve: async context =>
                {
@@ -319,8 +318,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                    var userContext = context.UserContext as GraphQLUserContext;
                    var userName = userContext.Username;
 
-                    // TODO: Get from work manager
-                    var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
+                   // TODO: Get from work manager
+                   var workTaskId = Guid.Parse("54800ae5-13a5-4b03-8626-a63b66a25568");
 
                    var commandUserContext = new UserContext(userName, workTaskId);
 
@@ -328,7 +327,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                    {
                        SpecificationId = context.HasArgument("specificationId") ? context.GetArgument<Guid>("specificationId") : null,
                        Name = context.HasArgument("name") ? context.GetArgument<string>("name") : null,
-                       HeightInUnits = context.HasArgument("heighInUnits") ? context.GetArgument<int>("heighInUnits") : null,
+                       HeightInUnits = context.HasArgument("heightInUnits") ? context.GetArgument<int>("heightInUnits") : null,
                    };
 
                    var updateResult = await commandDispatcher.HandleAsync<UpdateRackProperties, Result>(updateCmd);
