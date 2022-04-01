@@ -10,10 +10,10 @@
     <PackageReference Include="DAX.EventProcessing.Dispatcher" Version="2.1.0" />
     <PackageReference Include="GraphQL.Authorization" Version="4.0.0" />
     <PackageReference Include="GraphQL.MicrosoftDI" Version="4.7.1" />
-    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="5.2.0" />
-    <PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.2.0" />
-    <PackageReference Include="GraphQL.Server.Transports.Subscriptions.WebSockets " Version="5.2.0" />
-    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="5.2.0" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="5.2.1" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.2.1" />
+    <PackageReference Include="GraphQL.Server.Transports.Subscriptions.WebSockets " Version="5.2.1" />
+    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="5.2.1" />
     <PackageReference Include="GraphQL.SystemReactive" Version="4.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
@@ -22,13 +22,13 @@
     <PackageReference Include="OpenFTTH.Address.Business" Version="2.1.0" />
     <PackageReference Include="OpenFTTH.CQRS" Version="2.1.1" />
     <PackageReference Include="OpenFTTH.Events" Version="3.1.0" />
-    <PackageReference Include="OpenFTTH.EventSourcing" Version="2.1.2" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="2.2.8" />
     <PackageReference Include="OpenFTTH.RouteNetwork.API" Version="2.1.0" />
     <PackageReference Include="OpenFTTH.RouteNetwork.Business" Version="2.1.0" />
     <PackageReference Include="OpenFTTH.Schematic.API" Version="2.0.3" />
     <PackageReference Include="OpenFTTH.Schematic.Business" Version="2.0.3" />
-    <PackageReference Include="OpenFTTH.UtilityGraphService.API" Version="2.4.0" />
-    <PackageReference Include="OpenFTTH.UtilityGraphService.Business" Version="2.4.0" />
+    <PackageReference Include="OpenFTTH.UtilityGraphService.API" Version="2.6.0" />
+    <PackageReference Include="OpenFTTH.UtilityGraphService.Business" Version="2.6.0" />
     <PackageReference Include="ProjNet" Version="2.0.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
