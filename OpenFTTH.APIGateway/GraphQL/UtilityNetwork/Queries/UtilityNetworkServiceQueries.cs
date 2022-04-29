@@ -140,14 +140,14 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                         var theTrace = equipmentQueryResult.Value.RouteNetworkTraces.First();
 
                         segmentJsonGeometries.AddRange(theTrace.RouteSegmentGeometries);
-                        spanSegmentIds.AddRange(theTrace.RouteSegmentIds);
+                        routeSegmentIds.AddRange(theTrace.RouteSegmentIds);
                     }
 
                     var coordinateConverterResult = coordinateConverter.ConvertGeoJsonLineStringsToWgs84(segmentJsonGeometries.ToArray());
 
                     return new SpanSegmentTrace()
                     {
-                        RouteNetworkSegmentIds = spanSegmentIds.ToArray(),
+                        RouteNetworkSegmentIds = routeSegmentIds.ToArray(),
                         RouteNetworkSegmentGeometries = coordinateConverterResult.WGS84GeoJsonStrings,
                         WGS84MinX = coordinateConverterResult.WGS84BoundingBox.MinX,
                         WGS84MinY = coordinateConverterResult.WGS84BoundingBox.MinY,
