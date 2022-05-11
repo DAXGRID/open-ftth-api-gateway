@@ -18,6 +18,7 @@ namespace OpenFTTH.APIGateway.Auth
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthSetting _authSetting;
         private readonly HttpClient _httpClient;
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
 
         public AuthenticationListener(IHttpContextAccessor contextAccessor,
                                       IOptions<AuthSetting> authSetting,
@@ -26,32 +27,32 @@ namespace OpenFTTH.APIGateway.Auth
             _httpContextAccessor = contextAccessor;
             _authSetting = authSetting.Value;
             _httpClient = httpClient;
+            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                $"{_authSetting.Host}/.well-known/openid-configuration",
+                new OpenIdConnectConfigurationRetriever(),
+                new HttpDocumentRetriever(_httpClient) { RequireHttps = _authSetting.RequireHttps });
         }
 
         public async Task<ClaimsPrincipal> RetrieveIdentityPrincipal(string token)
         {
-            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                $"{_authSetting.Host}/.well-known/openid-configuration",
-                new OpenIdConnectConfigurationRetriever(),
-                new HttpDocumentRetriever(_httpClient) { RequireHttps = _authSetting.RequireHttps });
-
-            var result = await configurationManager.GetConfigurationAsync();
+            var result = await _configurationManager.GetConfigurationAsync();
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            return tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidIssuer = _authSetting.Host,
                 ValidAudience = _authSetting.Audience,
+                ValidateIssuer = true,
+                ValidIssuer = _authSetting.Host,
+                ValidateIssuerSigningKey = true,
                 IssuerSigningKeys = result.SigningKeys,
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+                RequireSignedTokens = true
             }, out SecurityToken validatedToken);
-
-            return claimsPrincipal;
         }
 
-        public Task BeforeHandleAsync(MessageHandlingContext context)
+        public async Task BeforeHandleAsync(MessageHandlingContext context)
         {
             if (MessageType.GQL_CONNECTION_INIT.Equals(context.Message?.Type))
             {
@@ -63,14 +64,15 @@ namespace OpenFTTH.APIGateway.Auth
                     if (authorizationTokenObject != null)
                     {
                         var token = authorizationTokenObject.ToString().Replace("Bearer ", string.Empty);
-                        _httpContextAccessor.HttpContext.User = RetrieveIdentityPrincipal(token).Result;
+                        _httpContextAccessor.HttpContext.User = await RetrieveIdentityPrincipal(token);
                     }
                 }
             }
 
-            context.Properties["GraphQLUserContext"] = new GraphQLUserContext() { User = _httpContextAccessor.HttpContext.User };
-
-            return Task.CompletedTask;
+            context.Properties["GraphQLUserContext"] = new GraphQLUserContext()
+            {
+                User = _httpContextAccessor.HttpContext.User
+            };
         }
 
         public Task HandleAsync(MessageHandlingContext context) => Task.CompletedTask;

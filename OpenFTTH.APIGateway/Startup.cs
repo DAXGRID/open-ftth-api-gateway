@@ -31,6 +31,7 @@ using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions;
 using OpenFTTH.APIGateway.GraphQL.Work;
 using OpenFTTH.APIGateway.Logging;
 using OpenFTTH.APIGateway.Settings;
+using OpenFTTH.APIGateway.Util;
 using OpenFTTH.APIGateway.Workers;
 using OpenFTTH.Address.Business;
 using OpenFTTH.Address.Business.Repository;
@@ -46,11 +47,10 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 using System;
-using System.Collections.Generic;
 using MicrosoftDI = GraphQL.MicrosoftDI;
+using System.Collections.Generic;
 using System.Reflection;
 using Typesense.Setup;
-using OpenFTTH.APIGateway.Util;
 
 namespace OpenFTTH.APIGateway
 {
@@ -101,7 +101,8 @@ namespace OpenFTTH.APIGateway
 
             if (configuration.GetSection("Auth").GetValue<bool>("Enable"))
             {
-                services.AddGraphQLAuth((settings, provider) => settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
+                services.AddGraphQLAuth((settings, provider) =>
+                                        settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
             }
 
             MicrosoftDI.GraphQLBuilderExtensions.AddGraphQL(services)
