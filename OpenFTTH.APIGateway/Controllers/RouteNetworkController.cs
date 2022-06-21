@@ -1,12 +1,12 @@
-using System;
-using System.Threading.Tasks;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
+using System;
+using System.Threading.Tasks;
 
-namespace OpenFTTH.APIGateway.RouteNetwork
+namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
