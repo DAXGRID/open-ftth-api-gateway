@@ -31,7 +31,7 @@ namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
             var queryResult = await _queryDispatcher.HandleAsync<GetUserWorkContext, Result<UserWorkContext>>(queryRequest);
             if (queryResult.IsSuccess)
             {
-                return Ok(queryResult.Value);
+                return Ok(queryResult.Value.CurrentWorkTask);
             }
             else
             {
