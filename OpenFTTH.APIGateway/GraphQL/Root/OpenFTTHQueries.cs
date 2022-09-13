@@ -14,12 +14,6 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
         {
             Description = "GraphQL API for querying Open FTTH";
 
-            AddField(new FieldType
-            {
-                Name = "apiVersion",
-                Resolver = AsyncFieldResolver<StringGraphType>(context => VersionInfo.VersionString())
-            });
-
             Field<StringGraphType>("apiVersion", resolve: context => VersionInfo.VersionString());
 
             Field<RouteNetworkServiceQueries>("routeNetwork", resolve: context => new { });

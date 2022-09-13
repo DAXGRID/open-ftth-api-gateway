@@ -77,7 +77,6 @@ namespace OpenFTTH.APIGateway
             services.AddGraphQL(b =>
             {
                 b.AddSchema<OpenFTTHSchema>();
-                b.AddAutoClrMappings();
                 b.AddSystemTextJson();
                 b.ConfigureExecutionOptions(options =>
                 {
@@ -89,17 +88,12 @@ namespace OpenFTTH.APIGateway
                     };
                 });
                 b.AddDataLoader();
+                b.AddGraphTypes(typeof(OpenFTTHSchema).Assembly);
                 b.AddUserContextBuilder(httpContext => new GraphQLUserContext(httpContext));
             });
 
             services.AddSingleton<SchematicUpdatedSubscription>();
             services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
-
-            // GraphQL root schema
-            // services.AddScoped<OpenFTTHSchema>();
-            // services.AddScoped<OpenFTTHQueries>();
-            // services.AddScoped<OpenFTTHMutations>();
-            // services.AddScoped<OpenFTTHSubscriptions>();
 
             // Auth
             // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -189,54 +183,6 @@ namespace OpenFTTH.APIGateway
             services.AddCQRS(assembliesWithBusinessLogic);
 
             services.AddSingleton<WorkContextManager, WorkContextManager>();
-
-            // Core types
-            // RegisterCoreTypes.Register(services);
-
-            // // Work service
-            // RegisterWorkServiceTypes.Register(services);
-
-            // // Schematic stuff
-            // RegisterSchematicTypes.Register(services);
-
-            // // // Utilty Network stuff
-            // RegisterUtilityNetworkTypes.Register(services);
-
-            // // // Route Network stuff
-            // RegisterRouteNetworkServiceTypes.Register(services);
-
-            // // // Address stuff
-            // RegisterAddressTypes.Register(services);
-
-            // // // Search stuff
-            // RegisterSearchServiceTypes.Register(services);
-
-            // services.AddTransient<RouteNetworkEditOperationOccuredEventType>();
-            // services.AddTransient<RouteNetworkTraceType>();
-            // services.AddTransient<TerminalEquipmentSpecificationType>();
-            // services.AddTransient<TerminalStructureSpecificationType>();
-            // services.AddTransient<RackSpecificationType>();
-            // services.AddTransient<SpanSegmentTraceType>();
-            // services.AddTransient<TerminalEquipmentType>();
-            // services.AddTransient<GraphQL.Addresses.Types.AddressInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.Addresses.Types.UnitAddressType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.AddressInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.SubrackPlacementInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.SubrackPlacmentMethodType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.DynamicProperties.Types.DynamicPropertiesSectionType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.DynamicProperties.Types.DynamicPropertyType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.MarkingInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.NodeContainerType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.RackType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentAZConnectivityViewModelType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewNodeStructureInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewEquipmentInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewTerminalStructureInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentAZConnectivityViewLineInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewEndInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewTerminalInfoType>();
-            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.FaceKindEnumType>();
-
             services.AddSingleton<RouteNetworkEventHandler, RouteNetworkEventHandler>();
             services.AddSingleton<IRouteNetworkState, InMemRouteNetworkState>();
             services.AddSingleton<IRouteNetworkRepository, InMemRouteNetworkRepository>();

@@ -7,9 +7,9 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
     {
         public OpenFTTHSchema(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            Query = new AutoRegisteringObjectGraphType<OpenFTTHQueries>();
-            Mutation = new AutoRegisteringObjectGraphType<OpenFTTHMutations>();
-            Subscription = new AutoRegisteringObjectGraphType<OpenFTTHSubscriptions>();
+            Query = (OpenFTTHQueries)serviceProvider.GetService(typeof(OpenFTTHQueries));
+            Mutation = (OpenFTTHMutations)serviceProvider.GetService(typeof(OpenFTTHMutations));
+            Subscription = (OpenFTTHSubscriptions)serviceProvider.GetService(typeof(OpenFTTHSubscriptions));
         }
     }
 }
