@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using OpenFTTH.APIGateway.Auth;
 using OpenFTTH.APIGateway.CoreTypes;
 using OpenFTTH.APIGateway.DynamicProperties;
 using OpenFTTH.APIGateway.GraphQL.Addresses;
@@ -89,11 +90,15 @@ namespace OpenFTTH.APIGateway
                 });
                 b.AddDataLoader();
                 b.AddGraphTypes(typeof(OpenFTTHSchema).Assembly);
+                b.AddWebSocketAuthentication<WebSocketAuthService>();
                 b.AddUserContextBuilder(httpContext => new GraphQLUserContext(httpContext));
             });
 
             services.AddSingleton<SchematicUpdatedSubscription>();
             services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
+
+            // This are needed for WebsocketAuthService
+            services.AddHttpClient<WebSocketAuthService>();
 
             // Auth
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
