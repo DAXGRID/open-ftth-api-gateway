@@ -84,6 +84,7 @@ namespace OpenFTTH.APIGateway
                 b.AddUserContextBuilder(httpContext => new GraphQLUserContext(httpContext));
             });
 
+            // We cannot register subscriptions automatically :-(
             services.AddSingleton<SchematicUpdatedSubscription>();
             services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
 
