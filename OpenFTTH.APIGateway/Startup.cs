@@ -233,7 +233,17 @@ namespace OpenFTTH.APIGateway
             app.UseCors(AllowedOrigins);
 
             app.UseAuthentication();
+
+            app.UseGraphQLPlayground();
+
+            app.UseRouting();
+
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.UseWebSockets(new WebSocketOptions
             {
@@ -243,15 +253,6 @@ namespace OpenFTTH.APIGateway
             app.UseGraphQL("/graphql", config =>
             {
                 config.AuthorizationRequired = !env.IsDevelopment();
-            });
-
-            app.UseGraphQLPlayground();
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
             });
         }
 
