@@ -10,12 +10,12 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic
     {
         public static void Register(IServiceCollection services)
         {
-            services.AddSingleton<SchematicMutations>();
-            services.AddSingleton<SchematicQueries>();
-            services.AddSingleton<SchematicUpdatedSubscription>();
+            services.AddTransient<SchematicMutations>();
+            services.AddTransient<SchematicQueries>();
+            services.AddTransient<SchematicUpdatedSubscription>();
 
-            services.AddSingleton<DiagramType>();
-            services.AddSingleton<DiagramObjectType>();
+            services.AddTransient<DiagramType>();
+            services.AddTransient<DiagramObjectType>();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using GraphQL;
 using GraphQL.Resolvers;
-using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Types;
 using Microsoft.Extensions.Options;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Types;
@@ -15,7 +14,9 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
         private readonly SchematicDiagramObserver _schematicDiagramObserver;
         private readonly AuthSetting _authSetting;
 
-        public SchematicUpdatedSubscription(SchematicDiagramObserver schematicDiagramObserver, IOptions<AuthSetting> authSetting)
+        public SchematicUpdatedSubscription(
+            SchematicDiagramObserver schematicDiagramObserver,
+            IOptions<AuthSetting> authSetting)
         {
             _schematicDiagramObserver = schematicDiagramObserver;
             _authSetting = authSetting.Value;
@@ -23,7 +24,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
 
         public void AddFields(ObjectGraphType objectGraphType)
         {
-            objectGraphType.AddField(new EventStreamFieldType
+            objectGraphType.AddField(new FieldType
             {
                 Name = "schematicDiagramUpdated",
                 Type = typeof(DiagramType),
@@ -31,17 +32,8 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                 Arguments = new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" }
                 ),
-                Subscriber = new EventStreamResolver<Diagram>(context =>
+                StreamResolver = new SourceStreamResolver<Diagram>(context =>
                 {
-                    var messageHandlingContext = (MessageHandlingContext)context.UserContext;
-                    var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
-
-                    if (_authSetting.Enable && !graphQLUserContext.User.Identity.IsAuthenticated)
-                    {
-                        context.Errors.Add(new ExecutionError("Not authorized"));
-                        return null;
-                    }
-
                     var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     return _schematicDiagramObserver.WhenDiagramNeedsUpdate(routeNetworkElementId);
                 }),

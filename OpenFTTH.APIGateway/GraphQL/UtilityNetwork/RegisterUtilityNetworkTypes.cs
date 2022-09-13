@@ -11,23 +11,23 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork
         public static void Register(IServiceCollection services)
         {
             // Mutations
-            services.AddSingleton<TestDataMutations>();
-            services.AddSingleton<SpanEquipmentMutations>();
-            services.AddSingleton<TerminalEquipmentMutations>();
-            services.AddSingleton<NodeContainerMutations>();
+            services.AddTransient<TestDataMutations>();
+            services.AddTransient<SpanEquipmentMutations>();
+            services.AddTransient<TerminalEquipmentMutations>();
+            services.AddTransient<NodeContainerMutations>();
 
             // Queries
-            services.AddSingleton<UtilityNetworkServiceQueries>();
+            services.AddTransient<UtilityNetworkServiceQueries>();
 
             // Types
-            services.AddSingleton<SpanEquipmentType>();
-            services.AddSingleton<ManufacturerType>();
-            services.AddSingleton<SpanEquipmentSpecificationType>();
-            services.AddSingleton<NodeContainerSpecificationType>();
-            services.AddSingleton<NodeContainerSideEnumType>();
+            services.AddTransient<SpanEquipmentType>();
+            services.AddTransient<ManufacturerType>();
+            services.AddTransient<SpanEquipmentSpecificationType>();
+            services.AddTransient<NodeContainerSpecificationType>();
+            services.AddTransient<NodeContainerSideEnumType>();
 
             // Subscriptions
-            services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
+            services.AddTransient<TerminalEquipmentConnectivityUpdatedSubscription>();
         }
     }
 }

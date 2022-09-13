@@ -1,17 +1,18 @@
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using GraphQL.Authorization;
 
 namespace OpenFTTH.APIGateway
 {
-    /// <summary>
-    /// Custom context class that implements <see cref="IProvideClaimsPrincipal"/>.
-    /// </summary>
-    public class GraphQLUserContext : Dictionary<string, object>, IProvideClaimsPrincipal
+    public class GraphQLUserContext : Dictionary<string, object>
     {
-        /// <inheritdoc />
         public ClaimsPrincipal User { get; set; }
+
+        public GraphQLUserContext(HttpContext context)
+        {
+            User = context.User;
+        }
 
         public string Username => User?.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value;
     }

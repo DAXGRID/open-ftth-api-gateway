@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries;
-using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Subscriptions;
 using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types;
 
 namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork
@@ -9,39 +8,37 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork
     {
         public static void Register(IServiceCollection services)
         {
-            services.AddSingleton<RouteNetworkEventSubscription>();
-
-            services.AddSingleton<RouteNetworkServiceQueries>();
+            services.AddTransient<RouteNetworkServiceQueries>();
 
             // General types
-            services.AddSingleton<RouteNetworkEditOperationOccuredEventType>();
-            services.AddSingleton<NamingInfoType>();
-            services.AddSingleton<NamingInfoInputType>();
+            services.AddTransient<RouteNetworkEditOperationOccuredEventType>();
+            services.AddTransient<NamingInfoType>();
+            services.AddTransient<NamingInfoInputType>();
 
-            services.AddSingleton<LifecycleInfoType>();
-            services.AddSingleton<LifecycleInfoInputType>();
-            services.AddSingleton<DeploymentStateEnumType>();
+            services.AddTransient<LifecycleInfoType>();
+            services.AddTransient<LifecycleInfoInputType>();
+            services.AddTransient<DeploymentStateEnumType>();
 
-            services.AddSingleton<MappingInfoType>();
-            services.AddSingleton<MappingInfoInputType>();
-            services.AddSingleton<MappingMethodEnumType>();
+            services.AddTransient<MappingInfoType>();
+            services.AddTransient<MappingInfoInputType>();
+            services.AddTransient<MappingMethodEnumType>();
 
-            services.AddSingleton<SafetyInfoType>();
-            services.AddSingleton<SafetyInfoInputType>();
+            services.AddTransient<SafetyInfoType>();
+            services.AddTransient<SafetyInfoInputType>();
 
 
             // Route node specific types
-            services.AddSingleton<RouteNetworkElementType>();
-            services.AddSingleton<RouteNodeInfoType>();
-            services.AddSingleton<RouteNodeInfoInputType>();
-            services.AddSingleton<RouteNodeKindEnumType>();
-            services.AddSingleton<RouteNodeFunctionEnumType>();
+            services.AddTransient<RouteNetworkElementType>();
+            services.AddTransient<RouteNodeInfoType>();
+            services.AddTransient<RouteNodeInfoInputType>();
+            services.AddTransient<RouteNodeKindEnumType>();
+            services.AddTransient<RouteNodeFunctionEnumType>();
 
 
             // Route segment specific types
-            services.AddSingleton<RouteSegmentInfoType>();
-            services.AddSingleton<RouteSegmentInfoInputType>();
-            services.AddSingleton<RouteSegmentKindEnumType>();
+            services.AddTransient<RouteSegmentInfoType>();
+            services.AddTransient<RouteSegmentInfoInputType>();
+            services.AddTransient<RouteSegmentKindEnumType>();
         }
     }
 }

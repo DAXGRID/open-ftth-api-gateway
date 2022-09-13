@@ -7,8 +7,8 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses
     {
         public static void Register(IServiceCollection services)
         {
-            services.AddSingleton<NearestAddressSearchHitType>();
-            services.AddSingleton<AccessAddressType>();
+            services.AddTransient<NearestAddressSearchHitType>();
+            services.AddTransient<AccessAddressType>();
         }
     }
 }

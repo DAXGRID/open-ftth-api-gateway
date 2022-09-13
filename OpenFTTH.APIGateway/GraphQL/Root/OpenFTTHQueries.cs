@@ -1,6 +1,4 @@
-﻿using GraphQL;
-using GraphQL.Types;
-using Microsoft.Extensions.Logging;
+﻿using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Queries;
 using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Queries;
@@ -12,11 +10,15 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
 {
     public class OpenFTTHQueries : ObjectGraphType
     {
-        public OpenFTTHQueries(ILogger<OpenFTTHQueries> logger)
+        public OpenFTTHQueries()
         {
             Description = "GraphQL API for querying Open FTTH";
 
-            this.AuthorizeWith("Authenticated");
+            AddField(new FieldType
+            {
+                Name = "apiVersion",
+                Resolver = AsyncFieldResolver<StringGraphType>(context => VersionInfo.VersionString())
+            });
 
             Field<StringGraphType>("apiVersion", resolve: context => VersionInfo.VersionString());
 

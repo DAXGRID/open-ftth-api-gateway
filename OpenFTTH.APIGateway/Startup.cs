@@ -2,10 +2,6 @@
 using DAX.EventProcessing.Dispatcher;
 using DAX.EventProcessing.Dispatcher.Topos;
 using GraphQL;
-using GraphQL.DataLoader;
-using GraphQL.Server;
-using GraphQL.Server.Transports.Subscriptions.Abstractions;
-using GraphQL.SystemReactive;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,18 +14,20 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using OpenFTTH.APIGateway.Auth;
 using OpenFTTH.APIGateway.CoreTypes;
+using OpenFTTH.APIGateway.DynamicProperties;
 using OpenFTTH.APIGateway.GraphQL.Addresses;
+using OpenFTTH.APIGateway.GraphQL.Addresses.Types;
 using OpenFTTH.APIGateway.GraphQL.Root;
 using OpenFTTH.APIGateway.GraphQL.RouteNetwork;
+using OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types;
 using OpenFTTH.APIGateway.GraphQL.Schematic;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions;
 using OpenFTTH.APIGateway.GraphQL.Search;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions;
+using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
 using OpenFTTH.APIGateway.GraphQL.Work;
-using OpenFTTH.APIGateway.Logging;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.APIGateway.Workers;
@@ -42,16 +40,15 @@ using OpenFTTH.Events.RouteNetwork;
 using OpenFTTH.Events.UtilityNetwork;
 using OpenFTTH.RouteNetwork.Business.RouteElements.EventHandling;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
+using OpenFTTH.Work.Business;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 using System;
-using MicrosoftDI = GraphQL.MicrosoftDI;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using Typesense.Setup;
-using OpenFTTH.Work.Business;
-using OpenFTTH.APIGateway.DynamicProperties;
 
 namespace OpenFTTH.APIGateway
 {
@@ -77,50 +74,51 @@ namespace OpenFTTH.APIGateway
 
             ConfigureSerialization();
 
-            // Auth
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, _ =>
-                {
-                    _.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateAudience = true,
-                        ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
-                        ValidateIssuer = true,
-                        ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
-                        ValidateIssuerSigningKey = true,
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        RequireSignedTokens = true,
-                    };
-                    _.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
-                    _.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
-                });
-
-            services.AddHttpContextAccessor();
-            services.AddTransient<IOperationMessageListener, AuthenticationListener>();
-            services.AddHttpClient<IOperationMessageListener, AuthenticationListener>();
-
-            if (configuration.GetSection("Auth").GetValue<bool>("Enable"))
+            services.AddGraphQL(b =>
             {
-                services.AddGraphQLAuth((settings, provider) =>
-                                        settings.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser()));
-            }
-
-            MicrosoftDI.GraphQLBuilderExtensions.AddGraphQL(services)
-                .AddSubscriptionDocumentExecuter()
-                .AddServer(true)
-                .AddSchema<OpenFTTHSchema>()
-                .ConfigureExecution(options =>
+                b.AddSchema<OpenFTTHSchema>();
+                b.AddAutoClrMappings();
+                b.AddSystemTextJson();
+                b.ConfigureExecutionOptions(options =>
                 {
-                    options.EnableMetrics = false;
-                    var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
-                    options.UnhandledExceptionDelegate = ctx => logger.LogError($"Unhandled exception: {ctx.OriginalException.Message}, stacktrace: {ctx.OriginalException.StackTrace}.");
-                })
-                .AddSystemTextJson()
-                .AddWebSockets()
-                .AddDataLoader()
-                .AddGraphTypes(typeof(OpenFTTHSchema).Assembly)
-                .AddUserContextBuilder(context => new GraphQLUserContext { User = context.User });
+                    var logger = options.RequestServices!.GetRequiredService<ILogger<Startup>>();
+                    options.UnhandledExceptionDelegate = ctx =>
+                    {
+                        logger.LogError("{Error} occurred", ctx.OriginalException.Message);
+                        return Task.CompletedTask;
+                    };
+                });
+                b.AddDataLoader();
+                b.AddUserContextBuilder(httpContext => new GraphQLUserContext(httpContext));
+            });
+
+            services.AddSingleton<SchematicUpdatedSubscription>();
+            services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
+
+            // GraphQL root schema
+            // services.AddScoped<OpenFTTHSchema>();
+            // services.AddScoped<OpenFTTHQueries>();
+            // services.AddScoped<OpenFTTHMutations>();
+            // services.AddScoped<OpenFTTHSubscriptions>();
+
+            // Auth
+            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
+            //     {
+            //         x.TokenValidationParameters = new TokenValidationParameters()
+            //         {
+            //             ValidateAudience = true,
+            //             ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
+            //             ValidateIssuer = true,
+            //             ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
+            //             ValidateIssuerSigningKey = true,
+            //             RequireExpirationTime = true,
+            //             ValidateLifetime = true,
+            //             RequireSignedTokens = true,
+            //         };
+            //         x.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
+            //         x.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
+            //     });
 
             // Settings
             services.Configure<KafkaSetting>(kafkaSettings =>
@@ -143,13 +141,6 @@ namespace OpenFTTH.APIGateway
 
             // Web stuff
             services.AddRazorPages();
-
-            // GraphQL root schema
-            services.AddSingleton<OpenFTTHSchema>();
-            services.AddSingleton<OpenFTTHQueries>();
-            services.AddSingleton<OpenFTTHMutations>();
-            services.AddSingleton<OpenFTTHSubscriptions>();
-
             // CORS
             services.AddCors(options =>
             {
@@ -197,27 +188,54 @@ namespace OpenFTTH.APIGateway
 
             services.AddCQRS(assembliesWithBusinessLogic);
 
-            // Core types
-            RegisterCoreTypes.Register(services);
-
-            // Work service
-            RegisterWorkServiceTypes.Register(services);
             services.AddSingleton<WorkContextManager, WorkContextManager>();
 
-            // Schematic stuff
-            RegisterSchematicTypes.Register(services);
+            // Core types
+            // RegisterCoreTypes.Register(services);
 
-            // Utilty Network stuff
-            RegisterUtilityNetworkTypes.Register(services);
+            // // Work service
+            // RegisterWorkServiceTypes.Register(services);
 
-            // Route Network stuff
-            RegisterRouteNetworkServiceTypes.Register(services);
+            // // Schematic stuff
+            // RegisterSchematicTypes.Register(services);
 
-            // Address stuff
-            RegisterAddressTypes.Register(services);
+            // // // Utilty Network stuff
+            // RegisterUtilityNetworkTypes.Register(services);
 
-            // Search stuff
-            RegisterSearchServiceTypes.Register(services);
+            // // // Route Network stuff
+            // RegisterRouteNetworkServiceTypes.Register(services);
+
+            // // // Address stuff
+            // RegisterAddressTypes.Register(services);
+
+            // // // Search stuff
+            // RegisterSearchServiceTypes.Register(services);
+
+            // services.AddTransient<RouteNetworkEditOperationOccuredEventType>();
+            // services.AddTransient<RouteNetworkTraceType>();
+            // services.AddTransient<TerminalEquipmentSpecificationType>();
+            // services.AddTransient<TerminalStructureSpecificationType>();
+            // services.AddTransient<RackSpecificationType>();
+            // services.AddTransient<SpanSegmentTraceType>();
+            // services.AddTransient<TerminalEquipmentType>();
+            // services.AddTransient<GraphQL.Addresses.Types.AddressInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.Addresses.Types.UnitAddressType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.AddressInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.SubrackPlacementInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.SubrackPlacmentMethodType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.DynamicProperties.Types.DynamicPropertiesSectionType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.DynamicProperties.Types.DynamicPropertyType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.MarkingInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.NodeContainerType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.RackType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentAZConnectivityViewModelType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewNodeStructureInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewEquipmentInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewTerminalStructureInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentAZConnectivityViewLineInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewEndInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.TerminalEquipmentConnectivityViewTerminalInfoType>();
+            // services.AddTransient<OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types.FaceKindEnumType>();
 
             services.AddSingleton<RouteNetworkEventHandler, RouteNetworkEventHandler>();
             services.AddSingleton<IRouteNetworkState, InMemRouteNetworkState>();
@@ -252,7 +270,6 @@ namespace OpenFTTH.APIGateway
             // Coordinate converter
             services.AddSingleton<UTM32WGS84Converter>();
 
-
             // Dynamic properties reader
             services.AddSingleton<DynamicPropertiesClient>();
         }
@@ -264,16 +281,22 @@ namespace OpenFTTH.APIGateway
 
             app.UseCors(AllowedOrigins);
 
-            app.UseAuthentication();
+
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseWebSockets(new WebSocketOptions
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(30)
             });
 
-            app.UseGraphQLWebSockets<OpenFTTHSchema>();
-            app.UseGraphQL<OpenFTTHSchema, GraphQLHttpMiddlewareWithLogs<OpenFTTHSchema>>();
+            app.UseGraphQL("/graphql", config =>
+            {
+                //config.AuthorizationRequired = false;
+            });
+
             app.UseGraphQLPlayground();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

@@ -1,6 +1,5 @@
 ﻿using GraphQL;
 using GraphQL.Resolvers;
-using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.Types;
 using Microsoft.Extensions.Options;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
@@ -23,7 +22,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
 
         public void AddFields(ObjectGraphType objectGraphType)
         {
-            objectGraphType.AddField(new EventStreamFieldType
+            objectGraphType.AddField(new FieldType
             {
                 Name = "terminalEquipmentConnectivityUpdated",
                 Type = typeof(TerminalEquipmentAZConnectivityViewModelType),
@@ -32,17 +31,8 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrRackId" }
                 ),
-                Subscriber = new EventStreamResolver<TerminalEquipmentAZConnectivityViewModel>(context =>
+                StreamResolver = new SourceStreamResolver<TerminalEquipmentAZConnectivityViewModel>(context =>
                 {
-                    var messageHandlingContext = (MessageHandlingContext)context.UserContext;
-                    var graphQLUserContext = messageHandlingContext.Get<GraphQLUserContext>("GraphQLUserContext");
-
-                    if (_authSetting.Enable && !graphQLUserContext.User.Identity.IsAuthenticated)
-                    {
-                        context.Errors.Add(new ExecutionError("Not authorized"));
-                        return null;
-                    }
-
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     if (routeNodeId == Guid.Empty)
                     {

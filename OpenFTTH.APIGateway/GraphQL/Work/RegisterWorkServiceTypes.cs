@@ -10,14 +10,14 @@ namespace OpenFTTH.APIGateway.GraphQL.Work
         public static void Register(IServiceCollection services)
         {
             // Queries
-            services.AddSingleton<WorkServiceQueries>();
+            services.AddTransient<WorkServiceQueries>();
 
             // Mutations
-            services.AddSingleton<UserWorkContextMutations>();
+            services.AddTransient<UserWorkContextMutations>();
 
             // Work specific types
-            services.AddSingleton<WorkTaskType>();
-            services.AddSingleton<UserWorkContextType>();
+            services.AddTransient<WorkTaskType>();
+            services.AddTransient<UserWorkContextType>();
         }
     }
 }

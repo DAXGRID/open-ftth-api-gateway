@@ -9,10 +9,10 @@ namespace OpenFTTH.APIGateway.GraphQL.Search
         public static void Register(IServiceCollection services)
         {
             // Queries
-            services.AddSingleton<SearchQueries>();
+            services.AddTransient<SearchQueries>();
 
             // Search specific types
-            services.AddSingleton<GlobalSearchHitType>();
+            services.AddTransient<GlobalSearchHitType>();
         }
     }
 }

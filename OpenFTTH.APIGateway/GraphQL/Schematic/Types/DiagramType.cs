@@ -1,5 +1,4 @@
-﻿using GraphQL.DataLoader;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.Core.Types;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
 
@@ -7,7 +6,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Types
 {
     public class DiagramType : ObjectGraphType<Diagram>
     {
-        public DiagramType(IDataLoaderContextAccessor dataLoader)
+        public DiagramType()
         {
             Description = "Diagram";
 
