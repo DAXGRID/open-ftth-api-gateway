@@ -96,23 +96,23 @@ namespace OpenFTTH.APIGateway
             services.AddSingleton<TerminalEquipmentConnectivityUpdatedSubscription>();
 
             // Auth
-            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
-            //     {
-            //         x.TokenValidationParameters = new TokenValidationParameters()
-            //         {
-            //             ValidateAudience = true,
-            //             ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
-            //             ValidateIssuer = true,
-            //             ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
-            //             ValidateIssuerSigningKey = true,
-            //             RequireExpirationTime = true,
-            //             ValidateLifetime = true,
-            //             RequireSignedTokens = true,
-            //         };
-            //         x.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
-            //         x.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
-            //     });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
+                {
+                    x.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateAudience = true,
+                        ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
+                        ValidateIssuer = true,
+                        ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
+                        ValidateIssuerSigningKey = true,
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        RequireSignedTokens = true,
+                    };
+                    x.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
+                    x.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
+                });
 
             // Settings
             services.Configure<KafkaSetting>(kafkaSettings =>
@@ -227,9 +227,8 @@ namespace OpenFTTH.APIGateway
 
             app.UseCors(AllowedOrigins);
 
-
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseWebSockets(new WebSocketOptions
             {
@@ -238,7 +237,7 @@ namespace OpenFTTH.APIGateway
 
             app.UseGraphQL("/graphql", config =>
             {
-                //config.AuthorizationRequired = false;
+                config.AuthorizationRequired = !env.IsDevelopment();
             });
 
             app.UseGraphQLPlayground();
