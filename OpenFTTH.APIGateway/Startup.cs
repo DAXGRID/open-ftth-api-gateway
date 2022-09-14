@@ -2,6 +2,7 @@
 using DAX.EventProcessing.Dispatcher;
 using DAX.EventProcessing.Dispatcher.Topos;
 using GraphQL;
+using GraphQL.Server.Transports.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,7 @@ using OpenFTTH.APIGateway.DynamicProperties;
 using OpenFTTH.APIGateway.GraphQL.Root;
 using OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions;
+using OpenFTTH.APIGateway.Logging;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.APIGateway.Workers;
@@ -245,6 +247,9 @@ namespace OpenFTTH.APIGateway
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(30)
             });
+
+            app.UseGraphQL<GraphQLHttpMiddlewareWithLogs<OpenFTTHSchema>>(
+                "/graphql", new GraphQLHttpMiddlewareOptions());
 
             app.UseGraphQL("/graphql", config =>
             {
