@@ -10,12 +10,17 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
         {
             Description = "Entry point for sending mutations to the various underlying services";
 
-            Field<SpanEquipmentMutations>("spanEquipment", resolve: context => new { });
-            Field<TerminalEquipmentMutations>("terminalEquipment", resolve: context => new { });
-            Field<NodeContainerMutations>("nodeContainer", resolve: context => new { });
-            Field<UserWorkContextMutations>("userContext", resolve: context => new { });
-            Field<SchematicMutations>("schematic", resolve: context => new { });
-            Field<TestDataMutations>("testData", resolve: context => new { });
+            Field<SpanEquipmentMutations>("spanEquipment").Resolve(_ => new { });
+
+            Field<TerminalEquipmentMutations>("terminalEquipment").Resolve(_ => new { });
+
+            Field<NodeContainerMutations>("nodeContainer").Resolve(_ => new { });
+
+            Field<UserWorkContextMutations>("userContext").Resolve(_ => new { });
+
+            Field<SchematicMutations>("schematic").Resolve(_ => new { });
+
+            Field<TestDataMutations>("testData").Resolve(_ => new { });
         }
     }
 }
