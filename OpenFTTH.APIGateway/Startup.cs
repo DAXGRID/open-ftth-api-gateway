@@ -71,10 +71,15 @@ namespace OpenFTTH.APIGateway
                 b.AddSystemTextJson();
                 b.ConfigureExecutionOptions(options =>
                 {
+                    options.EnableMetrics = false;
                     var logger = options.RequestServices!.GetRequiredService<ILogger<Startup>>();
                     options.UnhandledExceptionDelegate = ctx =>
                     {
-                        logger.LogError("{Error} occurred", ctx.OriginalException.Message);
+                        logger.LogError(
+                            "{Error} occurred, {StackTrace}",
+                            ctx.OriginalException.Message,
+                            ctx.OriginalException.StackTrace);
+
                         return Task.CompletedTask;
                     };
                 });
