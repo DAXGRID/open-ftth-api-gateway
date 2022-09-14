@@ -14,19 +14,19 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
         {
             Description = "GraphQL API for querying Open FTTH";
 
-            Field<StringGraphType>("apiVersion", resolve: context => VersionInfo.VersionString());
+            Field<StringGraphType>("apiVersion").Resolve(_ => VersionInfo.VersionString());
 
-            Field<RouteNetworkServiceQueries>("routeNetwork", resolve: context => new { });
+            Field<RouteNetworkServiceQueries>("routeNetwork").Resolve(_ => new { });
 
-            Field<UtilityNetworkServiceQueries>("utilityNetwork", resolve: context => new { });
+            Field<UtilityNetworkServiceQueries>("utilityNetwork").Resolve(_ => new { });
 
-            Field<WorkServiceQueries>("workService", resolve: context => new { });
+            Field<WorkServiceQueries>("workService").Resolve(_ => new { });
 
-            Field<SchematicQueries>("schematic", resolve: context => new { });
+            Field<SchematicQueries>("schematic").Resolve(_ => new { });
 
-            Field<SearchQueries>("search", resolve: context => new { });
+            Field<SearchQueries>("search").Resolve(_ => new { });
 
-            Field<AddressServiceQueries>("addressService", resolve: context => new { });
+            Field<AddressServiceQueries>("addressService").Resolve(_ => new { });
         }
     }
 }
