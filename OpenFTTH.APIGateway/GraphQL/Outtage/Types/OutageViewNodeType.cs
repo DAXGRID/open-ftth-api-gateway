@@ -14,6 +14,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Types
             Field(x => x.Label, type: typeof(StringGraphType)).Description("Label");
             Field(x => x.Value, type: typeof(StringGraphType)).Description("Value");
             Field(x => x.Description, type: typeof(StringGraphType)).Description("Description");
+            Field(x => x.Expanded, type: typeof(BooleanGraphType)).Description("Expanded");
             Field(x => x.Nodes, type: typeof(ListGraphType<OutageViewNodeType>)).Description("Child nodes");
         }
     }
