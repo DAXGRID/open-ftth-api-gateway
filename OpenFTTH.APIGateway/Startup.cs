@@ -77,6 +77,14 @@ namespace OpenFTTH.APIGateway
                     var logger = options.RequestServices!.GetRequiredService<ILogger<Startup>>();
                     options.UnhandledExceptionDelegate = ctx =>
                     {
+                        // We do not care about `OperationCanceledException` since it is not
+                        // critical, and happens quite a lot when browsers cancels requests,
+                        // resulting in many errors in the logs.
+                        if (ctx.OriginalException is OperationCanceledException)
+                        {
+                            return Task.CompletedTask;
+                        }
+
                         logger.LogError(
                             "{Error} occurred, {StackTrace}",
                             ctx.OriginalException.Message,
