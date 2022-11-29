@@ -2,15 +2,11 @@
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
-using OpenFTTH.APIGateway.DynamicProperties;
-using OpenFTTH.APIGateway.GraphQL.Outage.Types;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Util;
-using OpenFTTH.UtilityGraphService.API.Model.Outage;
-using OpenFTTH.UtilityGraphService.API.Model.Trace;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
 using OpenFTTH.UtilityGraphService.API.Queries;
@@ -26,76 +22,60 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
         {
             Description = "GraphQL API for querying data owned by utility network service";
 
-            FieldAsync<ListGraphType<ManufacturerType>>(
-                name: "manufacturers",
-                description: "Retrieve all manufacturers.",
-                resolve: async context =>
+            Field<ListGraphType<ManufacturerType>>("manufactuers")
+                .Description("Retrieve all manufacturers.")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
-
                     return queryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<SpanEquipmentSpecificationType>>(
-                name: "spanEquipmentSpecifications",
-                description: "Retrieve all span equipment specifications.",
-                resolve: async context =>
+            Field<ListGraphType<SpanEquipmentSpecificationType>>("spanEquipmentSpecifications")
+                .Description("Retrieve all span equipment specifications.")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications,
                         Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications());
-
                     return queryResult.Value.OrderBy(s => s.Description);
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<TerminalEquipmentSpecificationType>>(
-                name: "terminalEquipmentSpecifications",
-                description: "Retrieve all terminal equipment specifications.",
-                resolve: async context =>
+            Field<ListGraphType<TerminalEquipmentSpecificationType>>("terminalEquipmentSpecifications")
+                .Description("Retrieve all terminal equipment specifications.")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetTerminalEquipmentSpecifications,
                         Result<LookupCollection<TerminalEquipmentSpecification>>>(new GetTerminalEquipmentSpecifications());
 
                     return queryResult.Value.OrderBy(s => s.Description);
-                }
-            );
+                });
 
-
-            FieldAsync<ListGraphType<TerminalStructureSpecificationType>>(
-                name: "terminalStructureSpecifications",
-                description: "Retrieve all terminal structure specifications - i.e. cards, tray etc.",
-                resolve: async context =>
+            Field<ListGraphType<TerminalStructureSpecificationType>>("terminalStructureSpecifications")
+                .Description("Retrieve all terminal structure specifications - i.e. cards, tray etc.")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetTerminalStructureSpecifications,
                         Result<LookupCollection<TerminalStructureSpecification>>>(new GetTerminalStructureSpecifications());
 
                     return queryResult.Value.OrderBy(s => s.Description);
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<NodeContainerSpecificationType>>(
-                name: "nodeContainerSpecifications",
-                description: "Retrieve all node container specifications.",
-                resolve: async context =>
+            Field<ListGraphType<NodeContainerSpecificationType>>("nodeContainerSpecifications")
+                .Description("Retrieve all node container specifications.")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetNodeContainerSpecifications,
                         Result<LookupCollection<NodeContainerSpecification>>>(new GetNodeContainerSpecifications());
 
                     return queryResult.Value.OrderBy(s => s.Description);
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<RackSpecificationType>>(
-               name: "rackSpecifications",
-               description: "Retrieve all rack specifications.",
-               resolve: async context =>
-               {
+            Field<ListGraphType<RackSpecificationType>>("rackSpecifications")
+                .Description("Retrieve all rack specifications.")
+                .ResolveAsync(async context =>
+                {
                    var queryResult = await queryDispatcher.HandleAsync<GetRackSpecifications, Result<LookupCollection<RackSpecification>>>(new GetRackSpecifications());
-
                    return queryResult.Value.OrderBy(s => s.Description);
-               }
-            );
+                });
 
             FieldAsync<SpanSegmentTraceType>(
                 name: "spanSegmentTrace",
