@@ -2,6 +2,7 @@ using DAX.EventProcessing.Dispatcher;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Npgsql;
 using OpenFTTH.APIGateway.Conversion;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
@@ -133,19 +134,28 @@ namespace OpenFTTH.APIGateway.Workers
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    Thread.Sleep(2000);
+                    try
+                    {
+                        Thread.Sleep(2000);
 
-                    var eventsProcessed = _eventStore.CatchUp();
+                        var eventsProcessed = _eventStore.CatchUp();
 
-                    if (eventsProcessed > 0)
-                        _logger.LogInformation($"Processed {eventsProcessed} new external events.");
+                        if (eventsProcessed > 0)
+                            _logger.LogInformation($"Processed {eventsProcessed} new external events.");
+                    }
+                    catch (PostgresException ex)
+                    {
+                        const int RETRY_WAIT_TIME_SEC = 30;
+                        _logger.LogError("{}", ex);
+                        _logger.LogInformation("Waiting {Seconds}, before retrying catchup.", RETRY_WAIT_TIME_SEC);
+                        Thread.Sleep(TimeSpan.FromSeconds(RETRY_WAIT_TIME_SEC));
+                    }
                 }
-
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
+                throw;
             }
 
             await Task.CompletedTask;
