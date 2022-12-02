@@ -73,17 +73,14 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                 .Description("Retrieve all rack specifications.")
                 .ResolveAsync(async context =>
                 {
-                   var queryResult = await queryDispatcher.HandleAsync<GetRackSpecifications, Result<LookupCollection<RackSpecification>>>(new GetRackSpecifications());
-                   return queryResult.Value.OrderBy(s => s.Description);
+                    var queryResult = await queryDispatcher.HandleAsync<GetRackSpecifications, Result<LookupCollection<RackSpecification>>>(new GetRackSpecifications());
+                    return queryResult.Value.OrderBy(s => s.Description);
                 });
 
-            FieldAsync<SpanSegmentTraceType>(
-                name: "spanSegmentTrace",
-                description: "Trace one or more span segments",
-                arguments: new QueryArguments(
-                  new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentIds" }
-                ),
-                resolve: async context =>
+            Field<SpanSegmentTraceType>("spanSegmentTrace")
+                .Description("Trace one or more span segments")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentIds" }))
+                .ResolveAsync(async context =>
                 {
                     var spanSegmentIds = context.GetArgument<List<Guid>>("spanSegmentIds");
 
@@ -156,83 +153,74 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     };
                 });
 
-            FieldAsync<TerminalEquipmentType>(
-               name: "terminalEquipment",
-               description: "Query information related to a specific terminal equipment",
-               arguments: new QueryArguments(
-                 new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrTerminalId" }
-               ),
-               resolve: async context =>
-               {
-                   var terminalEquipmentOrTerminalId = context.GetArgument<Guid>("terminalEquipmentOrTerminalId");
+            Field<TerminalEquipmentType>("terminalEquipment")
+                .Description("Query information related to a specific terminal equipment")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrTerminalId" }))
+                .ResolveAsync(async context =>
+                {
+                    var terminalEquipmentOrTerminalId = context.GetArgument<Guid>("terminalEquipmentOrTerminalId");
 
-                   // Get equipment information
-                   var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
-                       new GetEquipmentDetails(new EquipmentIdList() { terminalEquipmentOrTerminalId })
-                   );
+                    // Get equipment information
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                        new GetEquipmentDetails(new EquipmentIdList() { terminalEquipmentOrTerminalId })
+                    );
 
-                   if (equipmentQueryResult.IsFailed)
-                   {
-                       foreach (var error in equipmentQueryResult.Errors)
-                           context.Errors.Add(new ExecutionError(error.Message));
+                    if (equipmentQueryResult.IsFailed)
+                    {
+                        foreach (var error in equipmentQueryResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
 
-                       return null;
-                   }
+                        return null;
+                    }
 
-                   if (equipmentQueryResult.Value.TerminalEquipment == null || equipmentQueryResult.Value.TerminalEquipment.Count == 0)
-                   {
-                       context.Errors.Add(new ExecutionError($"Cannot find any terminal equipment or terminal with id: {terminalEquipmentOrTerminalId}"));
+                    if (equipmentQueryResult.Value.TerminalEquipment == null || equipmentQueryResult.Value.TerminalEquipment.Count == 0)
+                    {
+                        context.Errors.Add(new ExecutionError($"Cannot find any terminal equipment or terminal with id: {terminalEquipmentOrTerminalId}"));
 
-                       return null;
-                   }
+                        return null;
+                    }
 
-                   var terminalEquipment = equipmentQueryResult.Value.TerminalEquipment.First();
+                    var terminalEquipment = equipmentQueryResult.Value.TerminalEquipment.First();
 
-                   return terminalEquipment;
-               });
+                    return terminalEquipment;
+                });
 
-            FieldAsync<SpanEquipmentType>(
-             name: "spanEquipment",
-             description: "Query information related to a specific span equipment",
-             arguments: new QueryArguments(
-               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentOrSegmentId" }
-             ),
-             resolve: async context =>
-             {
-                 var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
+            Field<SpanEquipmentType>("spanEquipment")
+                .Description("Query information related to a specific span equipment")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentOrSegmentId" }))
+                .ResolveAsync(async context =>
+                {
+                    var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
 
-                 // Get equipment information
-                 var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
-                     new GetEquipmentDetails(new EquipmentIdList() { spanEquipmentOrSegmentId })
-                 );
+                    // Get equipment information
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                        new GetEquipmentDetails(new EquipmentIdList() { spanEquipmentOrSegmentId })
+                    );
 
-                 if (equipmentQueryResult.IsFailed)
-                 {
-                     foreach (var error in equipmentQueryResult.Errors)
-                         context.Errors.Add(new ExecutionError(error.Message));
+                    if (equipmentQueryResult.IsFailed)
+                    {
+                        foreach (var error in equipmentQueryResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
 
-                     return null;
-                 }
+                        return null;
+                    }
 
-                 if (equipmentQueryResult.Value.SpanEquipment == null || equipmentQueryResult.Value.SpanEquipment.Count == 0)
-                 {
-                     context.Errors.Add(new ExecutionError($"Cannot find any span equipment containing a span segment with id: {spanEquipmentOrSegmentId}"));
+                    if (equipmentQueryResult.Value.SpanEquipment == null || equipmentQueryResult.Value.SpanEquipment.Count == 0)
+                    {
+                        context.Errors.Add(new ExecutionError($"Cannot find any span equipment containing a span segment with id: {spanEquipmentOrSegmentId}"));
 
-                     return null;
-                 }
+                        return null;
+                    }
 
-                 var spanEquipment = equipmentQueryResult.Value.SpanEquipment.First();
+                    var spanEquipment = equipmentQueryResult.Value.SpanEquipment.First();
 
-                 return spanEquipment;
-             });
+                    return spanEquipment;
+                });
 
-            FieldAsync<NodeContainerType>(
-                name: "nodeContainer",
-                description: "Query information related to a specific node container",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" }
-                ),
-                resolve: async context =>
+            Field<NodeContainerType>("nodeContainer")
+                .Description("Query information related to a specific node container")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" }))
+                .ResolveAsync(async context =>
                 {
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
 
@@ -259,17 +247,15 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var nodeContainer = equipmentQueryResult.Value.NodeContainers.First();
 
                     return nodeContainer;
-                }
-            );
+                });
 
-            Field<RackType>(
-                name: "rack",
-                description: "Query information related to a specific rack residing within a node",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" }
-                ),
-                resolve: context =>
+            Field<RackType>("rack")
+                .Description("Query information related to a specific rack residing within a node")
+                .Arguments(
+                    new QueryArguments(
+                        new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
+                        new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" }))
+                .Resolve(context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var rackId = context.GetArgument<Guid>("rackId");
@@ -293,48 +279,42 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return nodeContainer.Racks.First(r => r.Id == rackId);
-                }
-            );
+                });
 
-            Field<ListGraphType<RackType>>(
-                 name: "racks",
-                 description: "Query all racks within node",
-                 arguments: new QueryArguments(
-                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" }
-                 ),
-                 resolve: context =>
-                 {
-                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
+            Field<ListGraphType<RackType>>("racks")
+                .Description("Query all racks within node")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" }))
+                .Resolve(context =>
+                {
+                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
 
-                     var getNodeContainerResult = QueryHelper.GetNodeContainerFromRouteNodeId(queryDispatcher, routeNodeId);
+                    var getNodeContainerResult = QueryHelper.GetNodeContainerFromRouteNodeId(queryDispatcher, routeNodeId);
 
-                     if (getNodeContainerResult.IsFailed)
-                     {
-                         foreach (var error in getNodeContainerResult.Errors)
-                             context.Errors.Add(new ExecutionError(error.Message));
+                    if (getNodeContainerResult.IsFailed)
+                    {
+                        foreach (var error in getNodeContainerResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
 
-                         return null;
-                     }
+                        return null;
+                    }
 
-                     var nodeContainer = getNodeContainerResult.Value;
+                    var nodeContainer = getNodeContainerResult.Value;
 
-                     if (nodeContainer.Racks == null)
-                     {
-                         return new Rack[] { };
-                     }
+                    if (nodeContainer.Racks == null)
+                    {
+                        return new Rack[] { };
+                    }
 
-                     return nodeContainer.Racks;
-                 }
-             );
+                    return nodeContainer.Racks;
+                });
 
-            FieldAsync<TerminalEquipmentAZConnectivityViewModelType>(
-                name: "terminalEquipmentConnectivityView",
-                description: "Query connectivity information related to ",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrRackId" }
-                ),
-                resolve: async context =>
+            Field<TerminalEquipmentAZConnectivityViewModelType>("terminalEquipmentConnectivityView")
+                .Description("Query connectivity information related to")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrRackId" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentOrRackId = context.GetArgument<Guid>("terminalEquipmentOrRackId");
@@ -354,17 +334,14 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityQueryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<ConnectivityTraceViewType>(
-                name: "connectivityTraceView",
-                description: "Trace connectivity",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalOrSpanEquipmentId" }
-                ),
-                resolve: async context =>
+            Field<ConnectivityTraceViewType>("connectivityTraceView")
+                .Description("Trace connectivity")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalOrSpanEquipmentId" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     var terminalOrSpanEquipmentId = context.GetArgument<Guid>("terminalOrSpanEquipmentId");
@@ -383,17 +360,14 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityQueryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<SpanEquipmentAZConnectivityViewModelType>(
-                name: "spanEquipmentConnectivityView",
-                description: "Query connectivity information related to span equipment",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
-                    new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanEquipmentOrSegmentIds" }
-                ),
-                resolve: async context =>
+            Field<SpanEquipmentAZConnectivityViewModelType>("spanEquipmentConnectivityView")
+                .Description("Query connectivity information related to span equipment")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
+                               new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanEquipmentOrSegmentIds" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     var spanEquipmentOrSegmentIds = context.GetArgument<Guid[]>("spanEquipmentOrSegmentIds");
@@ -401,7 +375,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var connectivityQuery = new GetSpanEquipmentConnectivityView(routeNetworkElementId, spanEquipmentOrSegmentIds);
 
                     var connectivityQueryResult = await queryDispatcher.HandleAsync<GetSpanEquipmentConnectivityView, Result<SpanEquipmentAZConnectivityViewModel>>(
-                      connectivityQuery
+                        connectivityQuery
                     );
 
                     if (connectivityQueryResult.IsFailed)
@@ -413,17 +387,14 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityQueryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<SpanEquipmentPassageViewModelType>(
-                name: "spanEquipmentPassageView",
-                description: "Query passage information related to span equipment",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
-                    new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanEquipmentOrSegmentIds" }
-                ),
-                resolve: async context =>
+            Field<SpanEquipmentPassageViewModelType>("spanEquipmentPassageView")
+                .Description("Query passage information related to span equipment")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
+                               new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanEquipmentOrSegmentIds" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     var spanEquipmentOrSegmentIds = context.GetArgument<Guid[]>("spanEquipmentOrSegmentIds");
@@ -431,7 +402,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var connectivityQuery = new GetSpanEquipmentPassageView(routeNetworkElementId, spanEquipmentOrSegmentIds);
 
                     var connectivityQueryResult = await queryDispatcher.HandleAsync<GetSpanEquipmentPassageView, Result<SpanEquipmentPassageViewModel>>(
-                      connectivityQuery
+                        connectivityQuery
                     );
 
                     if (connectivityQueryResult.IsFailed)
@@ -443,23 +414,20 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityQueryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<ConnectivityFaceType>>(
-                name: "connectivityFaces",
-                description: "Query terminal equipment sides and fiber cable ends available for connectivity (aka connectivity faces)",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" }
-                ),
-                resolve: async context =>
+            Field<ListGraphType<ConnectivityFaceType>>("connectivityFaces")
+                .Description("Query terminal equipment sides and fiber cable ends available for connectivity (aka connectivity faces)")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
 
                     var connectivityFacesQuery = new GetConnectivityFaces(routeNodeId);
 
                     var connectivityFacesQueryResult = await queryDispatcher.HandleAsync<GetConnectivityFaces, Result<List<ConnectivityFace>>>(
-                      connectivityFacesQuery
+                        connectivityFacesQuery
                     );
 
                     if (connectivityFacesQueryResult.IsFailed)
@@ -471,18 +439,15 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityFacesQueryResult.Value;
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<ConnectivityFaceConnectionType>>(
-                name: "connectivityFaceConnections",
-                description: "Query the connections available in a connectivity face",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanOrTerminalEquipmentId" },
-                    new QueryArgument<NonNullGraphType<FaceKindEnumType>> { Name = "faceType" }
-                ),
-                resolve: async context =>
+            Field<ListGraphType<ConnectivityFaceConnectionType>>("connectivityFaceConnections")
+                .Description("Query the connections available in a connectivity face")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanOrTerminalEquipmentId" },
+                               new QueryArgument<NonNullGraphType<FaceKindEnumType>> { Name = "faceType" }))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var spanOrTerminalEquipmentId = context.GetArgument<Guid>("spanOrTerminalEquipmentId");
@@ -491,7 +456,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var connectivityFacesConnectionsQuery = new GetConnectivityFaceConnections(routeNodeId, spanOrTerminalEquipmentId, faceType);
 
                     var connectivityFaceConnectionsQueryResult = await queryDispatcher.HandleAsync<GetConnectivityFaceConnections, Result<List<ConnectivityFaceConnection>>>(
-                      connectivityFacesConnectionsQuery
+                        connectivityFacesConnectionsQuery
                     );
 
                     if (connectivityFaceConnectionsQueryResult.IsFailed)
@@ -503,40 +468,34 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     }
 
                     return connectivityFaceConnectionsQueryResult.Value;
-                }
-            );
+                });
 
 
-            FieldAsync<DisconnectSpanEquipmentFromTerminalViewType>(
-               name: "disconnectSpanEquipmentFromTerminalView",
-               description: "Information needed to show disconnect information to user",
-               arguments: new QueryArguments(
-                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanSegmentId" },
-                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalId" }
-               ),
-               resolve: async context =>
-               {
-                   var spanSegmentId = context.GetArgument<Guid>("spanSegmentId");
-                   var terminalId = context.GetArgument<Guid>("terminalId");
+            Field<DisconnectSpanEquipmentFromTerminalViewType>("disconnectSpanEquipmentFromTerminalView")
+                .Description("Information needed to show disconnect information to user")
+                .Arguments(new QueryArguments(
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanSegmentId" },
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalId" }))
+                .ResolveAsync(async context =>
+                {
+                    var spanSegmentId = context.GetArgument<Guid>("spanSegmentId");
+                    var terminalId = context.GetArgument<Guid>("terminalId");
 
-                   var query = new GetDisconnectSpanEquipmentFromTerminalView(spanSegmentId, terminalId);
+                    var query = new GetDisconnectSpanEquipmentFromTerminalView(spanSegmentId, terminalId);
 
-                   var queryResult = await queryDispatcher.HandleAsync<GetDisconnectSpanEquipmentFromTerminalView, Result<DisconnectSpanEquipmentFromTerminalView>>(
-                       query
-                   );
+                    var queryResult = await queryDispatcher.HandleAsync<GetDisconnectSpanEquipmentFromTerminalView, Result<DisconnectSpanEquipmentFromTerminalView>>(
+                        query
+                    );
 
-                   if (queryResult.IsFailed)
-                   {
-                       foreach (var error in queryResult.Errors)
-                           context.Errors.Add(new ExecutionError(error.Message));
-                       return null;
-                   }
+                    if (queryResult.IsFailed)
+                    {
+                        foreach (var error in queryResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
+                        return null;
+                    }
 
-                   return queryResult.Value;
-               }
-           );
-
-
+                    return queryResult.Value;
+                });
         }
     }
 }
