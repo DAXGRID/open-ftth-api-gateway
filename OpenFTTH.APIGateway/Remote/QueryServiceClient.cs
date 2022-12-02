@@ -38,10 +38,10 @@ namespace OpenFTTH.APIGateway.Remote
 
                 _logger.LogDebug($"Sending query request: {queryCommand.GetType().Name} to service: {requestUrl}");
 
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                var response = await httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var responseBody = await response.Content.ReadAsStringAsync();
 
                 return (ResponseType)JsonConvert.DeserializeObject(responseBody, typeof(ResponseType));
             }

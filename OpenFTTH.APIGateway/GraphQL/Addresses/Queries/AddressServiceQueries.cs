@@ -51,7 +51,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
                     if (routeNodeId != Guid.Empty)
                     {
-                        var nodeCoord = await GetNodeCoordinates(routeNodeId, queryDispatcher).ConfigureAwait(false);
+                        var nodeCoord = await GetNodeCoordinates(routeNodeId, queryDispatcher);
 
                         if (nodeCoord == (0, 0))
                         {
@@ -73,12 +73,12 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     }
                     else if (spanEquipmentOrSegmentId != Guid.Empty)
                     {
-                        var segmentEnd = await GetSpanSegmentEndCoordinate(spanEquipmentOrSegmentId, queryDispatcher).ConfigureAwait(false);
+                        var segmentEnd = await GetSpanSegmentEndCoordinate(spanEquipmentOrSegmentId, queryDispatcher);
 
                         // Find address near the from span equipment end
                         var getAddressInfoQuery = new GetAddressInfo(segmentEnd.Item1, segmentEnd.Item2, 25832, maxHits);
 
-                        var getAddressInfoQueryResult = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).ConfigureAwait(false);
+                        var getAddressInfoQueryResult = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery);
                         if (getAddressInfoQueryResult.IsFailed)
                         {
                             context.Errors.Add(new ExecutionError(getAddressInfoQueryResult.Errors.First().Message));
@@ -91,7 +91,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                     {
                         var getAddressInfoQuery = new GetAddressInfo(x, y, srid, maxHits);
 
-                        var result = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).ConfigureAwait(false);
+                        var result = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery);
 
                         if (result.IsFailed)
                         {
@@ -112,7 +112,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                   {
                       RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
                   }
-            ).ConfigureAwait(false);
+            );
 
             if (routeNodeQueryResult.IsSuccess)
             {
@@ -131,7 +131,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                 {
                     EquipmentDetailsFilter = new EquipmentDetailsFilterOptions { IncludeRouteNetworkTrace = true }
                 }
-            ).ConfigureAwait(false);
+            );
 
             if (equipmentQueryResult.IsFailed)
             {
@@ -155,7 +155,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                           },
                           RelatedInterestFilter = RelatedInterestFilterOptions.None
                       }
-            ).ConfigureAwait(false);
+            );
 
             if (routeNetworkQueryResult.IsFailed)
             {
@@ -169,7 +169,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             var lastNodeInSpanSegment = routeNetworkElementIds.Last();
 
-            var coord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher).ConfigureAwait(false);
+            var coord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher);
 
             _logger.LogInformation($"Address search info: Get coordinate of span segment: {spanSegmentId} in span equipment: {equipmentQueryResult.Value.SpanEquipment.First().Name} {equipmentQueryResult.Value.SpanEquipment.First().Id} Route node id: {lastNodeInSpanSegment} successfully returned: x={coord.Item1} y={coord.Item2}");
 

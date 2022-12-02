@@ -62,7 +62,7 @@ namespace OpenFTTH.APIGateway.Search
                 QueryByWeights = "5,3,3,2"
             };
 
-            var searchResult = await _typesenseClient.Search<OfficialAccessAddressSearchHit>("Addresses", query).ConfigureAwait(false);
+            var searchResult = await _typesenseClient.Search<OfficialAccessAddressSearchHit>("Addresses", query);
 
             List<GlobalSearchHit> result = new();
 
@@ -91,7 +91,7 @@ namespace OpenFTTH.APIGateway.Search
                 NumberOfTypos = "0"
             };
 
-            var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query).ConfigureAwait(false);
+            var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query);
             if (searchResult.Hits.Count == 0)
                 return new();
 
@@ -106,7 +106,7 @@ namespace OpenFTTH.APIGateway.Search
                 {
                     RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
                 }
-            ).ConfigureAwait(false);
+            );
 
             List<GlobalSearchHit> result = new();
             if (routeNodeQueryResult.IsSuccess)
@@ -143,7 +143,7 @@ namespace OpenFTTH.APIGateway.Search
                 NumberOfTypos = "0"
             };
 
-            var searchResult = await _typesenseClient.Search<EquipmentSearchHit>("equipments", query).ConfigureAwait(false);
+            var searchResult = await _typesenseClient.Search<EquipmentSearchHit>("equipments", query);
             if (searchResult.Hits.Count == 0)
                 return new();
 
@@ -168,7 +168,7 @@ namespace OpenFTTH.APIGateway.Search
 
                 nodeEquipmentResult = await _queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
                   new GetEquipmentDetails(nodeContainerIds)
-                ).ConfigureAwait(false);
+                );
             }
             else
             {
@@ -193,7 +193,7 @@ namespace OpenFTTH.APIGateway.Search
                 {
                     RouteNetworkElementFilter = new RouteNetworkElementFilterOptions() { IncludeCoordinates = true }
                 }
-            ).ConfigureAwait(false);
+            );
 
             List<GlobalSearchHit> result = new();
             if (routeNodeQueryResult.IsSuccess)
