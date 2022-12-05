@@ -22,7 +22,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
         {
             Description = "GraphQL API for querying data owned by utility network service";
 
-            Field<ListGraphType<ManufacturerType>>("manufactuers")
+            Field<ListGraphType<ManufacturerType>>("manufacturers")
                 .Description("Retrieve all manufacturers.")
                 .ResolveAsync(async context =>
                 {
