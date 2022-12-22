@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.CQRS;
-using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Events.Core.Infos;
 using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.TestData;
@@ -34,7 +34,6 @@ namespace OpenFTTH.APIGateway.Conversion
         private UtilityNetworkProjection _utilityNetwork;
         private LookupCollection<SpanEquipmentSpecification> _spanEquipmentSpecifications;
 
-        //private string _tableName = "conversion.ne_multiconduit_conversion_result";
         private string _tableName = "conversion.fibercables";
 
         private string _directInRouteTableName = "conversion.cable_in_route_segment_rels";
@@ -110,7 +109,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
             foreach (var spanEquipment in spanEquipments)
             {
-                
+
                 var result = PlaceCableSpanEquipment(logCmd, spanEquipment.Id, spanEquipment.ExternalId, spanEquipment.SpecificatonId, spanEquipment.SegmentIds, spanEquipment.ConduitRels);
 
                 if (result.IsFailed)
@@ -154,7 +153,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
             if (validateInterestResult.IsFailed)
                 return Result.Fail(validateInterestResult.Errors.First());
-       
+
             // trace all conduits
             var conduitsTraceResult = TraceAllConduits(conduitRels);
 
@@ -178,7 +177,7 @@ namespace OpenFTTH.APIGateway.Conversion
                 NamingInfo = namingInfo,
             };
 
-            
+
             var placeSpanEquipmentResult = _commandDispatcher.HandleAsync<PlaceSpanEquipmentInUtilityNetwork, Result>(placeSpanEquipmentCommand).Result;
 
             if (placeSpanEquipmentResult.IsFailed)
@@ -208,7 +207,7 @@ namespace OpenFTTH.APIGateway.Conversion
                 LogStatus((NpgsqlCommand)logCmd, _tableName, errorMsg, externalId);
                 return placeSpanEquipmentResult;
             }
-            
+
             return Result.Ok();
         }
 
@@ -313,7 +312,7 @@ namespace OpenFTTH.APIGateway.Conversion
         {
             if (directlyInRouteNetworkWalk.Count > 2)
             {
-                for (int i = 1; i < directlyInRouteNetworkWalk.Count; i+= 2)
+                for (int i = 1; i < directlyInRouteNetworkWalk.Count; i += 2)
                 {
                     LogCableToRouteNetworkRelations(externalId, directlyInRouteNetworkWalk[i]);
                 }
@@ -348,7 +347,7 @@ namespace OpenFTTH.APIGateway.Conversion
                     {
                         traceResult.FromNodeId = traceResult.OriginalTrace.FromRouteNodeId;
                         traceResult.ToNodeId = traceResult.OriginalTrace.ToRouteNodeId;
-                        
+
                         foreach (var spanSegmentId in traceResult.SpanSegmentIds)
                             alreadyUsedSpanSegmentIds.Add(spanSegmentId);
 
@@ -502,11 +501,11 @@ namespace OpenFTTH.APIGateway.Conversion
             public List<Guid> SegmentIds = new List<Guid>();
 
             public List<CableConduitRel> ConduitRels = new List<CableConduitRel>();
-            public Guid SpecificatonId { get; set;}
+            public Guid SpecificatonId { get; set; }
 
             public Guid? AccessAddressId;
             public Guid? UnitAddressId;
-            public string? AddressRemark;
+            public string AddressRemark = null;
 
             public bool MissingSegments = false;
 
@@ -575,7 +574,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
                 return result;
             }
-         
+
         }
 
         private class ConduitTraceResult
