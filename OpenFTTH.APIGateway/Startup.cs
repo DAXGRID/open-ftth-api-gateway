@@ -30,7 +30,6 @@ using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
 using OpenFTTH.EventSourcing.Postgres;
 using OpenFTTH.Events.RouteNetwork;
-using OpenFTTH.Events.UtilityNetwork;
 using OpenFTTH.RouteNetwork.Business.RouteElements.EventHandling;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 using OpenFTTH.Work.Business;
@@ -206,7 +205,6 @@ namespace OpenFTTH.APIGateway
 
             // Utility network updated
             services.AddHostedService<UtilityNetworkUpdatedEventConsumer>();
-            services.AddSingleton<IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>, ToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>>();
             services.AddSingleton<SchematicDiagramObserver>();
             services.AddSingleton<TerminalEquipmentConnectivityObserver>();
 
