@@ -1,9 +1,7 @@
 ﻿using GraphQL;
 using GraphQL.Resolvers;
 using GraphQL.Types;
-using Microsoft.Extensions.Options;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
-using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
 using System;
 
@@ -13,7 +11,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
     {
         private readonly TerminalEquipmentConnectivityObserver _terminalEquipmentConnectivityObserver;
 
-        public TerminalEquipmentConnectivityUpdatedSubscription(TerminalEquipmentConnectivityObserver terminalEquipmentConnectivityObserver, IOptions<AuthSetting> authSetting)
+        public TerminalEquipmentConnectivityUpdatedSubscription(TerminalEquipmentConnectivityObserver terminalEquipmentConnectivityObserver)
         {
             _terminalEquipmentConnectivityObserver = terminalEquipmentConnectivityObserver;
         }
