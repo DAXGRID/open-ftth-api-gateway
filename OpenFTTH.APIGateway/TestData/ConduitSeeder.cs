@@ -67,8 +67,6 @@ namespace OpenFTTH.APIGateway.TestData
             {
                 _logger.LogInformation("No conversion_database_connection_string env variable specified. Will not seed database with conversion data");
             }
-
-
         }
 
         private List<ConduitForConversion> LoadConduitsFromConversionDatabase()

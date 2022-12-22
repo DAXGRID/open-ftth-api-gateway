@@ -47,34 +47,33 @@ namespace OpenFTTH.APIGateway.Test
         private Guid Multi_Ø50_5x10_12_7_BlueYellow = Guid.Parse("dc83bdd3-142b-49ff-8a80-d8d7e1d794b3");
         private Guid Multi_Ø50_5x10_12_7_GreenWhite = Guid.Parse("2fe1a566-6477-4f24-b7df-e242bd6c7d7d");
 
-        public void Run()
+        public async Task Run()
         {
             // Manufacturer
-            AddManufacturer(new Manufacturer(Manu_GMPlast, "GM Plast"));
-            AddManufacturer(new Manufacturer(Manu_Emtelle, "Emtelle"));
+            await AddManufacturer(new Manufacturer(Manu_GMPlast, "GM Plast"));
+            await AddManufacturer(new Manufacturer(Manu_Emtelle, "Emtelle"));
 
             // Span Structure Specifications
-            AddSpecification(new SpanStructureSpecification(Ø10_Blue, "Conduit", "Ø10/8", "Blue") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Yellow, "Conduit", "Ø10/8", "Yellow") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_White, "Conduit", "Ø10/8", "White") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Green, "Conduit", "Ø10/8", "Green") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Black, "Conduit", "Ø10/8", "Black") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Red, "Conduit", "Ø10/8", "Red") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Orange, "Conduit", "Ø10/8", "Orange") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Pink, "Conduit", "Ø10/8", "Pink") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Silver, "Conduit", "Ø10/8", "Silver") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Brown, "Conduit", "Ø10/8", "Brown") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Turquoise, "Conduit", "Ø10/8", "Turquoise") { OuterDiameter = 10, InnerDiameter = 8 });
-            AddSpecification(new SpanStructureSpecification(Ø10_Violet, "Conduit", "Ø10/8", "Violet") { OuterDiameter = 10, InnerDiameter = 8 });
-
-            AddSpecification(new SpanStructureSpecification(Ø32_Orange, "Conduit", "Ø32", "Orange") { OuterDiameter = 32 });
-            AddSpecification(new SpanStructureSpecification(Ø40_Orange, "Conduit", "Ø40", "Orange") { OuterDiameter = 40 });
-            AddSpecification(new SpanStructureSpecification(Ø40_Red, "Conduit", "Ø40", "Red") { OuterDiameter = 40 });
-            AddSpecification(new SpanStructureSpecification(Ø50_Orange, "Conduit", "Ø50", "Orange") { OuterDiameter = 40 });
-            AddSpecification(new SpanStructureSpecification(Ø110_Orange, "Conduit", "Ø110", "Orange") { OuterDiameter = 40 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Blue, "Conduit", "Ø10/8", "Blue") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Yellow, "Conduit", "Ø10/8", "Yellow") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_White, "Conduit", "Ø10/8", "White") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Green, "Conduit", "Ø10/8", "Green") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Black, "Conduit", "Ø10/8", "Black") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Red, "Conduit", "Ø10/8", "Red") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Orange, "Conduit", "Ø10/8", "Orange") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Pink, "Conduit", "Ø10/8", "Pink") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Silver, "Conduit", "Ø10/8", "Silver") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Brown, "Conduit", "Ø10/8", "Brown") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Turquoise, "Conduit", "Ø10/8", "Turquoise") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø10_Violet, "Conduit", "Ø10/8", "Violet") { OuterDiameter = 10, InnerDiameter = 8 });
+            await AddSpecification(new SpanStructureSpecification(Ø32_Orange, "Conduit", "Ø32", "Orange") { OuterDiameter = 32 });
+            await AddSpecification(new SpanStructureSpecification(Ø40_Orange, "Conduit", "Ø40", "Orange") { OuterDiameter = 40 });
+            await AddSpecification(new SpanStructureSpecification(Ø40_Red, "Conduit", "Ø40", "Red") { OuterDiameter = 40 });
+            await AddSpecification(new SpanStructureSpecification(Ø50_Orange, "Conduit", "Ø50", "Orange") { OuterDiameter = 40 });
+            await AddSpecification(new SpanStructureSpecification(Ø110_Orange, "Conduit", "Ø110", "Orange") { OuterDiameter = 40 });
 
             // Span Equipment Specifications
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø32_3x10, "Conduit", "Ø32 3x10",
+            await AddSpecification(new SpanEquipmentSpecification(Multi_Ø32_3x10, "Conduit", "Ø32 3x10",
                 new SpanStructureTemplate(Ø32_Orange, 1, 1,
                     new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
@@ -87,7 +86,7 @@ namespace OpenFTTH.APIGateway.Test
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
 
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_5x10, "Conduit", "Ø40 5x10",
+            await AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_5x10, "Conduit", "Ø40 5x10",
                 new SpanStructureTemplate(Ø40_Orange, 1, 1,
                     new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
@@ -102,7 +101,7 @@ namespace OpenFTTH.APIGateway.Test
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
 
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_6x10, "Conduit", "Ø40 6x10",
+            await AddSpecification(new SpanEquipmentSpecification(Multi_Ø40_6x10, "Conduit", "Ø40 6x10",
                 new SpanStructureTemplate(Ø40_Orange, 1, 1,
                     new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
@@ -118,7 +117,7 @@ namespace OpenFTTH.APIGateway.Test
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
 
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø50_10x10, "Conduit", "Ø50 10x10",
+            await AddSpecification(new SpanEquipmentSpecification(Multi_Ø50_10x10, "Conduit", "Ø50 10x10",
                 new SpanStructureTemplate(Ø50_Orange, 1, 1,
                     new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
@@ -138,7 +137,7 @@ namespace OpenFTTH.APIGateway.Test
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
 
-            AddSpecification(new SpanEquipmentSpecification(Multi_Ø50_5x10_12_7_MultiColor, "Conduit", "Ø50 10x10",
+            await AddSpecification(new SpanEquipmentSpecification(Multi_Ø50_5x10_12_7_MultiColor, "Conduit", "Ø50 10x10",
                 new SpanStructureTemplate(Ø50_Orange, 1, 1,
                     new SpanStructureTemplate[] {
                         new SpanStructureTemplate(Ø10_Blue, 2, 1, Array.Empty<SpanStructureTemplate>()),
@@ -157,7 +156,6 @@ namespace OpenFTTH.APIGateway.Test
                 Description = "ø50 mm Multirør 5x10 + 12x7 color",
                 ManufacturerRefs = new Guid[] { Manu_GMPlast, Manu_Emtelle }
             });
-
         }
 
         private async Task AddSpecification(SpanEquipmentSpecification spec)
