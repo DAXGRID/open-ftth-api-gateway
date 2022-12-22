@@ -15,7 +15,6 @@ namespace OpenFTTH.TestData
     public class TestSpecifications
     {
         private static Guid _specSeederId = Guid.Parse("ac478ae4-9851-4c25-8b1a-d45d69e250d7");
-        private static bool _specificationsCreated = false;
         private static readonly object _myLock = new object();
 
         private ICommandDispatcher _commandDispatcher;
@@ -86,7 +85,7 @@ namespace OpenFTTH.TestData
         public static Guid Ø7_Violet = Guid.Parse("3672dd91-886a-444e-93a2-afc0d44d6541");
 
         public static Guid Ø7_3_5_Orange = Guid.Parse("00b2786c-e6b9-4f88-b4ea-584337a4d38a");
-        
+
 
         public static Guid Ø10_Blue = Guid.Parse("980a2a21-cf40-4b70-91ae-69af79be9e80");
         public static Guid Ø10_Yellow = Guid.Parse("779a8d88-1c52-4fca-b2d5-0aabfa652393");
@@ -254,8 +253,6 @@ namespace OpenFTTH.TestData
 
         public static Guid LGX_Holder = Guid.Parse("6f648aae-0fb8-4a41-9de4-617573da26a9");
 
-
-
         public FluentResults.Result<TestSpecifications> Run()
         {
             lock (_myLock)
@@ -282,8 +279,6 @@ namespace OpenFTTH.TestData
                 AddTerminalEquipmentSpecifications();
 
                 Thread.Sleep(100);
-
-                _specificationsCreated = true;
 
                 return FluentResults.Result.Ok(this);
             }
@@ -1104,7 +1099,7 @@ namespace OpenFTTH.TestData
             AddManufacturer(new Manufacturer(Manu_CommScope, "CommScope"));
             AddManufacturer(new Manufacturer(Manu_HuberSuhner, "Huber+Suhner"));
             AddManufacturer(new Manufacturer(Manu_ABB, "ABB"));
-            
+
 
             AddManufacturer(new Manufacturer(Manu_Nokia, "Nokia"));
         }
@@ -1118,7 +1113,7 @@ namespace OpenFTTH.TestData
 
         private void AddTerminalStructureSpecifications()
         {
-          
+
             // 4 Pin Tray Uknown Type
             AddSpecification(new TerminalStructureSpecification(SpliceTray_Uknown4Pin, "SpliceTray", "Splidsebakke 4 Søm", "Bakke 4 Søm",
                 new TerminalTemplate[]
@@ -1248,7 +1243,7 @@ namespace OpenFTTH.TestData
                     new TerminalTemplate("24", TerminalDirectionEnum.BI, false, true) { ConnectorType = "LX.5/UPC"}
                 }
             ));
-                      
+
             // LISA 24 Søm LC/APC
             AddSpecification(new TerminalStructureSpecification(SplicePatchTray_LC_APC, "SplicePatchTray", "LISATray 24 x LC/APC", "LISA LC/APC",
                 new TerminalTemplate[]
@@ -1330,7 +1325,7 @@ namespace OpenFTTH.TestData
                     new TerminalTemplate("24", TerminalDirectionEnum.BI, false, true) { ConnectorType = "LC/APC"}
                 }
             ));
-                       
+
 
             // GSS 4 x 1:2 splitter bakke
             AddSpecification(new TerminalStructureSpecification(GSS_4x1_2_Splitter, "Splitters", "GSS Bakke med 4 stk 1:2 Splitter", "1:2 Split",
@@ -1350,7 +1345,7 @@ namespace OpenFTTH.TestData
                     new TerminalTemplate("spl4_ud2 (søm 12)", TerminalDirectionEnum.OUT, true, false) { ConnectorType = "LC/APC", InternalConnectivityNode = "spl4" },
                  }
             ));
-                    
+
 
             // PLC LISA 1:32 splitter LC/APC
             AddSpecification(new TerminalStructureSpecification(PLC_1_32_Splitter_LISA, "Splitters", "Splittermodul PLC 1:32 4,6m LC/APC (LISA)", "1:32 Split",
@@ -1553,7 +1548,7 @@ namespace OpenFTTH.TestData
                 }
             ));
 
-          
+
             // 8 Port Line Card
             AddSpecification(new TerminalStructureSpecification(OLT_LineCard8Port, "LineCards", "ISAM FD/FX 8port GPON Line board", "8 ports LT kort",
                 new TerminalTemplate[]
@@ -1664,7 +1659,6 @@ namespace OpenFTTH.TestData
                 }
             ));
 
-
             // VMC 12 bakker
             AddSpecification(new TerminalEquipmentSpecification(SpliceClosure_VMC_12Tray, "SpliceClosure", "VMC Splidseboks 24 Fiber 12 stk. bakker med 12 søm", "VMC-12", false, 0,
                 new TerminalStructureTemplate[]
@@ -1756,7 +1750,6 @@ namespace OpenFTTH.TestData
                 }
             ));
 
-
             // BUDI 1S 16 smal bakker
             AddSpecification(new TerminalEquipmentSpecification(SpliceClosure_BUDI1S_16SCTrays, "SpliceClosure", "BUDI-1S splidseboks 48 Fiber 16 stk. SC bakker med 12 søm", "BUDI-1S", false, 0,
                 new TerminalStructureTemplate[]
@@ -1795,7 +1788,6 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
 
-
             // BUDI 2S 1 bakke
             AddSpecification(new TerminalEquipmentSpecification(SpliceClosure_BUDI2S_1SETrays, "SpliceClosure", "BUDI-2S splidseboks 12 Fiber 1 stk. SE bakker med 12 søm", "BUDI-2S", false, 0,
                 new TerminalStructureTemplate[]
@@ -1804,7 +1796,6 @@ namespace OpenFTTH.TestData
                }
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
-
 
             // FTUO
             AddSpecification(new TerminalEquipmentSpecification(SpliceClosure_FTUO, "SpliceClosure", "FTUO udvendig splideboks med plads til 12 søm", "FTUO", false, 0,
@@ -1815,8 +1806,6 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
 
-
-
             // LISA 24 Søm APC+UDF Tray
             AddSpecification(new TerminalEquipmentSpecification(Subrack_LISA_APC_UPC, "Subrack", "LISATray 12 x LX.5/UPC og 12 x LX.5/APC", "LISA APC+UPC", true, 1,
                 new TerminalStructureTemplate[]
@@ -1825,7 +1814,6 @@ namespace OpenFTTH.TestData
                }
             )
             { ManufacturerRefs = new Guid[] { Manu_HuberSuhner } });
-     
 
             // LISA 24 Søm LC APC Tray
             AddSpecification(new TerminalEquipmentSpecification(Subrack_LISA_LC_APC, "Subrack", "LISATray 24 x LC/APC", "LISA LC/APC", true, 1,
@@ -1836,7 +1824,6 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_HuberSuhner } });
 
-
             // LISA 24 Søm LC APC Tray
             AddSpecification(new TerminalEquipmentSpecification(Subrack_LISA_Splice, "Subrack", "LISATray 24 x Gennemsplidsning", "LISA søm", true, 1,
                 new TerminalStructureTemplate[]
@@ -1846,7 +1833,6 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_HuberSuhner } });
 
-  
             // Customer termination
             AddSpecification(new TerminalEquipmentSpecification(CustomerTermination, "Kundeterminering", "Kundeterminering", "Kundeterminering med 4 søm", false, 0,
                 new TerminalStructureTemplate[]
@@ -1859,9 +1845,7 @@ namespace OpenFTTH.TestData
                 IsCustomerTermination = true
             });
 
-
-
-            // Patch/splidse GPS2 19" 72xSC/APC  
+            // Patch/splidse GPS2 19" 72xSC/APC
             AddSpecification(new TerminalEquipmentSpecification(Subrack_GPS_72_SC, "Subrack", "Patch/splidse GPS2 19\" 72 x SC/APC", "GPS2-72", true, 4,
                 new TerminalStructureTemplate[]
                 {
@@ -1875,8 +1859,7 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
 
-
-            // Patch/splidse GPS2 19" 144xLC/APC  
+            // Patch/splidse GPS2 19" 144xLC/APC
             AddSpecification(new TerminalEquipmentSpecification(Subrack_GPS_144_LC, "Subrack", "Patch/splidse GPS2 19\" 144 x LC/APC", "GPS2-144", true, 4,
                 new TerminalStructureTemplate[]
                 {
@@ -1889,7 +1872,6 @@ namespace OpenFTTH.TestData
                }
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
-           
 
             // GSS with 24 1:2 splitters  
             AddSpecification(new TerminalEquipmentSpecification(GSS_24_Splitters, "Subrack", "GSS m. 1:2 split komplet", "1:2 Split", true, 4,
@@ -1919,9 +1901,6 @@ namespace OpenFTTH.TestData
             )
             { ManufacturerRefs = new Guid[] { Manu_CommScope } });
 
-
-
-
             // LISA splitter holder 
             AddSpecification(new TerminalEquipmentSpecification(LISA_SplitterHolder, "Subrack", "Splitterholder HuberSuhner f 6x5 splittere", "Splitterholder LISA", true, 2,
                 Array.Empty<TerminalStructureTemplate>()
@@ -1938,7 +1917,6 @@ namespace OpenFTTH.TestData
                 Array.Empty<TerminalStructureTemplate>()
             )
             { ManufacturerRefs = new Guid[] { Manu_Nokia } });
-
         }
 
         private void AddSpecification(SpanEquipmentSpecification spec)
@@ -1964,7 +1942,7 @@ namespace OpenFTTH.TestData
 
         private void AddSpecification(NodeContainerSpecification spec)
         {
-            var cmd = new AddNodeContainerSpecification(Guid.NewGuid(), new UserContext("specification seeder",_specSeederId), spec);
+            var cmd = new AddNodeContainerSpecification(Guid.NewGuid(), new UserContext("specification seeder", _specSeederId), spec);
 
             var cmdResult = _commandDispatcher.HandleAsync<AddNodeContainerSpecification, Result>(cmd).Result;
 
