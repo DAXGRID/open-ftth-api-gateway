@@ -12,12 +12,10 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
     public class TerminalEquipmentConnectivityUpdatedSubscription
     {
         private readonly TerminalEquipmentConnectivityObserver _terminalEquipmentConnectivityObserver;
-        private readonly AuthSetting _authSetting;
 
         public TerminalEquipmentConnectivityUpdatedSubscription(TerminalEquipmentConnectivityObserver terminalEquipmentConnectivityObserver, IOptions<AuthSetting> authSetting)
         {
             _terminalEquipmentConnectivityObserver = terminalEquipmentConnectivityObserver;
-            _authSetting = authSetting.Value;
         }
 
         public void AddFields(ObjectGraphType objectGraphType)
