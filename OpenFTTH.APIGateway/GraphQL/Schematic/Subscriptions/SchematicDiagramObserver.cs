@@ -16,17 +16,18 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
     public class SchematicDiagramObserver : IObserver<RouteNetworkElementContainedEquipmentUpdated>
     {
         private readonly ILogger<SchematicDiagramObserver> _logger;
-        private readonly IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _toposTypedEventObserable;
+        private readonly ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _typedEventObservable;
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly ConcurrentDictionary<Guid, Subject<Diagram>> _observableByRouteNetworkElementId = new();
 
-        private ConcurrentDictionary<Guid, Subject<Diagram>> _observableByRouteNetworkElementId = new ConcurrentDictionary<Guid, Subject<Diagram>>();
-
-        public SchematicDiagramObserver(ILogger<SchematicDiagramObserver> logger, IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> toposTypedEventObserable, IQueryDispatcher queryDispatcher)
+        public SchematicDiagramObserver(
+            ILogger<SchematicDiagramObserver> logger,
+            ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> typedEventObservable, IQueryDispatcher queryDispatcher)
         {
             _logger = logger;
-            _toposTypedEventObserable = toposTypedEventObserable;
+            _typedEventObservable = typedEventObservable;
             _queryDispatcher = queryDispatcher;
-            _toposTypedEventObserable.OnEvent.Subscribe(this);
+            _typedEventObservable.OnEvent.Subscribe(this);
         }
 
         public IObservable<Diagram> WhenDiagramNeedsUpdate(Guid routeNetworkElementId)
@@ -69,12 +70,11 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
                     if (@event.Category != null && @event.Category.StartsWith("EquipmentStructureModification"))
                         continue;
 
-
                     observable.OnNext(GetDiagram(routeNetworkElementId));
                 }
             }
         }
-        
+
         private Diagram GetDiagram(Guid routeNetworkElementId)
         {
             // We catch all execeptions to avoid Topos retrying (calling the message handler again and again)

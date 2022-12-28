@@ -1,72 +1,55 @@
 using DAX.EventProcessing.Dispatcher;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using OpenFTTH.APIGateway.Settings;
+using Newtonsoft.Json;
 using OpenFTTH.Events.UtilityNetwork;
+using OpenFTTH.NotificationClient;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Topos.Config;
 
 namespace OpenFTTH.APIGateway.Workers
 {
     public class UtilityNetworkUpdatedEventConsumer : BackgroundService
     {
-        private readonly ILogger<UtilityNetworkUpdatedEventConsumer> _logger;
-        private readonly IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _eventDispatcher;
-        private readonly KafkaSetting _kafkaSetting;
+        private readonly ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _eventDispatcher;
+        private readonly Client _notificationClient;
 
-        private IDisposable _kafkaConsumer;
-
-        public UtilityNetworkUpdatedEventConsumer(ILogger<UtilityNetworkUpdatedEventConsumer> logger, IOptions<KafkaSetting> kafkaSetting, IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> eventDispatcher)
+        public UtilityNetworkUpdatedEventConsumer(
+            ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> eventDispatcher,
+            OpenFTTH.NotificationClient.Client notificationClient)
         {
-            _logger = logger;
-            _kafkaSetting = kafkaSetting.Value;
             _eventDispatcher = eventDispatcher;
+            _notificationClient = notificationClient;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting utility network updated event consumer worker at: {time}", DateTimeOffset.Now);
+            var notificationCh = _notificationClient.Connect();
 
-            try
+            var notifications = notificationCh.ReadAllAsync().ConfigureAwait(false);
+
+            await foreach (var notification in notifications)
             {
-                if (String.IsNullOrEmpty(_kafkaSetting.UtilityNetworkNotificationsTopic))
-                    throw new ApplicationException("UtilityNetworkNotificationsTopic Kafka app setting must be set!");
+                if (string.CompareOrdinal(notification.Type, "RouteNetworkElementContainedEquipmentUpdated") == 0)
+                {
+                    var areaUpdated = JsonConvert
+                        .DeserializeObject<RouteNetworkElementContainedEquipmentUpdated>(notification.Body);
 
-                _kafkaConsumer = _eventDispatcher.Config("utility_network_updated_event_" + Guid.NewGuid(), c => {
-                    var kafkaConfig = c.UseKafka(_kafkaSetting.Server);
-
-                    if (_kafkaSetting.CertificateFilename != null)
+                    if (areaUpdated is null)
                     {
-                        kafkaConfig.WithCertificate(_kafkaSetting.CertificateFilename);
+                        throw new InvalidOperationException(
+                            $"Could not deserialize {nameof(RouteNetworkElementContainedEquipmentUpdated)} resulted in null.");
                     }
-                })
-              .Logging(l => l.UseSerilog())
-              .Positions(x =>
-              {
-                  x.SetInitialPosition(StartFromPosition.Now);
-                  x.StoreInMemory();
-              })
-              .Topics(t => t.Subscribe(_kafkaSetting.UtilityNetworkNotificationsTopic))
-              .Start();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
 
-            await Task.CompletedTask;
+                    _eventDispatcher.Dispatch(areaUpdated);
+                }
+            }
         }
 
-        public override async Task StopAsync(CancellationToken stoppingToken)
+        public override Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Stopping background worker");
-            _kafkaConsumer.Dispose();
-
-            await Task.CompletedTask;
+            _notificationClient.Dispose();
+            return Task.CompletedTask;
         }
-
     }
 }

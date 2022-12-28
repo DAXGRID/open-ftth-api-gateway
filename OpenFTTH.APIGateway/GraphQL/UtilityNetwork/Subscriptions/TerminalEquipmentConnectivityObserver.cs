@@ -7,7 +7,6 @@ using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
 using OpenFTTH.UtilityGraphService.API.Queries;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -17,17 +16,19 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
     public class TerminalEquipmentConnectivityObserver : IObserver<RouteNetworkElementContainedEquipmentUpdated>
     {
         private readonly ILogger<TerminalEquipmentConnectivityObserver> _logger;
-        private readonly IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _toposTypedEventObserable;
+        private readonly ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> _typedEventObversable;
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, ObserverSubject>> _observableByRouteNetworkElementId = new();
 
-        private ConcurrentDictionary<Guid, ConcurrentDictionary<Guid,ObserverSubject>> _observableByRouteNetworkElementId = new ConcurrentDictionary<Guid, ConcurrentDictionary<Guid,ObserverSubject>>();
-
-        public TerminalEquipmentConnectivityObserver(ILogger<TerminalEquipmentConnectivityObserver> logger, IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> toposTypedEventObserable, IQueryDispatcher queryDispatcher)
+        public TerminalEquipmentConnectivityObserver(
+            ILogger<TerminalEquipmentConnectivityObserver> logger,
+            ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> typedEventObservable,
+            IQueryDispatcher queryDispatcher)
         {
             _logger = logger;
-            _toposTypedEventObserable = toposTypedEventObserable;
+            _typedEventObversable = typedEventObservable;
             _queryDispatcher = queryDispatcher;
-            _toposTypedEventObserable.OnEvent.Subscribe(this);
+            _typedEventObversable.OnEvent.Subscribe(this);
         }
 
         public IObservable<TerminalEquipmentAZConnectivityViewModel> WhenViewNeedsUpdate(Guid routeNodeId, Guid terminalEquipmentOrRackId)

@@ -39,6 +39,9 @@ using Serilog.Events;
 using Serilog.Formatting.Compact;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using Typesense.Setup;
@@ -142,7 +145,11 @@ namespace OpenFTTH.APIGateway
                      Configuration.GetSection("Typesense").Bind(typesenseSettings));
 
             services.Configure<AuthSetting>(authSettings =>
-                            Configuration.GetSection("Auth").Bind(authSettings));
+                                            Configuration.GetSection("Auth").Bind(authSettings));
+
+            services.Configure<NotificationServerSetting>(
+                notificationServerSettings =>
+                Configuration.GetSection("NotificationServer").Bind(notificationServerSettings));
 
             services.Configure<OutageServiceSetting>(outageServceSettings =>
                           Configuration.GetSection("OutageService").Bind(outageServceSettings));
@@ -161,14 +168,23 @@ namespace OpenFTTH.APIGateway
                                   });
             });
 
-            // Use kafka as external event producer
             services.AddSingleton<IExternalEventProducer>(x =>
-                new KafkaProducer(
-                    x.GetRequiredService<ILogger<KafkaProducer>>(),
-                    x.GetRequiredService<IOptions<KafkaSetting>>().Value.Server,
-                    x.GetRequiredService<IOptions<KafkaSetting>>().Value.CertificateFilename
-                )
-            );
+            {
+                var notificationServerSetting = x.GetService<NotificationServerSetting>();
+                if (notificationServerSetting is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Could not find service '{nameof(NotificationServerSetting)}'.");
+                }
+
+                var ipAddress = Dns.GetHostEntry(notificationServerSetting.Domain).AddressList
+                    .First(x => x.AddressFamily == AddressFamily.InterNetwork);
+
+                return new NotificationProducer(
+                    ipAddress,
+                    notificationServerSetting.Port
+                );
+            });
 
             // Event Sourcing and CQRS Stuff
             var assembliesWithBusinessLogic = new Assembly[] {
@@ -200,13 +216,34 @@ namespace OpenFTTH.APIGateway
             services.AddSingleton<RouteNetworkEventHandler, RouteNetworkEventHandler>();
             services.AddSingleton<IRouteNetworkState, InMemRouteNetworkState>();
             services.AddSingleton<IRouteNetworkRepository, InMemRouteNetworkRepository>();
-            services.AddSingleton<IToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>, ToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>>();
 
             services.AddHostedService<RouteNetworkEventConsumer>();
 
             // Utility network updated
             services.AddHostedService<UtilityNetworkUpdatedEventConsumer>();
+
+            // Important that it is scoped, we want a new instance for each injection.
+            services.AddScoped<OpenFTTH.NotificationClient.Client>(x =>
+            {
+                var notificationServerSetting = x.GetService<NotificationServerSetting>();
+                if (notificationServerSetting is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Could not find service '{nameof(NotificationServerSetting)}'.");
+                }
+
+                var ipAddress = Dns.GetHostEntry(notificationServerSetting.Domain).AddressList
+                    .First(x => x.AddressFamily == AddressFamily.InterNetwork);
+
+                return new OpenFTTH.NotificationClient.Client(ipAddress, notificationServerSetting.Port);
+            });
+
+            services.AddSingleton<IToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>, ToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>>();
             services.AddSingleton<IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>, ToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>>();
+
+            services.AddSingleton<ITypedEventObservable<RouteNetworkEditOperationOccuredEvent>, TypedEventObservable<RouteNetworkEditOperationOccuredEvent>>();
+            services.AddSingleton<ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>, TypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>>();
+
             services.AddSingleton<SchematicDiagramObserver>();
             services.AddSingleton<TerminalEquipmentConnectivityObserver>();
 
