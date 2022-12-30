@@ -210,7 +210,7 @@ namespace OpenFTTH.APIGateway
                     connectionString: e.GetRequiredService<IOptions<EventStoreDatabaseSetting>>().Value.PostgresConnectionString,
                     databaseSchemaName: "events"
                 ) as IEventStore
-                );
+            );
 
             services.AddProjections(assembliesWithBusinessLogic);
 
