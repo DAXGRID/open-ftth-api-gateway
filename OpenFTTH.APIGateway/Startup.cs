@@ -129,40 +129,47 @@ namespace OpenFTTH.APIGateway
                 });
 
             // Settings
-            services.Configure<KafkaSetting>(kafkaSettings =>
-                            Configuration.GetSection("Kafka").Bind(kafkaSettings));
+            services.Configure<KafkaSetting>(
+                kafkaSettings =>
+                Configuration.GetSection("Kafka").Bind(kafkaSettings));
 
-            services.Configure<EventStoreDatabaseSetting>(databaseSettings =>
-                            Configuration.GetSection("EventStoreDatabase").Bind(databaseSettings));
+            services.Configure<EventStoreDatabaseSetting>(
+                databaseSettings =>
+                Configuration.GetSection("EventStoreDatabase").Bind(databaseSettings));
 
-            services.Configure<GeoDatabaseSetting>(databaseSettings =>
-                            Configuration.GetSection("GeoDatabase").Bind(databaseSettings));
+            services.Configure<GeoDatabaseSetting>(
+                databaseSettings =>
+                Configuration.GetSection("GeoDatabase").Bind(databaseSettings));
 
-            services.Configure<TypesenseSetting>(typesenseSettings =>
-                     Configuration.GetSection("Typesense").Bind(typesenseSettings));
+            services.Configure<TypesenseSetting>(
+                typesenseSettings =>
+                Configuration.GetSection("Typesense").Bind(typesenseSettings));
 
-            services.Configure<AuthSetting>(authSettings =>
-                                            Configuration.GetSection("Auth").Bind(authSettings));
+            services.Configure<AuthSetting>(
+                authSettings =>
+                Configuration.GetSection("Auth").Bind(authSettings));
 
             services.Configure<NotificationServerSetting>(
                 notificationServerSettings =>
                 Configuration.GetSection("NotificationServer").Bind(notificationServerSettings));
 
-            services.Configure<OutageServiceSetting>(outageServceSettings =>
-                          Configuration.GetSection("OutageService").Bind(outageServceSettings));
+            services.Configure<OutageServiceSetting>(
+                outageServceSettings =>
+                Configuration.GetSection("OutageService").Bind(outageServceSettings));
 
             // Web stuff
             services.AddRazorPages();
             // CORS
             services.AddCors(options =>
             {
-                options.AddPolicy(name: AllowedOrigins,
-                                  builder =>
-                                  {
-                                      builder.AllowAnyOrigin();
-                                      builder.AllowAnyMethod();
-                                      builder.AllowAnyHeader();
-                                  });
+                options.AddPolicy(
+                    name: AllowedOrigins,
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                        builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                    });
             });
 
             services.AddSingleton<IExternalEventProducer>(x =>
@@ -196,12 +203,13 @@ namespace OpenFTTH.APIGateway
             services.AddConnections();
 
             // Setup the event store
-            services.AddSingleton<IEventStore>(e =>
-                    new PostgresEventStore(
-                        serviceProvider: e.GetRequiredService<IServiceProvider>(),
-                        connectionString: e.GetRequiredService<IOptions<EventStoreDatabaseSetting>>().Value.PostgresConnectionString,
-                        databaseSchemaName: "events"
-                    ) as IEventStore
+            services.AddSingleton<IEventStore>(
+                e =>
+                new PostgresEventStore(
+                    serviceProvider: e.GetRequiredService<IServiceProvider>(),
+                    connectionString: e.GetRequiredService<IOptions<EventStoreDatabaseSetting>>().Value.PostgresConnectionString,
+                    databaseSchemaName: "events"
+                ) as IEventStore
                 );
 
             services.AddProjections(assembliesWithBusinessLogic);
@@ -253,8 +261,10 @@ namespace OpenFTTH.APIGateway
             });
 
             // Address service
-            services.AddSingleton<IAddressRepository>(x =>
-                    new PostgresAddressRepository(x.GetRequiredService<IOptions<GeoDatabaseSetting>>().Value.PostgresConnectionString)
+            services.AddSingleton<IAddressRepository>(
+                x =>
+                new PostgresAddressRepository(
+                    x.GetRequiredService<IOptions<GeoDatabaseSetting>>().Value.PostgresConnectionString)
             );
 
             // Coordinate converter
@@ -267,7 +277,9 @@ namespace OpenFTTH.APIGateway
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
 
             app.UseCors(AllowedOrigins);
 
