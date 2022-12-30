@@ -234,9 +234,7 @@ namespace OpenFTTH.APIGateway
             });
 
             services.AddSingleton<IToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>, ToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent>>();
-            services.AddSingleton<IToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>, ToposTypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>>();
 
-            services.AddSingleton<ITypedEventObservable<RouteNetworkEditOperationOccuredEvent>, TypedEventObservable<RouteNetworkEditOperationOccuredEvent>>();
             services.AddSingleton<ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>, TypedEventObservable<RouteNetworkElementContainedEquipmentUpdated>>();
 
             services.AddSingleton<SchematicDiagramObserver>();
