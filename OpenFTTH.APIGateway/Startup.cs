@@ -170,12 +170,11 @@ namespace OpenFTTH.APIGateway
 
             services.AddSingleton<IExternalEventProducer>(x =>
             {
-                var notificationServerSetting = x.GetService<NotificationServerSetting>();
-                if (notificationServerSetting is null)
-                {
+                var notificationServerSetting = Configuration
+                    .GetSection("NotificationServer")
+                    .Get<NotificationServerSetting>() ??
                     throw new InvalidOperationException(
                         $"Could not find service '{nameof(NotificationServerSetting)}'.");
-                }
 
                 var ipAddress = Dns.GetHostEntry(notificationServerSetting.Domain).AddressList
                     .First(x => x.AddressFamily == AddressFamily.InterNetwork);
@@ -225,12 +224,11 @@ namespace OpenFTTH.APIGateway
             // Important that it is scoped, we want a new instance for each injection.
             services.AddScoped<OpenFTTH.NotificationClient.Client>(x =>
             {
-                var notificationServerSetting = x.GetService<NotificationServerSetting>();
-                if (notificationServerSetting is null)
-                {
+                var notificationServerSetting = Configuration
+                    .GetSection("NotificationServer")
+                    .Get<NotificationServerSetting>() ??
                     throw new InvalidOperationException(
                         $"Could not find service '{nameof(NotificationServerSetting)}'.");
-                }
 
                 var ipAddress = Dns.GetHostEntry(notificationServerSetting.Domain).AddressList
                     .First(x => x.AddressFamily == AddressFamily.InterNetwork);
