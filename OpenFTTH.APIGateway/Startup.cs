@@ -132,9 +132,6 @@ namespace OpenFTTH.APIGateway
             services.Configure<KafkaSetting>(kafkaSettings =>
                             Configuration.GetSection("Kafka").Bind(kafkaSettings));
 
-            services.Configure<RemoteServicesSetting>(remoteServiceSettings =>
-                            Configuration.GetSection("RemoteServices").Bind(remoteServiceSettings));
-
             services.Configure<EventStoreDatabaseSetting>(databaseSettings =>
                             Configuration.GetSection("EventStoreDatabase").Bind(databaseSettings));
 
