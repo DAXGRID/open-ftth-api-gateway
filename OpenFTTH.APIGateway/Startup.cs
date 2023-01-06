@@ -306,7 +306,7 @@ namespace OpenFTTH.APIGateway
 
             app.UseGraphQL("/graphql", config =>
             {
-                config.AuthorizationRequired = !env.IsDevelopment();
+                config.AuthorizationRequired = Configuration.GetSection("Auth").GetValue<bool>("Enabled");
             });
         }
 
