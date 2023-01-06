@@ -302,12 +302,10 @@ namespace OpenFTTH.APIGateway
             });
 
             app.UseGraphQL<GraphQLHttpMiddlewareWithLogs<OpenFTTHSchema>>(
-                "/graphql", new GraphQLHttpMiddlewareOptions());
-
-            app.UseGraphQL("/graphql", config =>
-            {
-                config.AuthorizationRequired = Configuration.GetSection("Auth").GetValue<bool>("Enabled");
-            });
+                "/graphql", new GraphQLHttpMiddlewareOptions
+                {
+                    AuthorizationRequired = !env.IsDevelopment()
+                });
         }
 
         private static void ConfigureLogging(IConfigurationRoot configuration, IServiceCollection services)
