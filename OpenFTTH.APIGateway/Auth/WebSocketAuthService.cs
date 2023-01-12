@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using OpenFTTH.APIGateway.Settings;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -34,17 +35,30 @@ namespace OpenFTTH.APIGateway.Auth
 
         public async Task AuthenticateAsync(IWebSocketConnection connection, string subProtocol, OperationMessage operationMessage)
         {
-            var payload = _serializer.ReadNode<Inputs>(operationMessage.Payload);
-            if ((payload?.TryGetValue("Authorization", out var value) ?? false) && value is string valueString)
+            try
             {
-                // We remove the `Bearer` part since it is not part of the token.
-                var token = valueString.ToString().Replace("Bearer ", string.Empty);
-                var user = await ParseToken(token);
-                if (user is not null)
+                var payload = _serializer.ReadNode<Inputs>(operationMessage.Payload);
+                if ((payload?.TryGetValue("Authorization", out var value) ?? false) && value is string valueString)
                 {
-                    // set user indicates authentication was successful
-                    connection.HttpContext.User = user;
+                    // We remove the `Bearer` part since it is not part of the token.
+                    var token = valueString.ToString().Replace("Bearer ", string.Empty);
+                    var user = await ParseToken(token);
+                    if (user is not null)
+                    {
+                        // set user indicates authentication was successful
+                        connection.HttpContext.User = user;
+                    }
                 }
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                // In case the security token is expired, we do nothing.
+                // The `HttpContext.User` won't be set so the user won't be authorized.
+            }
+            catch (OperationCanceledException)
+            {
+                // In case the operation is cancelled before it is finished, we do nothing.
+                // The `HttpContext.User` won't be set so the user won't be authorized.
             }
         }
 
