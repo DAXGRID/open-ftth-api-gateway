@@ -1,6 +1,7 @@
 using GraphQL;
 using GraphQL.Server.Transports.AspNetCore.WebSockets;
 using GraphQL.Transport;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -19,11 +20,13 @@ namespace OpenFTTH.APIGateway.Auth
         private readonly IGraphQLSerializer _serializer;
         private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
         private readonly AuthSetting _authSetting;
+        private readonly ILogger<WebSocketAuthService> _logger;
 
         public WebSocketAuthService(
             IGraphQLSerializer serializer,
             IOptions<AuthSetting> authSetting,
-            HttpClient httpClient)
+            HttpClient httpClient,
+            ILogger<WebSocketAuthService> logger)
         {
             _serializer = serializer;
             _authSetting = authSetting.Value;
@@ -31,6 +34,7 @@ namespace OpenFTTH.APIGateway.Auth
                 $"{_authSetting.Host}/.well-known/openid-configuration",
                 new OpenIdConnectConfigurationRetriever(),
                 new HttpDocumentRetriever(httpClient) { RequireHttps = _authSetting.RequireHttps });
+            _logger = logger;
         }
 
         public async Task AuthenticateAsync(IWebSocketConnection connection, string subProtocol, OperationMessage operationMessage)
@@ -50,15 +54,20 @@ namespace OpenFTTH.APIGateway.Auth
                     }
                 }
             }
-            catch (SecurityTokenExpiredException)
-            {
-                // In case the security token is expired, we do nothing.
-                // The `HttpContext.User` won't be set so the user won't be authorized.
-            }
             catch (OperationCanceledException)
             {
                 // In case the operation is cancelled before it is finished, we do nothing.
                 // The `HttpContext.User` won't be set so the user won't be authorized.
+            }
+            catch (SecurityTokenExpiredException ex)
+            {
+                // In case the security token is expired, we do nothing.
+                // The `HttpContext.User` won't be set so the user won't be authorized.
+                _logger.LogInformation("ex", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("ex", ex.Message);
             }
         }
 
