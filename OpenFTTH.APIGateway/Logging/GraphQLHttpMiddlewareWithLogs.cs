@@ -38,30 +38,19 @@ namespace OpenFTTH.APIGateway.Logging
             IServiceProvider serviceProvider,
             IDictionary<string, object> userContext)
         {
-            try
+            var executionResult = await base.ExecuteRequestAsync(context, request, serviceProvider, userContext);
+            if (executionResult.Errors is not null)
             {
-                var executionResult = await base.ExecuteRequestAsync(context, request, serviceProvider, userContext);
-                if (executionResult.Errors is not null)
-                {
-                    var username = context.User?.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "USERNAME NOT FOUND";
-                    var failedQuery = GetQueryWithParameters(request);
-                    _logger.LogError(
-                        "User: {Username} - GraphQL execution with error(s): {Errors}.\n{FailedQuery}",
-                        username,
-                        executionResult.Errors,
-                        failedQuery);
-                }
-
-                return executionResult;
-            }
-            catch (OperationCanceledException)
-            {
-                // In case the operation is canceled, we do nothing.
-                // It can happen if the socket connection for the request is closed
-                // before the request is finished.
+                var username = context.User?.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "USERNAME NOT FOUND";
+                var failedQuery = GetQueryWithParameters(request);
+                _logger.LogError(
+                    "User: {Username} - GraphQL execution with error(s): {Errors}.\n{FailedQuery}",
+                    username,
+                    executionResult.Errors,
+                    failedQuery);
             }
 
-            return null;
+            return executionResult;
         }
 
         private static string GetQueryWithParameters(GraphQLRequest request)
