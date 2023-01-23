@@ -31,7 +31,6 @@ using OpenFTTH.EventSourcing;
 using OpenFTTH.EventSourcing.Postgres;
 using OpenFTTH.Events.RouteNetwork;
 using OpenFTTH.Events.UtilityNetwork;
-using OpenFTTH.RouteNetwork.Business.RouteElements.EventHandling;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 using OpenFTTH.Work.Business;
 using Serilog;
@@ -129,10 +128,6 @@ namespace OpenFTTH.APIGateway
                 });
 
             // Settings
-            services.Configure<KafkaSetting>(
-                kafkaSettings =>
-                Configuration.GetSection("Kafka").Bind(kafkaSettings));
-
             services.Configure<EventStoreDatabaseSetting>(
                 databaseSettings =>
                 Configuration.GetSection("EventStoreDatabase").Bind(databaseSettings));
@@ -217,7 +212,6 @@ namespace OpenFTTH.APIGateway
             services.AddCQRS(assembliesWithBusinessLogic);
 
             services.AddSingleton<WorkContextManager, WorkContextManager>();
-            services.AddSingleton<RouteNetworkEventHandler, RouteNetworkEventHandler>();
             services.AddSingleton<IRouteNetworkState, InMemRouteNetworkState>();
             services.AddSingleton<IRouteNetworkRepository, InMemRouteNetworkRepository>();
 
