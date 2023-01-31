@@ -17,34 +17,20 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.OuterConduitInfo, type: typeof(StringGraphType)).Description("Outer conduit info");
             Field(x => x.InnerConduitInfo, type: typeof(StringGraphType)).Description("Inner conduit info");
 
-            Field<FloatGraphType>(
-                name: "SegmentLength",
-                description: "Segment length",
-                resolve: context =>
-                {
-                    return Math.Round(context.Source.SegmentLength, 2);
-                }
-            );
+            Field(x => x.SegmentLength, type: typeof(FloatGraphType))
+                .Resolve(context => Math.Round(context.Source.SegmentLength, 2))
+                .Description("Segment length");
 
-            Field<FloatGraphType>(
-               name: "CumulativeDistance",
-               description: "Cumulative distance",
-               resolve: context =>
-               {
-                   return Math.Round(context.Source.CumulativeDistance, 2);
-               }
-            );
+            Field(x => x.CumulativeDistance, type: typeof(FloatGraphType))
+                .Resolve(context => Math.Round(context.Source.CumulativeDistance, 2))
+                .Description("Cumulative distance");
 
-            Field(x => x.RouteSegmentIds, type: typeof(ListGraphType<IdGraphType>)).Description("Route network segment ids of the span segment traversal");
+            Field(x => x.RouteSegmentIds, type: typeof(ListGraphType<IdGraphType>))
+                .Description("Route network segment ids of the span segment traversal");
 
-            Field<ListGraphType<StringGraphType>>(
-               name: "RouteSegmentGeometries",
-               description: "Route network segment geometries of the span segment traversal",
-               resolve: context =>
-               {
-                   return coordinateConverter.ConvertGeoJsonLineStringsToWgs84(context.Source.RouteSegmentGeometries).WGS84GeoJsonStrings;
-               }
-            );
+            Field(x => x.RouteSegmentGeometries, type: typeof(ListGraphType<StringGraphType>))
+                .Resolve(context => coordinateConverter.ConvertGeoJsonLineStringsToWgs84(context.Source.RouteSegmentGeometries).WGS84GeoJsonStrings)
+                .Description("Route network segment geometries of the span segment traversal");
         }
     }
 }
