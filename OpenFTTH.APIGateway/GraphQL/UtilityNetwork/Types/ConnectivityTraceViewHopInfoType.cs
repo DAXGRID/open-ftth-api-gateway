@@ -21,24 +21,13 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
 
             Field(x => x.RouteSegmentIds, type: typeof(ListGraphType<IdGraphType>)).Description("Route network segment ids of the span segment traversal");
 
-            Field<FloatGraphType>(
-                name: "TotalLength",
-                description: "Length in meters",
-                resolve: context =>
-                {
-                    return Math.Round(context.Source.TotalLength, 2);
-                }
-            );
-     
-            Field<ListGraphType<StringGraphType>>(
-              name: "RouteSegmentGeometries",
-              description: "Route network segment geometries of the span segment traversal",
-              resolve: context =>
-              {
-                  return coordinateConverter.ConvertGeoJsonLineStringsToWgs84(context.Source.RouteSegmentGeometries).WGS84GeoJsonStrings;
-              }
-           );
+            Field(x => x.TotalLength, type: typeof(FloatGraphType))
+                .Description("Length in meters")
+                .Resolve(context => Math.Round(context.Source.TotalLength, 2));
 
+            Field(x => x.RouteSegmentGeometries)
+                .Description("Route network segment geometries of the span segment traversal")
+                .Resolve(context => coordinateConverter.ConvertGeoJsonLineStringsToWgs84(context.Source.RouteSegmentGeometries).WGS84GeoJsonStrings);
 
             Field(x => x.HopSeqNo, type: typeof(IntGraphType)).Description("Sequence number of the hop");
         }
