@@ -25,7 +25,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                 .Description("Length in meters")
                 .Resolve(context => Math.Round(context.Source.TotalLength, 2));
 
-            Field(x => x.RouteSegmentGeometries)
+            Field(x => x.RouteSegmentGeometries, type: typeof(ListGraphType<StringGraphType>))
                 .Description("Route network segment geometries of the span segment traversal")
                 .Resolve(context => coordinateConverter.ConvertGeoJsonLineStringsToWgs84(context.Source.RouteSegmentGeometries).WGS84GeoJsonStrings);
 
