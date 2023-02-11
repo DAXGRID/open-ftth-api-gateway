@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using OpenFTTH.EventSourcing;
 
 namespace OpenFTTH.APIGateway
 {
@@ -8,18 +10,21 @@ namespace OpenFTTH.APIGateway
     {
         public static void Main(string[] args)
         {
-            Host.CreateDefaultBuilder(args)
-           .ConfigureAppConfiguration((hostingContext, config) =>
-           {
-               config.AddJsonFile("appsettings.json", true, true);
-               config.AddEnvironmentVariables();
-           })
-           .ConfigureWebHostDefaults(webBuilder =>
-           {
-               webBuilder.UseStartup<Startup>();
-           })
-           .Build()
-           .Run();
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", true, true);
+                    config.AddEnvironmentVariables();
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
+                .Build();
+
+            host.Services.GetService<IEventStore>()!.ScanForProjections();
+
+            host.Run();
         }
     }
 }

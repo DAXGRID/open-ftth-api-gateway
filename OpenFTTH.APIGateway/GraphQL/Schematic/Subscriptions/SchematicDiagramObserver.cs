@@ -22,7 +22,8 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
 
         public SchematicDiagramObserver(
             ILogger<SchematicDiagramObserver> logger,
-            ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> typedEventObservable, IQueryDispatcher queryDispatcher)
+            ITypedEventObservable<RouteNetworkElementContainedEquipmentUpdated> typedEventObservable,
+            IQueryDispatcher queryDispatcher)
         {
             _logger = logger;
             _typedEventObservable = typedEventObservable;

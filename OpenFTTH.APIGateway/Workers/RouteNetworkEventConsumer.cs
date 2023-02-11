@@ -54,18 +54,24 @@ namespace OpenFTTH.APIGateway.Workers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting route network event consumer worker at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation(
+                "Starting route network event consumer worker at: {time}",
+                DateTimeOffset.Now);
 
             try
             {
                 // Memory before
                 LogMenUsage();
 
+                var inMemRouteNetworkState = (InMemRouteNetworkState)_routeNetworkState;
+
                 // Dehydrate projections
                 _logger.LogInformation("Start dehydrate in-memory projections...");
                 _eventStore.DehydrateProjections();
+                _logger.LogInformation(
+                    $"{inMemRouteNetworkState.NumberOfObjectsLoaded} route network events processed.");
                 _logger.LogInformation("Finish dehydrating in-memory projections.");
-                ((InMemRouteNetworkState)_routeNetworkState).FinishLoadMode();
+                inMemRouteNetworkState.FinishLoadMode();
 
                 // Memory after events are loaded
                 LogMenUsage();
@@ -75,7 +81,12 @@ namespace OpenFTTH.APIGateway.Workers
                 _logger.LogInformation("Healhty file written writen to tmp.");
 
                 // Start conversion
-                new ConversionRunner(_loggerFactory, _eventStore, _geoDatabaseSetting, _commandDispatcher, _queryDispatcher).Run();
+                new ConversionRunner(
+                    _loggerFactory,
+                    _eventStore,
+                    _geoDatabaseSetting,
+                    _commandDispatcher,
+                    _queryDispatcher).Run();
 
                 // Catchup external events
                 _logger.LogInformation("Start catching up external events...");
@@ -84,19 +95,26 @@ namespace OpenFTTH.APIGateway.Workers
                 {
                     try
                     {
-                        Thread.Sleep(100);
+                        await Task.Delay(100);
 
                         var eventsProcessed = _eventStore.CatchUp();
 
                         if (eventsProcessed > 0)
-                            _logger.LogInformation($"Processed {eventsProcessed} new external events.");
+                        {
+                            _logger.LogDebug(
+                                $"Processed {eventsProcessed} new external events.");
+                        }
                     }
                     catch (PostgresException ex)
                     {
                         const int RETRY_WAIT_TIME_SEC = 30;
                         _logger.LogError("{}", ex);
-                        _logger.LogInformation("Waiting {Seconds}, before retrying catchup.", RETRY_WAIT_TIME_SEC);
-                        Thread.Sleep(TimeSpan.FromSeconds(RETRY_WAIT_TIME_SEC));
+
+                        _logger.LogInformation(
+                            "Waiting {Seconds}, before retrying catchup.",
+                            RETRY_WAIT_TIME_SEC);
+
+                        await Task.Delay(TimeSpan.FromSeconds(RETRY_WAIT_TIME_SEC));
                     }
                 }
             }
@@ -105,8 +123,6 @@ namespace OpenFTTH.APIGateway.Workers
                 _logger.LogError(ex, ex.Message);
                 throw;
             }
-
-            await Task.CompletedTask;
         }
 
         public override Task StopAsync(CancellationToken stoppingToken)

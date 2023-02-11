@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using Npgsql;
 using OpenFTTH.APIGateway.Settings;
-using OpenFTTH.Events.Core;
 using OpenFTTH.EventSourcing;
 using OpenFTTH.UtilityGraphService.Business.SpanEquipments.Events;
 using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Events;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.DynamicProperties
 {
@@ -24,11 +22,10 @@ namespace OpenFTTH.APIGateway.DynamicProperties
 
         private HashSet<Guid> _customerTerminationSpecifications = new();
         private HashSet<Guid> _customerTerminations = new();
-        private Dictionary<Guid,Guid> _nodeContainerToRouteNodeId = new();
+        private Dictionary<Guid, Guid> _nodeContainerToRouteNodeId = new();
 
         private bool _isInitialized = false;
         private bool _newInstallationStoredProcedureExists = false;
-
 
         public DynamicPropertiesProjection(ILogger<DynamicPropertiesProjection> logger, IOptions<GeoDatabaseSetting> geoDatabaseSetting)
         {
@@ -36,11 +33,11 @@ namespace OpenFTTH.APIGateway.DynamicProperties
             _geoDatabaseSetting = geoDatabaseSetting.Value;
 
             Initialize();
-         
-            ProjectEventAsync<TerminalEquipmentPlacedInNodeContainer>(Project);
-            ProjectEventAsync<TerminalEquipmentSpecificationAdded>(Project);
-            ProjectEventAsync<NodeContainerPlacedInRouteNetwork>(Project);
-            ProjectEventAsync<TerminalEquipmentAddressInfoChanged>(Project);
+
+            ProjectEvent<TerminalEquipmentPlacedInNodeContainer>(Project);
+            ProjectEvent<TerminalEquipmentSpecificationAdded>(Project);
+            ProjectEvent<NodeContainerPlacedInRouteNetwork>(Project);
+            ProjectEvent<TerminalEquipmentAddressInfoChanged>(Project);
         }
 
         private void Initialize()
@@ -56,7 +53,7 @@ namespace OpenFTTH.APIGateway.DynamicProperties
             _isInitialized = true;
         }
 
-        private Task Project(IEventEnvelope eventEnvelope)
+        private void Project(IEventEnvelope eventEnvelope)
         {
             if (_newInstallationStoredProcedureExists)
             {
@@ -97,8 +94,6 @@ namespace OpenFTTH.APIGateway.DynamicProperties
 
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         private void CallNewInstallationStoredProcedure(TerminalEquipmentPlacedInNodeContainer @event)
