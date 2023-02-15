@@ -24,7 +24,6 @@ namespace OpenFTTH.APIGateway.Workers
         private readonly IEventStore _eventStore;
         private readonly IToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent> _eventDispatcher;
         private readonly IRouteNetworkState _routeNetworkState;
-        private readonly EventStoreDatabaseSetting _eventStoreDatabaseSetting;
         private readonly GeoDatabaseSetting _geoDatabaseSetting;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IQueryDispatcher _queryDispatcher;
@@ -32,7 +31,6 @@ namespace OpenFTTH.APIGateway.Workers
         public RouteNetworkEventConsumer(
             ILoggerFactory loggerFactory,
             IEventStore eventStore,
-            IOptions<EventStoreDatabaseSetting> eventStoreDatabaseSetting,
             IOptions<GeoDatabaseSetting> geoDatabaseSetting,
             IToposTypedEventObservable<RouteNetworkEditOperationOccuredEvent> eventDispatcher,
             IRouteNetworkState routeNetworkState,
@@ -42,7 +40,6 @@ namespace OpenFTTH.APIGateway.Workers
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<RouteNetworkEventConsumer>();
             _eventStore = eventStore;
-            _eventStoreDatabaseSetting = eventStoreDatabaseSetting.Value;
             _geoDatabaseSetting = geoDatabaseSetting.Value;
 
             _commandDispatcher = commandDispatcher;
