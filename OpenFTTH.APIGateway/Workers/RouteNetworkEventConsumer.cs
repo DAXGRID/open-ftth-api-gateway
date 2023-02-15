@@ -68,8 +68,7 @@ namespace OpenFTTH.APIGateway.Workers
                 // Dehydrate projections
                 _logger.LogInformation("Start dehydrate in-memory projections...");
                 _eventStore.DehydrateProjections();
-                _logger.LogInformation(
-                    $"{inMemRouteNetworkState.NumberOfObjectsLoaded} route network events processed.");
+                _logger.LogInformation($"{inMemRouteNetworkState.NumberOfObjectsLoaded} route network objects loaded.");
                 _logger.LogInformation("Finish dehydrating in-memory projections.");
                 inMemRouteNetworkState.FinishLoadMode();
 
