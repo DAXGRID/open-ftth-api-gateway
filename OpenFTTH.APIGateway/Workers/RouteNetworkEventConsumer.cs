@@ -54,9 +54,7 @@ namespace OpenFTTH.APIGateway.Workers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(
-                "Starting route network event consumer worker at: {time}",
-                DateTimeOffset.Now);
+            _logger.LogInformation("Starting route network event consumer worker.");
 
             try
             {
