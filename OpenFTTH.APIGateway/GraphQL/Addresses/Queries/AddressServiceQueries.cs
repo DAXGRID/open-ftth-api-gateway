@@ -171,7 +171,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             var coord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher);
 
-            _logger.LogInformation($"Address search info: Get coordinate of span segment: {spanSegmentId} in span equipment: {equipmentQueryResult.Value.SpanEquipment.First().Name} {equipmentQueryResult.Value.SpanEquipment.First().Id} Route node id: {lastNodeInSpanSegment} successfully returned: x={coord.Item1} y={coord.Item2}");
+            _logger.LogDebug($"Address search info: Get coordinate of span segment: {spanSegmentId} in span equipment: {equipmentQueryResult.Value.SpanEquipment.First().Name} {equipmentQueryResult.Value.SpanEquipment.First().Id} Route node id: {lastNodeInSpanSegment} successfully returned: x={coord.Item1} y={coord.Item2}");
 
             return coord;
         }
