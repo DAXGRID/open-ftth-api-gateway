@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenFTTH.APIGateway.DynamicProperties
 {
@@ -34,10 +35,10 @@ namespace OpenFTTH.APIGateway.DynamicProperties
 
             Initialize();
 
-            ProjectEvent<TerminalEquipmentPlacedInNodeContainer>(Project);
-            ProjectEvent<TerminalEquipmentSpecificationAdded>(Project);
-            ProjectEvent<NodeContainerPlacedInRouteNetwork>(Project);
-            ProjectEvent<TerminalEquipmentAddressInfoChanged>(Project);
+            ProjectEventAsync<TerminalEquipmentPlacedInNodeContainer>(ProjectAsync);
+            ProjectEventAsync<TerminalEquipmentSpecificationAdded>(ProjectAsync);
+            ProjectEventAsync<NodeContainerPlacedInRouteNetwork>(ProjectAsync);
+            ProjectEventAsync<TerminalEquipmentAddressInfoChanged>(ProjectAsync);
         }
 
         private void Initialize()
@@ -53,7 +54,7 @@ namespace OpenFTTH.APIGateway.DynamicProperties
             _isInitialized = true;
         }
 
-        private void Project(IEventEnvelope eventEnvelope)
+        private Task ProjectAsync(IEventEnvelope eventEnvelope)
         {
             if (_newInstallationStoredProcedureExists)
             {
@@ -94,6 +95,8 @@ namespace OpenFTTH.APIGateway.DynamicProperties
 
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private void CallNewInstallationStoredProcedure(TerminalEquipmentPlacedInNodeContainer @event)
