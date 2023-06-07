@@ -17,7 +17,7 @@ public sealed class LocationResponseType : ObjectGraphType<LocationResponse>
             .Name("envelope")
             .Description("The extent of the location.");
 
-        Field(x => x.RouteElementId, type: typeof(EnvelopeType))
+        Field(x => x.RouteElementId, type: typeof(IdGraphType))
             .Name("routeElementId")
             .Description("The route element id.");
 
