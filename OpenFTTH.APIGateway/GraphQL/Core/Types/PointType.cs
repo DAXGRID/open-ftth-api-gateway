@@ -7,8 +7,8 @@ namespace OpenFTTH.APIGateway.GraphQL.Core.Types
     {
         public PointType()
         {
-            Field(x => x.X, type: typeof(FloatGraphType)).Description("X");
-            Field(x => x.Y, type: typeof(FloatGraphType)).Description("Y");
+            Field(x => x.X, type: typeof(FloatGraphType)).Description("The x coordinate.");
+            Field(x => x.Y, type: typeof(FloatGraphType)).Description("The y coordinate.");
         }
     }
 }
