@@ -9,9 +9,6 @@ public sealed record LocationResponse
     public Guid RouteElementId { get; init; }
     public Point Coordinate { get; init; }
 
-    // TODO remove this...
-    public LocationResponse() { }
-
     public LocationResponse(
         Envelope envelope,
         Guid routeElementId,

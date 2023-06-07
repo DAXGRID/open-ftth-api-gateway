@@ -32,9 +32,13 @@ public class LocationQueries : ObjectGraphType
 
                 // TODO handle cases here
                 return new LocationResponse(
-                    new Envelope(10, 20, 30, 40),
-                    Guid.NewGuid(),
-                    new Point(10.0, 20.0)
+                    new Envelope(
+                        9.841922420538234,
+                        9.846643823320909,
+                        55.84230941549938,
+                        55.83975657387827),
+                    Guid.Parse("7e2da86a-179f-4d16-8507-30037a672fb8"),
+                    new Point(9.84454407055106, 55.84098217939197)
                 );
             });
     }
