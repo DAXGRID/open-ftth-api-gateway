@@ -38,10 +38,10 @@ public class LocationQueries : ObjectGraphType
                 const int EXPAND_ENVELOPE = 200;
                 var converter = new UTM32WGS84Converter();
 
-                var kind = context.GetArgument<string>("kind").ToUpperInvariant();
+                var kind = context.GetArgument<string>("kind");
                 var value = context.GetArgument<string>("value");
 
-                if (kind == "InstallationId".ToUpperInvariant())
+                if (kind.Equals("InstallationId", StringComparison.OrdinalIgnoreCase))
                 {
                     return new LocationResponse(
                         new Envelope(
@@ -53,11 +53,13 @@ public class LocationQueries : ObjectGraphType
                         new Point(9.84454407055106, 55.84098217939197)
                     );
                 }
-                else if (kind == "UnitAddressId".ToUpperInvariant())
+                else if (kind.Equals("UnitAddressId", StringComparison.OrdinalIgnoreCase))
                 {
                     var unitAddressId = Guid.Parse(value);
                     var getAddressInfoQuery = new GetAddressInfo(new Guid[] { unitAddressId });
-                    var result = await queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery);
+                    var result = await queryDispatcher
+                        .HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery);
+
                     if (result.IsFailed)
                     {
                         context.Errors.Add(new ExecutionError(result.Errors.First().Message));
@@ -66,22 +68,27 @@ public class LocationQueries : ObjectGraphType
 
                     if (result.Value.UnitAddresses.Count == 0)
                     {
-                        context.Errors.Add($"Could not find any unit addresses with id '{unitAddressId}'");
+                        context.Errors.Add(
+                            new ExecutionError(
+                                $"Could not find any unit addresses with id '{unitAddressId}'"));
+
                         return null;
                     }
 
                     var accessAddress = result.Value.AccessAddresses[result.Value.UnitAddresses.First().AccessAddressId];
                     var wgs84Coordinates = converter.ConvertFromUTM32NToWGS84(accessAddress.AddressPoint.X, accessAddress.AddressPoint.Y);
-                    var accessAddressPointWGS84 = new Point(accessAddressPointWGS84[0], accessAddressPointWGS84[1]);
+                    var accessAddressPointWGS84 = new Point(wgs84Coordinates[0], wgs84Coordinates[1]);
+                    var accssAddressPointWGS84Envelope = accessAddressPointWGS84.EnvelopeInternal;
+                    accssAddressPointWGS84Envelope.ExpandBy(EXPAND_ENVELOPE);
 
                     return new LocationResponse(
-                        accessAddressPoint.EnvelopeInternal.ExpandBy(EXPAND_ENVELOPE),
+                        accssAddressPointWGS84Envelope,
                         null, // We do not have a route element id for unit address id lookup, so we return null.
                         accessAddressPointWGS84);
                 }
                 else
                 {
-                    context.Errors.Add($"Could not handle type kind '{kind}'");
+                    context.Errors.Add(new ExecutionError($"Could not handle type kind '{kind}'"));
                     return null;
                 }
             });
