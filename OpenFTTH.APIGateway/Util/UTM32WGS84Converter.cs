@@ -3,6 +3,7 @@ using NetTopologySuite.IO;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenFTTH.APIGateway.Util
 {
@@ -66,6 +67,17 @@ namespace OpenFTTH.APIGateway.Util
             double[] toPoint = _trans.MathTransform.Transform(fromPoint);
 
             return toPoint;
+        }
+
+        public Envelope ConvertFromUTM32NToWGS84(Envelope envelope)
+        {
+            var geometryFactory = new GeometryFactory();
+            var envelopeGeometry = geometryFactory.ToGeometry(envelope);
+            var envelopeCoordinates = _trans.MathTransform
+                .TransformList(envelopeGeometry.Coordinates.Select(x => new double[] { x.X, x.Y}).ToList())
+                .Select(x => new Coordinate(x[0], x[1]));
+
+            return new Envelope(envelopeCoordinates);
         }
 
         public CoordinateConversionResult ConvertGeoJsonLineStringsToWgs84(string[] geoJsonLineStrings)

@@ -40,7 +40,7 @@ public class LocationQueries : ObjectGraphType
                     })
             ).ResolveAsync(async context =>
             {
-                const double EXPAND_ENVELOPE = 0.001;
+                const double EXPAND_ENVELOPE_METER = 150;
                 var converter = new UTM32WGS84Converter();
 
                 var kind = context.GetArgument<string>("kind");
@@ -85,10 +85,12 @@ public class LocationQueries : ObjectGraphType
                     }
 
                     var installationAddressPoint = ConvertPointGeojsonToPoint(routeNodeQueryResult.Value.RouteNetworkElements.First().Coordinates);
-                    var installationAddressPointWGS84 = PointToWGS84(installationAddressPoint);
+                    var envelopeETRS89 = new Envelope(installationAddressPoint.Coordinates);
 
-                    var envelopeWGS84 = installationAddressPointWGS84.EnvelopeInternal;
-                    envelopeWGS84.ExpandBy(EXPAND_ENVELOPE);
+                    envelopeETRS89.ExpandBy(EXPAND_ENVELOPE_METER);
+
+                    var installationAddressPointWGS84 = PointToWGS84(installationAddressPoint);
+                    var envelopeWGS84 = EnvelopeToWGS84(envelopeETRS89);
 
                     return new LocationResponse(
                         envelopeWGS84,
@@ -119,13 +121,14 @@ public class LocationQueries : ObjectGraphType
                     }
 
                     var accessAddress = result.Value.AccessAddresses[result.Value.UnitAddresses.First().AccessAddressId];
-                    var unitAddressPointWGS84 = PointToWGS84(accessAddress.AddressPoint);
+                    var envelopeETRS89 = new Envelope(accessAddress.AddressPoint.Coordinates);
+                    envelopeETRS89.ExpandBy(EXPAND_ENVELOPE_METER);
 
-                    var unitAddressPointWGS84Envelope = unitAddressPointWGS84.EnvelopeInternal;
-                    unitAddressPointWGS84Envelope.ExpandBy(EXPAND_ENVELOPE);
+                    var unitAddressPointWGS84 = PointToWGS84(accessAddress.AddressPoint);
+                    var envelopeWGS84 = EnvelopeToWGS84(envelopeETRS89);
 
                     return new LocationResponse(
-                        unitAddressPointWGS84Envelope,
+                        envelopeWGS84,
                         null, // We do not have a route element id for unit address id lookup, so we return null.
                         unitAddressPointWGS84);
                 }
@@ -142,6 +145,12 @@ public class LocationQueries : ObjectGraphType
         var converter = new UTM32WGS84Converter();
         var wgs84Coordinates = converter.ConvertFromUTM32NToWGS84(point.X, point.Y);
         return new Point(wgs84Coordinates[0], wgs84Coordinates[1]);
+    }
+
+    private static Envelope EnvelopeToWGS84(Envelope envelope)
+    {
+        var converter = new UTM32WGS84Converter();
+        return converter.ConvertFromUTM32NToWGS84(envelope);
     }
 
     private static Point ConvertPointGeojsonToPoint(string geojson)
