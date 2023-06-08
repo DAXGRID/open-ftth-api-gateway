@@ -119,16 +119,15 @@ public class LocationQueries : ObjectGraphType
                     }
 
                     var accessAddress = result.Value.AccessAddresses[result.Value.UnitAddresses.First().AccessAddressId];
-                    var wgs84Coordinates = converter.ConvertFromUTM32NToWGS84(accessAddress.AddressPoint.X, accessAddress.AddressPoint.Y);
-                    var accessAddressPointWGS84 = PointToWGS84(accessAddress.AddressPoint);
+                    var unitAddressPointWGS84 = PointToWGS84(accessAddress.AddressPoint);
 
-                    var accessAddressPointWGS84Envelope = accessAddressPointWGS84.EnvelopeInternal;
-                    accessAddressPointWGS84Envelope.ExpandBy(EXPAND_ENVELOPE);
+                    var unitAddressPointWGS84Envelope = unitAddressPointWGS84.EnvelopeInternal;
+                    unitAddressPointWGS84Envelope.ExpandBy(EXPAND_ENVELOPE);
 
                     return new LocationResponse(
-                        accessAddressPointWGS84Envelope,
+                        unitAddressPointWGS84Envelope,
                         null, // We do not have a route element id for unit address id lookup, so we return null.
-                        accessAddressPointWGS84);
+                        unitAddressPointWGS84);
                 }
                 else
                 {
