@@ -51,6 +51,18 @@ public class LocationQueries : ObjectGraphType
                     var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(value));
 
+                    if (equipmentQueryResult.IsFailed)
+                    {
+                        context.Errors.Add(new ExecutionError(equipmentQueryResult.Errors.First().Message));
+                        return null;
+                    }
+
+                    if (equipmentQueryResult.Value.TerminalEquipment.Count == 0)
+                    {
+                        context.Errors.Add(new ExecutionError($"Could not find any installation on id '{value}'."));
+                        return null;
+                    }
+
                     var nodeContainerId = equipmentQueryResult.Value.TerminalEquipment.First().NodeContainerId;
                     var nodeEquipmentResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(
@@ -77,10 +89,7 @@ public class LocationQueries : ObjectGraphType
 
                     if (routeNodeQueryResult.Value.RouteNetworkElements.Count == 0)
                     {
-                        context.Errors.Add(
-                            new ExecutionError(
-                                $"Could not find any installation with name '{value}'"));
-
+                        context.Errors.Add(new ExecutionError($"Could not find any route node with id '{routeNodeId}' doing installation lookup."));
                         return null;
                     }
 
