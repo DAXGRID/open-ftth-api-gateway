@@ -40,7 +40,7 @@ public class LocationQueries : ObjectGraphType
                     })
             ).ResolveAsync(async context =>
             {
-                const double EXPAND_ENVELOPE_METER = 150;
+                const double EXPAND_ENVELOPE_METER = 100;
                 var converter = new UTM32WGS84Converter();
 
                 var kind = context.GetArgument<string>("kind");
