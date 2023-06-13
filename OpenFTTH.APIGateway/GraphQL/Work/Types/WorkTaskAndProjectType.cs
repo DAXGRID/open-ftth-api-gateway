@@ -90,7 +90,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Types
                description: "Work Task Created Date",
                resolve: context =>
                {
-                   return context.Source.WorkTask.CreatedDate;
+                   return context.Source.WorkTask.CreatedDate.Date;
                }
             );
 
