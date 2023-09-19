@@ -117,7 +117,7 @@ namespace OpenFTTH.APIGateway
                         ValidateAudience = true,
                         ValidAudience = configuration.GetSection("Auth").GetValue<string>("Audience"),
                         ValidateIssuer = true,
-                        ValidIssuers = new[] { configuration.GetSection("Auth").GetValue<string>("Host") },
+                        ValidIssuers = configuration.GetSection("Auth").GetValue<string>("ValidIssuers").Split(",").Select(x => x.Trim()),
                         ValidateIssuerSigningKey = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,

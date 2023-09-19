@@ -6,5 +6,6 @@ namespace OpenFTTH.APIGateway.Settings
         public bool RequireHttps { get; set; }
         public bool Enable { get; set; }
         public string Audience { get; set; }
+        public string ValidIssuers { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenFTTH.APIGateway.Settings;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -86,7 +87,7 @@ namespace OpenFTTH.APIGateway.Auth
                 ValidateAudience = true,
                 ValidAudience = _authSetting.Audience,
                 ValidateIssuer = true,
-                ValidIssuer = _authSetting.Host,
+                ValidIssuers = _authSetting.ValidIssuers.Split(",").Select(x => x.Trim()),
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKeys = result.SigningKeys,
                 RequireExpirationTime = true,
