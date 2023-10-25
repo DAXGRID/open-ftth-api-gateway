@@ -55,6 +55,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Subscriptions
 
         public void OnError(Exception error)
         {
+            _logger.LogError("{Exception}", error);
         }
 
         void IObserver<RouteNetworkElementContainedEquipmentUpdated>.OnNext(RouteNetworkElementContainedEquipmentUpdated @event)

@@ -123,6 +123,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
 
         public void OnError(Exception error)
         {
+            _logger.LogError("{Exception}", error);
         }
 
         private class ObserverSubject
