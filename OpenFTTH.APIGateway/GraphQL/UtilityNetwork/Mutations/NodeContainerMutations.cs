@@ -401,20 +401,28 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                 "moveRackEquipment",
                 description: "Mutation that moves a terminal equipment within or between racks",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "moveToRackId" },
                     new QueryArgument<IntGraphType> { Name = "moveToRackPosition" }
                 ),
                 resolve: async context =>
                 {
-                    var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
+                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
                     var moveToRackId = context.GetArgument<Guid>("moveToRackId");
-                    int moveToRackPosition = context.GetArgument<int>("moveToRackPosition");
+                    var moveToRackPosition = context.GetArgument<int>("moveToRackPosition");
+
+                    var getNodeContainerResult = QueryHelper.GetNodeContainerFromRouteNodeId(queryDispatcher, routeNodeId);
+                    if (getNodeContainerResult.IsFailed)
+                    {
+                        foreach (var error in getNodeContainerResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
+
+                        return null;
+                    }
 
                     var correlationId = Guid.NewGuid();
-
                     var userContext = context.UserContext as GraphQLUserContext;
                     var userName = userContext.Username;
 
@@ -426,7 +434,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
 
                     var commandUserContext = new UserContext(userName, currentWorkTaskIdResult.Value);
 
-                    var cmd = new MoveRackEquipmentInNodeContainer(correlationId, commandUserContext, nodeContainerId, terminalEquipmentId, moveToRackId, moveToRackPosition);
+                    var cmd = new MoveRackEquipmentInNodeContainer(correlationId, commandUserContext, getNodeContainerResult.Value.Id, terminalEquipmentId, moveToRackId, moveToRackPosition);
 
                     var cmdResult = await commandDispatcher.HandleAsync<MoveRackEquipmentInNodeContainer, Result>(cmd);
 
@@ -438,20 +446,28 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                 "arrangeRackEquipment",
                 description: "Mutation that can move terminal equipments up/down in a rack",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<RackEquipmentArrangeMethodEnumType>> { Name = "arrangeMethod" },
                     new QueryArgument<IntGraphType> { Name = "numberOfRackPositions" }
                 ),
                 resolve: async context =>
                 {
-                    var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
+                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
                     var arrangeMethod = context.GetArgument<RackEquipmentArrangeMethodEnum>("moveToRackId");
-                    int numberOfRackPositions = context.GetArgument<int>("numberOfRackPositions");
+                    var numberOfRackPositions = context.GetArgument<int>("numberOfRackPositions");
+
+                    var getNodeContainerResult = QueryHelper.GetNodeContainerFromRouteNodeId(queryDispatcher, routeNodeId);
+                    if (getNodeContainerResult.IsFailed)
+                    {
+                        foreach (var error in getNodeContainerResult.Errors)
+                            context.Errors.Add(new ExecutionError(error.Message));
+
+                        return null;
+                    }
 
                     var correlationId = Guid.NewGuid();
-
                     var userContext = context.UserContext as GraphQLUserContext;
                     var userName = userContext.Username;
 
@@ -463,15 +479,13 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
 
                     var commandUserContext = new UserContext(userName, currentWorkTaskIdResult.Value);
 
-                    var cmd = new ArrangeRackEquipmentInNodeContainer(correlationId, commandUserContext, nodeContainerId, terminalEquipmentId, arrangeMethod, numberOfRackPositions);
+                    var cmd = new ArrangeRackEquipmentInNodeContainer(correlationId, commandUserContext, getNodeContainerResult.Value.Id, terminalEquipmentId, arrangeMethod, numberOfRackPositions);
 
                     var cmdResult = await commandDispatcher.HandleAsync<ArrangeRackEquipmentInNodeContainer, Result>(cmd);
 
                     return new CommandResult(cmdResult);
                 }
             );
-
-
         }
     }
 }
