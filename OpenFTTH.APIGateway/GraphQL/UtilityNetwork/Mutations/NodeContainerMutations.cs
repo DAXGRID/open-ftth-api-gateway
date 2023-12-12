@@ -455,7 +455,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
-                    var arrangeMethod = context.GetArgument<RackEquipmentArrangeMethodEnum>("moveToRackId");
+                    var arrangeMethod = context.GetArgument<RackEquipmentArrangeMethodEnum>("arrangeMethod");
                     var numberOfRackPositions = context.GetArgument<int>("numberOfRackPositions");
 
                     var getNodeContainerResult = QueryHelper.GetNodeContainerFromRouteNodeId(queryDispatcher, routeNodeId);
