@@ -57,8 +57,8 @@ namespace OpenFTTH.APIGateway.Search
         {
             var query = new SearchParameters(searchString, "roadNameHouseNumber,postDistrictCode,postDistrictName,townName")
             {
-                PerPage = maxHits.ToString(),
-                LimitHits = maxHits.ToString(),
+                PerPage = maxHits,
+                LimitHits = maxHits,
                 QueryByWeights = "5,3,3,2"
             };
 
@@ -73,7 +73,15 @@ namespace OpenFTTH.APIGateway.Search
 
                 var wgs84Coord = coordinateConverter.ConvertFromUTM32NToWGS84(xEtrs, yEtrs);
 
-                var globalHit = new GlobalSearchHit(hit.Document.Id, "accessAddress", GetAddressLabel(hit.Document), wgs84Coord[0], wgs84Coord[1], xEtrs, yEtrs, hit.TextMatch);
+                var globalHit = new GlobalSearchHit(
+                    hit.Document.Id,
+                    "accessAddress",
+                    GetAddressLabel(hit.Document),
+                    wgs84Coord[0],
+                    wgs84Coord[1],
+                    xEtrs,
+                    yEtrs,
+                    hit.TextMatch ?? 0);
 
                 result.Add(globalHit);
             }
@@ -86,9 +94,9 @@ namespace OpenFTTH.APIGateway.Search
             searchString = searchString.Replace(" ", "");
             var query = new SearchParameters(searchString, "name")
             {
-                PerPage = maxHits.ToString(),
-                LimitHits = maxHits.ToString(),
-                NumberOfTypos = "0"
+                PerPage = maxHits,
+                LimitHits = maxHits,
+                NumberOfTypos = 0
             };
 
             var searchResult = await _typesenseClient.Search<RouteNodeSearchHit>("RouteNodes", query);
@@ -124,7 +132,7 @@ namespace OpenFTTH.APIGateway.Search
                         wgs84Coord[1],
                         etrsCoord[0],
                         etrsCoord[1],
-                        hit.TextMatch);
+                        hit.TextMatch ?? 0);
 
                     result.Add(globalHit);
                 }
@@ -138,9 +146,9 @@ namespace OpenFTTH.APIGateway.Search
             searchString = searchString.Replace(" ", "");
             var query = new SearchParameters(searchString, "name")
             {
-                PerPage = maxHits.ToString(),
-                LimitHits = maxHits.ToString(),
-                NumberOfTypos = "0"
+                PerPage = maxHits,
+                LimitHits = maxHits,
+                NumberOfTypos = 0
             };
 
             var searchResult = await _typesenseClient.Search<EquipmentSearchHit>("equipments", query);
@@ -214,7 +222,7 @@ namespace OpenFTTH.APIGateway.Search
                         wgs84Coord[1],
                         etrsCoord[0],
                         etrsCoord[1],
-                        hit.TextMatch);
+                        hit.TextMatch ?? 0);
 
                     result.Add(globalHit);
                 }
