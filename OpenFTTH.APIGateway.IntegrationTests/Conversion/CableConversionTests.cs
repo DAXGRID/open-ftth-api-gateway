@@ -31,8 +31,6 @@ namespace OpenFTTH.APIGateway.IntegrationTests.Conversion
         private IQueryDispatcher _queryDispatcher;
         private IRouteNetworkState _routeNetworkState;
 
-        private static TestSpecifications _specs;
-
         public CableConversionTests(ILoggerFactory loggerFactory, IEventStore eventStore, ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher, IRouteNetworkState routeNetworkState)
         {
             _loggerFactory = loggerFactory;
