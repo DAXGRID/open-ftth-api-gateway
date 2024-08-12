@@ -327,16 +327,13 @@ namespace OpenFTTH.APIGateway.Reporting
             if (traces.Count == 0)
                 return new List<string>() { "no installations found" };
 
-            var resultCsvLines = new List<string>();
+            var resultCsvLines = new List<string>(traces.Count);
 
-            var firstObject = traces.First();
-
-            var myType = firstObject.GetType();
-            var props = new List<PropertyInfo>(myType.GetProperties().Reverse());
+            var myType = traces.First().GetType();
 
             var csvHeader = "";
 
-            foreach (PropertyInfo prop in props)
+            foreach (PropertyInfo prop in myType.GetProperties().Reverse())
             {
                 if (csvHeader != "")
                     csvHeader += ";";
@@ -352,7 +349,7 @@ namespace OpenFTTH.APIGateway.Reporting
 
                 bool first = true;
 
-                foreach (PropertyInfo prop in props)
+                foreach (PropertyInfo prop in myType.GetProperties().Reverse())
                 {
                     if (!first)
                         csvLine += ";";
