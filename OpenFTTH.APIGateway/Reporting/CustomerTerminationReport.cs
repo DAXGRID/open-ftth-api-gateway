@@ -35,7 +35,7 @@ namespace OpenFTTH.APIGateway.Reporting
             _routeNetworkState = routeNetworkState;
         }
 
-        public List<string> TraceAllCustomerTerminations()
+        public IEnumerable<string> TraceAllCustomerTerminations()
         {
             _logger.LogInformation("Service terminations trace started...");
             var interestsProjection = _eventStore.Projections.Get<InterestsProjection>();
@@ -44,7 +44,7 @@ namespace OpenFTTH.APIGateway.Reporting
 
             var terminalEquipments = _utilityNetwork.TerminalEquipmentByEquipmentId.Values;
 
-            var traces = new List<InstallationTraceResultLine>();
+            var firstLineTrace = true;
 
             foreach (var terminalEquipment in terminalEquipments)
             {
@@ -182,15 +182,20 @@ namespace OpenFTTH.APIGateway.Reporting
                                 }
                             }
 
-                            traces.Add(traceLine);
+                            // We do this to make sure that the CSV header is written first.
+                            if (firstLineTrace)
+                            {
+                                yield return GetCsvHeaderFromTrace(traceLine);
+                                firstLineTrace = false;
+                            }
+
+                            yield return GetCsvLineFromTrace(traceLine);
                         }
                     }
                 }
             }
 
             _logger.LogInformation("Service terminations trace finish!");
-
-            return GetCsvLinesFromTraceResult(traces);
         }
 
         private string GetNodeType(TraceState traceState, RouteNode routeNode, NodeContainer nodeContainer, TerminalEquipment hopEquipment, TerminalStructure hopTerminalStructure, Terminal hopTerminal)
@@ -296,7 +301,9 @@ namespace OpenFTTH.APIGateway.Reporting
             }
         }
 
-        private bool CheckIfEndTerminalIsWithinRackEquipment(LookupCollection<TerminalEquipmentSpecification> terminalEquipmentSpecifications, IGraphObject[] graphObjects)
+        private bool CheckIfEndTerminalIsWithinRackEquipment(
+            LookupCollection<TerminalEquipmentSpecification> terminalEquipmentSpecifications,
+            IGraphObject[] graphObjects)
         {
             if (graphObjects.Length > 0)
             {
@@ -322,14 +329,9 @@ namespace OpenFTTH.APIGateway.Reporting
             return false;
         }
 
-        private List<string> GetCsvLinesFromTraceResult(List<InstallationTraceResultLine> traces)
+        private string GetCsvHeaderFromTrace(InstallationTraceResultLine line)
         {
-            if (traces.Count == 0)
-                return new List<string>() { "no installations found" };
-
-            var resultCsvLines = new List<string>(traces.Count);
-
-            var myType = traces.First().GetType();
+            var myType = line.GetType();
 
             var csvHeader = "";
 
@@ -341,33 +343,33 @@ namespace OpenFTTH.APIGateway.Reporting
                 csvHeader += $"\"{prop.Name}\"";
             }
 
-            resultCsvLines.Add(csvHeader);
+            return csvHeader;
+        }
 
-            foreach (var line in traces)
+        private string GetCsvLineFromTrace(InstallationTraceResultLine line)
+        {
+            var myType = line.GetType();
+
+            var first = true;
+            var csvLine = "";
+            foreach (PropertyInfo prop in myType.GetProperties().Reverse())
             {
-                string csvLine = "";
-
-                bool first = true;
-
-                foreach (PropertyInfo prop in myType.GetProperties().Reverse())
+                if (!first)
                 {
-                    if (!first)
-                        csvLine += ";";
-
-                    object propValue = prop.GetValue(line, null);
-
-                    if (propValue != null)
-                    {
-                        csvLine += $"\"{propValue.ToString()}\"";
-                    }
-
-                    first = false;
+                    csvLine += ";";
                 }
 
-                resultCsvLines.Add(csvLine);
+                object propValue = prop.GetValue(line, null);
+
+                if (propValue != null)
+                {
+                    csvLine += $"\"{propValue.ToString()}\"";
+                }
+
+                first = false;
             }
 
-            return resultCsvLines;
+            return csvLine;
         }
     }
 
