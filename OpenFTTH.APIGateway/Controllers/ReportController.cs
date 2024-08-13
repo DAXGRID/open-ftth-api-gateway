@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.APIGateway.Reporting;
@@ -9,6 +10,7 @@ using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
 
 namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportController : ControllerBase
