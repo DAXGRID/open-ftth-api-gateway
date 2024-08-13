@@ -33,8 +33,6 @@ namespace OpenFTTH.APIGateway.GraphQL.Root
             Field<AddressServiceQueries>("addressService").Resolve(_ => new { });
 
             Field<OutageServiceQueries>("outage").Resolve(_ => new { });
-
-            Field<ReportingQueries>("reporting").Resolve(_ => new { });
         }
     }
 }
