@@ -28,7 +28,7 @@ namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
         }
 
         [HttpGet("CustomerTerminationReport")]
-        public async Task<IActionResult> CustomerTerminationReport()
+        public async Task CustomerTerminationReport()
         {
             var traceReport = new CustomerTerminationReport(
                 _loggerFactory.CreateLogger<CustomerTerminationReport>(),
@@ -36,8 +36,9 @@ namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
                 _routeNetworkState);
 
             Response.ContentType = "application/text";
+            Response.StatusCode = 200;
 
-            using (var writer = new StreamWriter(Response.Body, Encoding.UTF8))
+            await using (var writer = new StreamWriter(Response.Body, Encoding.UTF8))
             {
                 foreach (var line in traceReport.TraceAllCustomerTerminations())
                 {
@@ -46,8 +47,6 @@ namespace OpenFTTH.APIGateway.RouteNetwork.Controllers
                     await writer.FlushAsync();
                 }
             }
-
-            return Ok();
         }
     }
 }
