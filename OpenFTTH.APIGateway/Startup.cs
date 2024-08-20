@@ -217,8 +217,11 @@ namespace OpenFTTH.APIGateway
 
             services.AddHostedService<RouteNetworkEventConsumer>();
 
+            // This is disabled in DEBUG to avoid issues of splitting cables when running in debug.
+#if !DEBUG
             // Utility network updated
             services.AddHostedService<UtilityNetworkUpdatedEventConsumer>();
+#endif
 
             // Important that it is transient, we want a new instance for each injection.
             services.AddTransient<OpenFTTH.NotificationClient.Client>(x =>
