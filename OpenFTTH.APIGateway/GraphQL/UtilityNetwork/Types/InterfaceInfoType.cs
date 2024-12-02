@@ -12,7 +12,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.SlotNumber, type: typeof(IntGraphType)).Description("Slot number");
             Field(x => x.SubSlotNumber, type: typeof(IntGraphType)).Description("Sub slot number");
             Field(x => x.PortNumber, type: typeof(IntGraphType)).Description("Port number");
-            Field(x => x.CircuitName, type: typeof(IntGraphType)).Description("Circuit name");
+            Field(x => x.CircuitName, type: typeof(StringGraphType)).Description("Circuit name");
         }
     }
 
