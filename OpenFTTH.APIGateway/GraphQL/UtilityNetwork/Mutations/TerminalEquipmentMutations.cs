@@ -225,7 +225,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                    routeNodeId: routeNodeId,
                    terminalEquipmentId: terminalEquipmentId,
                    structureSpecificationId: structureSpecificationId,
-                   numberOfStructures: 0,
+                   numberOfStructures: 1,
                    position: 0
                  )
                  {
