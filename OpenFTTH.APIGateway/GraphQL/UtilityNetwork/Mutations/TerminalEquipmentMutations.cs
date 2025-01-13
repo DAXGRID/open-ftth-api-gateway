@@ -22,7 +22,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Terminal equipment mutations";
 
-            Field<CommandResultType>(
+            FieldAsync<CommandResultType>(
                 "updateProperties",
                 description: "Mutation that can be used to change the terminal equipment specification,naming information",
                 arguments: new QueryArguments(
@@ -34,7 +34,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     new QueryArgument<IdGraphType> { Name = "rackId" },
                     new QueryArgument<IntGraphType> { Name = "rackStartUnitPosition" }
                 ),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
 
@@ -62,13 +62,13 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                         StartUnitPosition = context.HasArgument("rackStartUnitPosition") ? context.GetArgument<int>("rackStartUnitPosition") : null,
                     };
 
-                    var updateResult = commandDispatcher.HandleAsync<UpdateTerminalEquipmentProperties, Result>(updateCmd).Result;
+                    var updateResult = await commandDispatcher.HandleAsync<UpdateTerminalEquipmentProperties, Result>(updateCmd);
 
                     return new CommandResult(updateResult);
                 }
             );
 
-            Field<CommandResultType>(
+            FieldAsync<CommandResultType>(
                 "updateTerminalStructureProperties",
                 description: "Mutation that can be used to change a terminal structure (card, tray etc) that sits a terminal equipment",
                 arguments: new QueryArguments(
@@ -78,7 +78,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     new QueryArgument<IntGraphType> { Name = "position" },
                     new QueryArgument<InterfaceInfoInputType> { Name = "interfaceInfo" }
                 ),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
                     var terminalStructureId = context.GetArgument<Guid>("terminalStructureId");
@@ -104,7 +104,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                         InterfaceInfo = context.GetArgument<InterfaceInfo>("interfaceInfo")
                     };
 
-                    var updateResult = commandDispatcher.HandleAsync<UpdateTerminalStructureProperties, Result>(updateCmd).Result;
+                    var updateResult = await commandDispatcher.HandleAsync<UpdateTerminalStructureProperties, Result>(updateCmd);
 
                     return new CommandResult(updateResult);
                 }
