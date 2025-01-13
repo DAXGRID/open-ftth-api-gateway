@@ -185,12 +185,12 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     return terminalEquipment;
                 });
 
-                Field<TerminalStructureType>("terminalSructure")
+            Field<TerminalStructureType>("terminalStructure")
                 .Description("Query information related to a specific terminal structure")
                 .Arguments(new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrTerminalId" },
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureId" })
-                 )
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentOrTerminalId" },
+                               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureId" })
+                )
                 .ResolveAsync(async context =>
                 {
                     var terminalEquipmentOrTerminalId = context.GetArgument<Guid>("terminalEquipmentOrTerminalId");
@@ -225,10 +225,8 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                         return null;
                     }
 
-
                     return terminalEquipment.TerminalStructures.First(t => t.Id == terminalStructureId);
-                 });
-
+                });
 
             Field<SpanEquipmentType>("spanEquipment")
                 .Description("Query information related to a specific span equipment")
