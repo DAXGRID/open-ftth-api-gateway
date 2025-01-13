@@ -76,7 +76,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureId" },
                new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureSpecificationId" },
                new QueryArgument<IntGraphType> { Name = "position" },
-               new QueryArgument<InterfaceInfoType> { Name = "interfaceInfo" }
+               new QueryArgument<InterfaceInfoInputType> { Name = "interfaceInfo" }
            ),
            resolve: context =>
            {
