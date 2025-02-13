@@ -1,22 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>13c4c711-9613-46f4-8cc6-3ca15306496a</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <Nullable>enable</Nullable>
+    <AssemblyName>Install-Package Xunit.DependencyInjection</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="2.2.0" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.0" />
     <PackageReference Include="OpenFTTH.Core" Version="2.0.0" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="2.2.0" />
-    <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OpenFTTH.RouteNetwork.API\OpenFTTH.RouteNetwork.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.Business\OpenFTTH.RouteNetwork.Business.csproj" />
   </ItemGroup>
+
 
 </Project>

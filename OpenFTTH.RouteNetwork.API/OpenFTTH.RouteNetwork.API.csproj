@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,16 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="2.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="2.2.0" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.0" />
     <PackageReference Include="OpenFTTH.Core" Version="2.0.0" />
     <PackageReference Include="OpenFTTH.CQRS" Version="2.2.0" />
     <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OpenFTTH.RouteNetwork.API\OpenFTTH.RouteNetwork.API.csproj" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="3.0.8" />
   </ItemGroup>
 
 </Project>

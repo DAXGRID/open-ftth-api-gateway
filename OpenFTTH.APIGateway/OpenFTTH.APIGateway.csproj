@@ -18,8 +18,6 @@
     <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
     <PackageReference Include="OpenFTTH.EventSourcing" Version="3.1.1" />
     <PackageReference Include="OpenFTTH.NotificationClient" Version="0.3.0" />
-    <PackageReference Include="OpenFTTH.RouteNetwork.API" Version="3.1.0" />
-    <PackageReference Include="OpenFTTH.RouteNetwork.Business" Version="3.1.0" />
     <PackageReference Include="OpenFTTH.Schematic.API" Version="3.3.0" />
     <PackageReference Include="OpenFTTH.Schematic.Business" Version="3.3.0" />
     <PackageReference Include="OpenFTTH.Work.API" Version="0.8.0" />
@@ -40,5 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenFTTH.UtilityGraphService.API\OpenFTTH.UtilityGraphService.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.API\OpenFTTH.RouteNetwork.API.csproj" />
   </ItemGroup>
 </Project>
