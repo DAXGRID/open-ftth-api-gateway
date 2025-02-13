@@ -7,6 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenFTTH.APIGateway", "Open
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenFTTH.APIGateway.IntegrationTests", "OpenFTTH.APIGateway.IntegrationTests\OpenFTTH.APIGateway.IntegrationTests.csproj", "{9D680995-B0DA-4579-9081-3284B38568D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.UtilityGraphService.API", "OpenFTTH.UtilityGraphService.API\OpenFTTH.UtilityGraphService.API.csproj", "{6BC12503-5678-4C0C-A539-F6DA2FA66B1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.UtilityGraphService.Business", "OpenFTTH.UtilityGraphService.Business\OpenFTTH.UtilityGraphService.Business.csproj", "{197C13C4-25E7-4CBE-B40E-E28442C6BC66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.UtilityGraphService.Service", "OpenFTTH.UtilityGraphService.Service\OpenFTTH.UtilityGraphService.Service.csproj", "{DEE8B26F-C324-4423-A72F-FCA9A5F3DB8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.UtilityGraphService.Tests", "OpenFTTH.UtilityGraphService.Tests\OpenFTTH.UtilityGraphService.Tests.csproj", "{E3F03D5B-EA99-4E08-983D-540FE413FF85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +29,22 @@ Global
 		{9D680995-B0DA-4579-9081-3284B38568D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D680995-B0DA-4579-9081-3284B38568D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D680995-B0DA-4579-9081-3284B38568D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC12503-5678-4C0C-A539-F6DA2FA66B1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC12503-5678-4C0C-A539-F6DA2FA66B1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC12503-5678-4C0C-A539-F6DA2FA66B1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC12503-5678-4C0C-A539-F6DA2FA66B1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{197C13C4-25E7-4CBE-B40E-E28442C6BC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{197C13C4-25E7-4CBE-B40E-E28442C6BC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{197C13C4-25E7-4CBE-B40E-E28442C6BC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{197C13C4-25E7-4CBE-B40E-E28442C6BC66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEE8B26F-C324-4423-A72F-FCA9A5F3DB8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEE8B26F-C324-4423-A72F-FCA9A5F3DB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEE8B26F-C324-4423-A72F-FCA9A5F3DB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEE8B26F-C324-4423-A72F-FCA9A5F3DB8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F03D5B-EA99-4E08-983D-540FE413FF85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F03D5B-EA99-4E08-983D-540FE413FF85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F03D5B-EA99-4E08-983D-540FE413FF85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F03D5B-EA99-4E08-983D-540FE413FF85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

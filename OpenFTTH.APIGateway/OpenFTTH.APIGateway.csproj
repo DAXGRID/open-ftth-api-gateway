@@ -22,8 +22,6 @@
     <PackageReference Include="OpenFTTH.RouteNetwork.Business" Version="3.1.0" />
     <PackageReference Include="OpenFTTH.Schematic.API" Version="3.3.0" />
     <PackageReference Include="OpenFTTH.Schematic.Business" Version="3.3.0" />
-    <PackageReference Include="OpenFTTH.UtilityGraphService.API" Version="4.16.3" />
-    <PackageReference Include="OpenFTTH.UtilityGraphService.Business" Version="4.16.3" />
     <PackageReference Include="OpenFTTH.Work.API" Version="0.8.0" />
     <PackageReference Include="OpenFTTH.Work.Business" Version="0.8.0" />
     <PackageReference Include="ProjNet" Version="2.0.0" />
@@ -38,5 +36,9 @@
 
   <ItemGroup>
     <Folder Include="GraphQL\Schematic\Types\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenFTTH.UtilityGraphService.API\OpenFTTH.UtilityGraphService.API.csproj" />
   </ItemGroup>
 </Project>
