@@ -23,6 +23,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.RouteNetwork.Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.RouteNetworkService.Tests", "OpenFTTH.RouteNetwork.Tests\OpenFTTH.RouteNetworkService.Tests.csproj", "{B3AE3552-4922-4E94-B643-91A2E00708F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.Schematic.API", "OpenFTTH.Schematic.API\OpenFTTH.Schematic.API.csproj", "{7A8195BA-7859-47E7-A047-11E0636981C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.Schematic.Business", "OpenFTTH.Schematic.Business\OpenFTTH.Schematic.Business.csproj", "{13A8C639-9EFE-4FA4-86E2-54EE720609C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.Schematic.Service", "OpenFTTH.Schematic.Service\OpenFTTH.Schematic.Service.csproj", "{6245BC42-F514-4419-97B7-BA7CF959065E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFTTH.Schematic.Tests", "OpenFTTH.Schematic.Tests\OpenFTTH.Schematic.Tests.csproj", "{7941877A-9B0D-41CF-95FA-5B474352139D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +77,22 @@ Global
 		{B3AE3552-4922-4E94-B643-91A2E00708F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3AE3552-4922-4E94-B643-91A2E00708F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3AE3552-4922-4E94-B643-91A2E00708F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A8195BA-7859-47E7-A047-11E0636981C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A8195BA-7859-47E7-A047-11E0636981C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A8195BA-7859-47E7-A047-11E0636981C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A8195BA-7859-47E7-A047-11E0636981C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13A8C639-9EFE-4FA4-86E2-54EE720609C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13A8C639-9EFE-4FA4-86E2-54EE720609C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13A8C639-9EFE-4FA4-86E2-54EE720609C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13A8C639-9EFE-4FA4-86E2-54EE720609C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6245BC42-F514-4419-97B7-BA7CF959065E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6245BC42-F514-4419-97B7-BA7CF959065E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6245BC42-F514-4419-97B7-BA7CF959065E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6245BC42-F514-4419-97B7-BA7CF959065E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7941877A-9B0D-41CF-95FA-5B474352139D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7941877A-9B0D-41CF-95FA-5B474352139D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7941877A-9B0D-41CF-95FA-5B474352139D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7941877A-9B0D-41CF-95FA-5B474352139D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

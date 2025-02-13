@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenFTTH.Schematic.API\OpenFTTH.Schematic.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.API\OpenFTTH.RouteNetwork.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.Business\OpenFTTH.RouteNetwork.Business.csproj" />
+    <ProjectReference Include="..\OpenFTTH.UtilityGraphService.API\OpenFTTH.UtilityGraphService.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.UtilityGraphService.Business\OpenFTTH.UtilityGraphService.Business.csproj" />
+  </ItemGroup>
+
+</Project>

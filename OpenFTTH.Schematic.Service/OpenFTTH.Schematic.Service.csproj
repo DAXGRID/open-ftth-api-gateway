@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>9babfb14-84c5-4b12-aa24-a692ac7384cd</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="2.2.0" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.API\OpenFTTH.RouteNetwork.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.RouteNetwork.Business\OpenFTTH.RouteNetwork.Business.csproj" />
+    <ProjectReference Include="..\OpenFTTH.UtilityGraphService.API\OpenFTTH.UtilityGraphService.API.csproj" />
+    <ProjectReference Include="..\OpenFTTH.UtilityGraphService.Business\OpenFTTH.UtilityGraphService.Business.csproj" />
+  </ItemGroup>
+
+</Project>
