@@ -13,10 +13,12 @@ COPY ./OpenFTTH.Schematic.API/*.csproj ./OpenFTTH.Schematic.API/
 COPY ./OpenFTTH.Schematic.Business/*.csproj ./OpenFTTH.Schematic.Business/
 COPY ./OpenFTTH.Schematic.Service/*.csproj ./OpenFTTH.Schematic.Service/
 COPY ./OpenFTTH.Schematic.Tests/*.csproj ./OpenFTTH.Schematic.Tests/
-COPY ./OpenFTTH.UtilityGraphService.API/*.csproj ./OpenFTTH.UtilityGraphService.API
+COPY ./OpenFTTH.UtilityGraphService.API/*.csproj ./OpenFTTH.UtilityGraphService.API/
 COPY ./OpenFTTH.UtilityGraphService.Business/*.csproj ./OpenFTTH.UtilityGraphService.Business/
 COPY ./OpenFTTH.UtilityGraphService.Service/*.csproj ./OpenFTTH.UtilityGraphService.Service/
 COPY ./OpenFTTH.UtilityGraphService.Tests/*.csproj ./OpenFTTH.UtilityGraphService.Tests/
+
+RUN dotnet restore --packages ./packages
 
 COPY . ./
 
