@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="2.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenFTTH.Address.API" Version="2.2.1" />
     <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.1" />
     <PackageReference Include="OpenFTTH.Core" Version="2.0.0" />
