@@ -32,12 +32,14 @@ namespace OpenFTTH.TestData
                 );
 
                 result.Add(
-                    new UnitAddress(Guid.Parse("d81c1428-1fe2-44bf-be71-57a5cfe8ac6c"), Guid.Parse("02a0b95e-b7f1-4888-bd10-074ef49f196c"))
-                    {
-                        ExternalId = Guid.Parse("0a3f50bc-aa89-32b8-e044-0003ba298018")
-                    }
+                    new UnitAddress(
+                        Guid.Parse("d81c1428-1fe2-44bf-be71-57a5cfe8ac6c"),
+                        Guid.Parse("02a0b95e-b7f1-4888-bd10-074ef49f196c"),
+                        Guid.Parse("0a3f50bc-aa89-32b8-e044-0003ba298018"),
+                        null,
+                        null
+                    )
                 );
-
 
                 // Vesterbrogade 7A, Hedensted
                 result.Add(
@@ -58,10 +60,12 @@ namespace OpenFTTH.TestData
                 );
 
                 result.Add(
-                    new UnitAddress(Guid.Parse("5d639c7c-64e7-42c7-828e-5f615a13424b"), Guid.Parse("3ddbdf9f-c7bf-448b-962f-d2e3f1d1511a"))
-                    {
-                        ExternalId = Guid.Parse("0a3f50bb-2d46-32b8-e044-0003ba298018")
-                    }
+                    new UnitAddress(
+                        Guid.Parse("5d639c7c-64e7-42c7-828e-5f615a13424b"),
+                        Guid.Parse("3ddbdf9f-c7bf-448b-962f-d2e3f1d1511a"),
+                        Guid.Parse("0a3f50bb-2d46-32b8-e044-0003ba298018"),
+                        null,
+                        null)
                 );
 
                 // Rådhusgade 3, Horsens
@@ -89,37 +93,42 @@ namespace OpenFTTH.TestData
 
                 // Basement or something like that
                 result.Add(
-                    new UnitAddress(Guid.Parse("9fe3d78b-0f22-48a2-afb4-fc76a9120e92"), Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"))
-                    {
-                        ExternalId = Guid.Parse("28a29822-3714-4285-ac71-f200027d5dda")
-                    }
+                    new UnitAddress(
+                        Guid.Parse("9fe3d78b-0f22-48a2-afb4-fc76a9120e92"),
+                        Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"),
+                        Guid.Parse("28a29822-3714-4285-ac71-f200027d5dda"),
+                        null,
+                        null)
                 );
 
                 // St (living floor)
                 result.Add(
-                    new UnitAddress(Guid.Parse("ea4d5132-c605-4c5a-9fc6-81f7935a16d9"), Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"))
-                    {
-                        ExternalId = Guid.Parse("3bc4989e-c838-4b42-bf43-cbb027587074"),
-                        FloorName = "st"
-                    }
+                    new UnitAddress(
+                        Guid.Parse("ea4d5132-c605-4c5a-9fc6-81f7935a16d9"),
+                        Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"),
+                        Guid.Parse("3bc4989e-c838-4b42-bf43-cbb027587074"),
+                        "st",
+                        null)
                 );
 
                 // 1 floor
                 result.Add(
-                    new UnitAddress(Guid.Parse("5e6293be-b8f6-4eb4-b871-ed08541f5951"), Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"))
-                    {
-                        ExternalId = Guid.Parse("5d992557-7a28-4dcd-a0dd-fcddccad2c41"),
-                        FloorName = "1"
-                    }
+                    new UnitAddress(
+                        Guid.Parse("5e6293be-b8f6-4eb4-b871-ed08541f5951"),
+                        Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"),
+                        Guid.Parse("5d992557-7a28-4dcd-a0dd-fcddccad2c41"),
+                        "1",
+                        null)
                 );
 
                 // 2 floor
                 result.Add(
-                   new UnitAddress(Guid.Parse("f2817327-2856-4435-8951-271ea0d65c38"), Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"))
-                   {
-                       ExternalId = Guid.Parse("d1a8f126-c731-4a78-85ce-fcf631fdad88"),
-                       FloorName = "2"
-                   }
+                   new UnitAddress(
+                       Guid.Parse("f2817327-2856-4435-8951-271ea0d65c38"),
+                       Guid.Parse("0c5a203e-b989-4b88-ab90-283c6e7aafc7"),
+                       Guid.Parse("d1a8f126-c731-4a78-85ce-fcf631fdad88"),
+                       "2",
+                       null)
                 );
 
                 return result;
