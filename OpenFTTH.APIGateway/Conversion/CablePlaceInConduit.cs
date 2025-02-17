@@ -226,12 +226,8 @@ namespace OpenFTTH.APIGateway.Conversion
             public List<CableConduitRel> ConduitRels = new List<CableConduitRel>();
             public Guid SpecificatonId { get; set; }
 
-            public Guid? AccessAddressId;
-            public Guid? UnitAddressId;
             public string AddressRemark = null;
-
             public bool MissingSegments = false;
-
 
             public SpanEquipmentForConversion(Guid id, string externalId, string externalSpec, string segmentIds, string parentConduits)
             {
