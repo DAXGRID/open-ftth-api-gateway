@@ -13,16 +13,13 @@ public sealed class LocationResponseType : ObjectGraphType<LocationResponse>
     {
         Description = "Location";
 
-        Field(x => x.Envelope, type: typeof(EnvelopeType))
-            .Name("envelope")
+        Field("envelope", x => x.Envelope, type: typeof(EnvelopeType))
             .Description("The extent of the location.");
 
-        Field(x => x.RouteElementId, type: typeof(IdGraphType))
-            .Name("routeElementId")
+        Field("routeElementId", x => x.RouteElementId, type: typeof(IdGraphType))
             .Description("The route element id.");
 
-        Field(x => x.Coordinate, type: typeof(PointType))
-            .Name("coordinate")
+        Field("coordinate", x => x.Coordinate, type: typeof(PointType))
             .Description("The coordinate for the point.");
     }
 }

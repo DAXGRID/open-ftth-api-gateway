@@ -10,9 +10,9 @@ namespace OpenFTTH.APIGateway.CoreTypes
         {
             Description = "Error code and message";
 
-            Field(x => x.IsSuccess, type: typeof(BooleanGraphType)).Name("IsSuccess").Description("True if the command was successfully processed on the server side.");
-            Field(x => x.ErrorCode, type: typeof(StringGraphType)).Name("ErrorCode").Description("Error code. Please see error code lists defined in the underlying services called");
-            Field(x => x.ErrorMessage, type: typeof(StringGraphType)).Name("ErrorMessage").Description("Error message");
+            Field("IsSuccess", x => x.IsSuccess, type: typeof(BooleanGraphType)).Description("True if the command was successfully processed on the server side.");
+            Field("ErrorCode", x => x.ErrorCode, type: typeof(StringGraphType)).Description("Error code. Please see error code lists defined in the underlying services called");
+            Field("ErrorMessage", x => x.ErrorMessage, type: typeof(StringGraphType)).Description("Error message");
         }
     }
 }
