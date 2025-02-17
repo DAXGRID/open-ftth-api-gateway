@@ -27,7 +27,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-    <PackageReference Include="Typesense" Version="6.13.0" />
+    <PackageReference Include="Typesense" Version="7.27.0" />
   </ItemGroup>
 
   <ItemGroup>
