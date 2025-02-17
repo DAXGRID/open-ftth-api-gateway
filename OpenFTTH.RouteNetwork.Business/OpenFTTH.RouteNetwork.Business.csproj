@@ -14,7 +14,7 @@
     <PackageReference Include="OpenFTTH.CQRS" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
     <PackageReference Include="OpenFTTH.EventSourcing" Version="4.0.1" />
-    <PackageReference Include="QuikGraph" Version="2.3.0" />
+    <PackageReference Include="QuikGraph" Version="2.5.0" />
     <PackageReference Include="RoyT.AStar" Version="3.0.2" />
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
