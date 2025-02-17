@@ -11,7 +11,7 @@
     <PackageReference Include="FluentResults" Version="2.6.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
     <PackageReference Include="NetTopologySuite" Version="2.5.0" />
-    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.4" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
     <PackageReference Include="OpenFTTH.Core" Version="2.0.0" />
     <PackageReference Include="OpenFTTH.CQRS" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
