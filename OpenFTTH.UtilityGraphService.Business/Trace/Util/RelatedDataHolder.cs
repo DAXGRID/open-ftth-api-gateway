@@ -318,7 +318,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
         public string? GetEquipmentName(TerminalEquipment terminalEquipment)
         {
             // Single structure equipment
-            if (terminalEquipment.TerminalStructures.Length == 1)
+            if (terminalEquipment.TerminalStructures.Length == 1 && terminalEquipment.TerminalStructures[0].Terminals.Length > 0)
             {
                 var terminal = terminalEquipment.TerminalStructures[0].Terminals[0];
                 var terminalEquipmentSpecification = _terminalEquipmentSpecifications[terminalEquipment.SpecificationId];
