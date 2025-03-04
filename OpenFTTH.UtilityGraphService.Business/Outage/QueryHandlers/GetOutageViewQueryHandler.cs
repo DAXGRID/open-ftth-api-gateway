@@ -1,7 +1,7 @@
 ﻿using Baseline;
 using Baseline.ImTools;
 using DAX.ObjectVersioning.Graph;
-using FluentResults;
+using OpenFTTH.Results;
 using Marten;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using OpenFTTH.Address.API.Model;

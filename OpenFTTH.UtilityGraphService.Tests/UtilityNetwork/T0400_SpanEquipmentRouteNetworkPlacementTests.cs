@@ -1,7 +1,7 @@
 ﻿using OpenFTTH.CQRS;
 using Xunit;
 using FluentAssertions;
-using FluentResults;
+using OpenFTTH.Results;
 using OpenFTTH.RouteNetwork.API.Model;
 using System;
 using OpenFTTH.UtilityGraphService.API.Commands;

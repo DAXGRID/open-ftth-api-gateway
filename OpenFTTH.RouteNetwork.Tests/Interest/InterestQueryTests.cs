@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using FluentResults;
+using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.RouteNetwork.API.Commands;
 using OpenFTTH.RouteNetwork.API.Model;

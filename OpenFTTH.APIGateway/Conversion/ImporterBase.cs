@@ -45,7 +45,7 @@ namespace OpenFTTH.APIGateway.Conversion
             }
         }
 
-        protected void LogStatus(NpgsqlCommand cmd, string tableName, string keyColumnName, string key, FluentResults.Result result)
+        protected void LogStatus(NpgsqlCommand cmd, string tableName, string keyColumnName, string key, OpenFTTH.Results.Result result)
         {
             cmd.CommandText = @"UPDATE " + tableName + " set status = @statusText where " + keyColumnName + "='" + key + "' and status is null";
             cmd.Parameters.Clear();

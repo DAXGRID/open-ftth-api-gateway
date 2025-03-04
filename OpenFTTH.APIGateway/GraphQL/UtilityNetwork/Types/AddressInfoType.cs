@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using GraphQL;
 using GraphQL.Types;
 using OpenFTTH.APIGateway.GraphQL.Addresses.Queries;

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using FluentResults;
+using OpenFTTH.Results;
 using NetTopologySuite.Geometries;
 using OpenFTTH.CQRS;
 using OpenFTTH.Events.Core.Infos;

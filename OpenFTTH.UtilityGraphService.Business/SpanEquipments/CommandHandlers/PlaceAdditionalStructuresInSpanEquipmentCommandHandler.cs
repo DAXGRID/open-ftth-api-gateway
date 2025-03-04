@@ -1,5 +1,5 @@
 ﻿using DAX.EventProcessing;
-using FluentResults;
+using OpenFTTH.Results;
 using Newtonsoft.Json;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;

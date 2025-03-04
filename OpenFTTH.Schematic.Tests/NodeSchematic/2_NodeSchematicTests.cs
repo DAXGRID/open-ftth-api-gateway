@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using FluentResults;
+using OpenFTTH.Results;
 using Microsoft.Extensions.Logging;
 using Moq;
 using OpenFTTH.CQRS;

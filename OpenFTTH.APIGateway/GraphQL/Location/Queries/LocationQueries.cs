@@ -9,7 +9,7 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using OpenFTTH.Address.API.Model;
 using OpenFTTH.Address.API.Queries;
-using FluentResults;
+using OpenFTTH.Results;
 using System.Linq;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.UtilityGraphService.API.Queries;

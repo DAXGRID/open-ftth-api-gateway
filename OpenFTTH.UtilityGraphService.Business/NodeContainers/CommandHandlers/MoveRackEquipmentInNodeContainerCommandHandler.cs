@@ -1,5 +1,5 @@
 ﻿using DAX.EventProcessing;
-using FluentResults;
+using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.Events.Changes;
 using OpenFTTH.Events.UtilityNetwork;

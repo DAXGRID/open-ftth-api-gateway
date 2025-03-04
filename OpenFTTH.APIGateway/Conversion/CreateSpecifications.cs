@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.Util;
 using OpenFTTH.UtilityGraphService.API.Commands;
@@ -75,12 +75,12 @@ namespace OpenFTTH.APIGateway.Conversion
         public static Guid Ø50_Orange = Guid.Parse("7960355a-4dab-4d60-b3a5-e20ac4301176");
         public static Guid Ø110_Red = Guid.Parse("e078e830-f79d-4220-bd9a-87ed7cf81f1d");
 
-        public FluentResults.Result<CreateSpecifications> Run()
+        public OpenFTTH.Results.Result<CreateSpecifications> Run()
         {
             var nodeContainerSpecification = _queryDispatcher.HandleAsync<GetNodeContainerSpecifications, Result<LookupCollection<NodeContainerSpecification>>>(new GetNodeContainerSpecifications()).Result;
 
             if (nodeContainerSpecification.Value.ContainsKey(Well_Unknown))
-                return FluentResults.Result.Fail("Additional specification already present in system");
+                return OpenFTTH.Results.Result.Fail("Additional specification already present in system");
 
             AddNodeContainerSpecifications();
 
@@ -88,7 +88,7 @@ namespace OpenFTTH.APIGateway.Conversion
 
             Thread.Sleep(100);
 
-            return FluentResults.Result.Ok(this);
+            return OpenFTTH.Results.Result.Ok(this);
         }
 
         private void AddNodeContainerSpecifications()

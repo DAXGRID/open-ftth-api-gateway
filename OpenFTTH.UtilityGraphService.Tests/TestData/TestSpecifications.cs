@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.Util;
 using OpenFTTH.UtilityGraphService.API.Commands;
@@ -218,14 +218,14 @@ namespace OpenFTTH.TestData
 
 
 
-        public FluentResults.Result<TestSpecifications> Run()
+        public OpenFTTH.Results.Result<TestSpecifications> Run()
         {
             lock (_myLock)
             {
                 var manufacturerQueryResult = _queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer()).Result;
 
                 if (manufacturerQueryResult.Value.ContainsKey(Manu_GMPlast))
-                    return FluentResults.Result.Fail("Test specification already present in system");
+                    return OpenFTTH.Results.Result.Fail("Test specification already present in system");
 
                 AddManufactures();
 
@@ -245,7 +245,7 @@ namespace OpenFTTH.TestData
 
                 Thread.Sleep(100);
 
-                return FluentResults.Result.Ok(this);
+                return OpenFTTH.Results.Result.Ok(this);
             }
         }
 

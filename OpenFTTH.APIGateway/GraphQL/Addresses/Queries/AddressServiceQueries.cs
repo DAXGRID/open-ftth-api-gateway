@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
@@ -126,7 +126,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
         private async Task<(double, double)> GetSpanSegmentEndCoordinate(Guid spanSegmentId, IQueryDispatcher queryDispatcher)
         {
             // Query span equipment
-            var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+            var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                 new GetEquipmentDetails(new EquipmentIdList() { spanSegmentId })
                 {
                     EquipmentDetailsFilter = new EquipmentDetailsFilterOptions { IncludeRouteNetworkTrace = true }
@@ -146,7 +146,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
             Guid spanEquipmentInterestId = equipmentQueryResult.Value.SpanEquipment.First().WalkOfInterestId;
 
             // Query route network
-            var routeNetworkQueryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
+            var routeNetworkQueryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, OpenFTTH.Results.Result<GetRouteNetworkDetailsResult>>(
                       new GetRouteNetworkDetails(new InterestIdList() { spanEquipmentInterestId })
                       {
                           RouteNetworkElementFilter = new RouteNetworkElementFilterOptions()

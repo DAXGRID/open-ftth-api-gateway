@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using OpenFTTH.Address.API.Model;
 using OpenFTTH.Address.API.Queries;
 using OpenFTTH.CQRS;

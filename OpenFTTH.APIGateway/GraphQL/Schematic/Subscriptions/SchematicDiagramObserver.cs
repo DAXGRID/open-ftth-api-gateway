@@ -1,5 +1,5 @@
 ﻿using DAX.EventProcessing.Dispatcher;
-using FluentResults;
+using OpenFTTH.Results;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.CQRS;
 using OpenFTTH.Events.UtilityNetwork;

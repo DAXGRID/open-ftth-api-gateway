@@ -1,5 +1,5 @@
 using FluentAssertions;
-using FluentResults;
+using OpenFTTH.Results;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.APIGateway.Conversion;
 using OpenFTTH.APIGateway.IntegrationTests.TestData;

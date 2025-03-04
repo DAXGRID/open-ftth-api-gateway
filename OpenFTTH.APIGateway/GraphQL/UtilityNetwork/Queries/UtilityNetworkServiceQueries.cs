@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
@@ -97,7 +97,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     foreach (var spanSegmentId in spanSegmentIds)
                     {
                         // Get equipment information
-                        var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                        var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                             new GetEquipmentDetails(new EquipmentIdList() { spanSegmentId })
                             {
                                 EquipmentDetailsFilter = new EquipmentDetailsFilterOptions { IncludeRouteNetworkTrace = true }
@@ -162,7 +162,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var terminalEquipmentOrTerminalId = context.GetArgument<Guid>("terminalEquipmentOrTerminalId");
 
                     // Get equipment information
-                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(new EquipmentIdList() { terminalEquipmentOrTerminalId })
                     );
 
@@ -198,7 +198,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var terminalStructureId = context.GetArgument<Guid>("terminalStructureId");
 
                     // Get equipment information
-                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(new EquipmentIdList() { terminalEquipmentOrTerminalId })
                     );
 
@@ -237,7 +237,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
 
                     // Get equipment information
-                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(new EquipmentIdList() { spanEquipmentOrSegmentId })
                     );
 
@@ -269,7 +269,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
 
                     // Get equipment information
-                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, FluentResults.Result<GetEquipmentDetailsResult>>(
+                    var equipmentQueryResult = await queryDispatcher.HandleAsync<GetEquipmentDetails, OpenFTTH.Results.Result<GetEquipmentDetailsResult>>(
                         new GetEquipmentDetails(new InterestIdList() { nodeContainerId })
                     );
 

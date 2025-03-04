@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <PackageReference Include="NetTopologySuite" Version="2.5.0" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="2.2.1" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.1" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="3.0.0" />
-    <PackageReference Include="OpenFTTH.EventSourcing" Version="4.0.1" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="3.0.0" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="3.0.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="4.1.0" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

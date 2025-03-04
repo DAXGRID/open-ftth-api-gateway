@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using Newtonsoft.Json;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.CQRS;

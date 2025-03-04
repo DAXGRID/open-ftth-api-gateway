@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 
 namespace OpenFTTH.APIGateway.GraphQL.Work
 {

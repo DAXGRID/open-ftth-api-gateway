@@ -1,5 +1,5 @@
 ﻿using DAX.ObjectVersioning.Graph;
-using FluentResults;
+using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
 using OpenFTTH.RouteNetwork.API.Model;

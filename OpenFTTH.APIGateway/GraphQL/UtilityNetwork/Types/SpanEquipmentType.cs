@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.CQRS;
@@ -57,7 +57,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                 description: "The route network walk of the span equipment",
                 resolve: async context =>
                 {
-                    var queryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, FluentResults.Result<GetRouteNetworkDetailsResult>>(
+                    var queryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, OpenFTTH.Results.Result<GetRouteNetworkDetailsResult>>(
                         new GetRouteNetworkDetails(new InterestIdList() { context.Source.WalkOfInterestId })
                         {
                             RelatedInterestFilter = RelatedInterestFilterOptions.ReferencesFromRouteElementAndInterestObjects

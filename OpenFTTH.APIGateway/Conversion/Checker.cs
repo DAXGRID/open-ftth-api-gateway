@@ -1,5 +1,5 @@
 ﻿using DAX.ObjectVersioning.Graph;
-using FluentResults;
+using OpenFTTH.Results;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.APIGateway.Settings;
 using OpenFTTH.APIGateway.Util;

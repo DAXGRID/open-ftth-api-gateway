@@ -1,4 +1,4 @@
-using FluentResults;
+using OpenFTTH.Results;
 using Microsoft.AspNetCore.Mvc;
 using OpenFTTH.CQRS;
 using OpenFTTH.Work.API.Model;

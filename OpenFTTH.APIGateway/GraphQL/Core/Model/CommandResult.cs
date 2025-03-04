@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using System.Linq;
 
 namespace OpenFTTH.APIGateway.GraphQL.Core.Model

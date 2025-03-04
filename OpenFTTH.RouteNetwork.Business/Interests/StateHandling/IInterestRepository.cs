@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenFTTH.Results;
 using OpenFTTH.RouteNetwork.API.Model;
 using System;
 using System.Collections.Generic;

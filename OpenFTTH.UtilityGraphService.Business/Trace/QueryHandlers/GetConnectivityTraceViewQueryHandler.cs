@@ -1,5 +1,5 @@
 ﻿using DAX.ObjectVersioning.Graph;
-using FluentResults;
+using OpenFTTH.Results;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
 using OpenFTTH.CQRS;
