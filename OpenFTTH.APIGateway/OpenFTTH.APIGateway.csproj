@@ -10,7 +10,7 @@
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="7.1.1" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="7.1.1" />
     <PackageReference Include="GraphQL.SystemReactive" Version="4.7.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
     <PackageReference Include="OpenFTTH.Address.API" Version="2.2.1" />
     <PackageReference Include="OpenFTTH.Address.Business" Version="2.2.1" />
