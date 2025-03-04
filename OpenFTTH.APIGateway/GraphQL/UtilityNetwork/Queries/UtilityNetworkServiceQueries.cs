@@ -543,13 +543,12 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
             Field<StringGraphType>("getNextPhysicalCircuitId")
             .Description("Get the next circuit id")
-            .ResolveAsync(async context =>
+            .Resolve(context =>
             {
                 var nextConduitSeqStr = eventStore.Sequences.GetNextVal("physicalCircuit").ToString();
 
                 return "AFK" + nextConduitSeqStr.PadLeft(6, '0');
             });
-
         }
     }
 }
