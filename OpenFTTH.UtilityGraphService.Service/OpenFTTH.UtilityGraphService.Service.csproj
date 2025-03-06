@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenFTTH.Core" Version="2.0.0" />
+    <PackageReference Include="OpenFTTH.Core" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
   </ItemGroup>
 
