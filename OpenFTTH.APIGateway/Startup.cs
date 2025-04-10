@@ -44,6 +44,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using Typesense.Setup;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace OpenFTTH.APIGateway
 {
@@ -274,6 +275,8 @@ namespace OpenFTTH.APIGateway
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
             });
         }
 
