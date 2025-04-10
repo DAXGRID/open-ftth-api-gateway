@@ -6,6 +6,7 @@ using GraphQL.Server.Transports.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,7 +45,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using Typesense.Setup;
-using Microsoft.AspNetCore.ResponseCompression;
 
 namespace OpenFTTH.APIGateway
 {
@@ -277,6 +277,9 @@ namespace OpenFTTH.APIGateway
                 options.EnableForHttps = true;
                 options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes =
+                    ResponseCompressionDefaults.MimeTypes.Concat(
+                        new[] { "application/graphql+json" });
             });
         }
 
