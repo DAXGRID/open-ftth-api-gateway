@@ -269,6 +269,12 @@ namespace OpenFTTH.APIGateway
 
             // Dynamic properties reader
             services.AddSingleton<DynamicPropertiesClient>();
+
+            // Enable response compression
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -285,6 +291,8 @@ namespace OpenFTTH.APIGateway
             app.UseGraphQLPlayground();
 
             app.UseRouting();
+
+            app.UseResponseCompression();
 
             app.UseAuthorization();
 
