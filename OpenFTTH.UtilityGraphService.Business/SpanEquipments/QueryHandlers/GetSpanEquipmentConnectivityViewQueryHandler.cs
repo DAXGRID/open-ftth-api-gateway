@@ -1,7 +1,7 @@
 ﻿using DAX.ObjectVersioning.Graph;
-using OpenFTTH.Results;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Results;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.RouteNetwork.API.Queries;
 using OpenFTTH.Util;
@@ -83,6 +83,12 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
             {
                 var spanStructure = spanEquipment.SpanStructures[spanStructureIndex];
 
+                // We do not want to include the span structure if it has been deleted.
+                if (spanStructure.Deleted)
+                {
+                    continue;
+                }
+
                 var spanStructureSpecification = _spanStructureSpecifications[spanStructure.SpecificationId];
 
                 var spanSegmentToTrace = GetSpanSegmentToTrace(query.RouteNetworkElementId, spanEquipment, spanStructure);
@@ -149,7 +155,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
 
             // TODO: use walk of interest to locate correct span segment
             return spanStructure.SpanSegments.First();
-            
+
             //throw new ApplicationException($"Error locating a span segment in span equipment: {spanEquipment.Id} structure position: {spanStructure.Position} that start or ends in route node id: {routeNetworkElementId}");
         }
 
@@ -398,7 +404,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
             return new TraceEndInfo((UtilityGraphConnectedTerminal)neighborTerminal, (UtilityGraphConnectedTerminal)terminalEnd);
         }
 
-    
+
         private class RelevantEquipmentData : RelatedDataHolder
         {
             public Dictionary<Guid, TraceInfo> TracedSegments { get; set; }
@@ -414,7 +420,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
             public TraceEndInfo? Upstream { get; set; }
             public TraceEndInfo? Downstream { get; set; }
 
-            public bool UpstreamIsZ {get; set;}
+            public bool UpstreamIsZ { get; set; }
             public TraceEndInfo? Z
             {
                 get
