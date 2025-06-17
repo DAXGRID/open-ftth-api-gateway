@@ -27,10 +27,9 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Span equipment mutations";
 
-            FieldAsync<CommandResultType>(
-              "placeSpanEquipmentInRouteNetwork",
-              description: "Place a span equipment (i.e. conduit, cable whatwever) in the route network",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("placeSpanEquipmentInRouteNetwork")
+              .Description("Place a span equipment (i.e. conduit, cable whatwever) in the route network")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentId" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentSpecificationId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "routeSegmentIds" },
@@ -38,8 +37,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   new QueryArgument<MarkingInfoInputType> { Name = "markingInfo" },
                   new QueryArgument<NamingInfoInputType> { Name = "namingInfo" },
                   new QueryArgument<AddressInfoInputType> { Name = "addressInfo" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanEquipmentId = context.GetArgument<Guid>("spanEquipmentId");
                   var spanEquipmentSpecificationId = context.GetArgument<Guid>("spanEquipmentSpecificationId");
@@ -107,18 +106,16 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   }
 
                   return new CommandResult(placeSpanEquipmentResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "affixSpanEquipmentToNodeContainer",
-              description: "Affix a span equipment to a node container - i.e. to some condult closure, man hole etc.",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("affixSpanEquipmentToNodeContainer")
+              .Description("Affix a span equipment to a node container - i.e. to some condult closure, man hole etc.")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentIds" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
                   new QueryArgument<NonNullGraphType<NodeContainerSideEnumType>> { Name = "nodeContainerSide" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanSegmentIds = context.GetArgument<List<Guid>>("spanSegmentIds");
                   var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
@@ -148,17 +145,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   }
 
                   return new CommandResult(Result.Ok());
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "detachSpanEquipmentFromNodeContainer",
-              description: "Detach a span equipment from a node container - i.e. from some condult closure, man hole etc.",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("detachSpanEquipmentFromNodeContainer")
+              .Description("Detach a span equipment from a node container - i.e. from some condult closure, man hole etc.")
+              .Arguments(new QueryArguments(
                   new QueryArgument<ListGraphType<IdGraphType>> { Name = "spanSegmentIds" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanSegmentIds = context.GetArgument<List<Guid>>("spanSegmentIds");
                   var routeNodeId = context.GetArgument<Guid>("routeNodeId");
@@ -189,17 +184,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   }
 
                   return new CommandResult(Result.Ok());
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "cutSpanSegments",
-              description: "Cut the span segments belonging to som span equipment at the route node specified",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("cutSpanSegments")
+              .Description("Cut the span segments belonging to som span equipment at the route node specified")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentstoCut" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                   var spanSegmentToCut = context.GetArgument<Guid[]>("spanSegmentstoCut");
@@ -224,17 +217,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var cutResult = await commandDispatcher.HandleAsync<CutSpanSegmentsAtRouteNode, Result>(cutCmd);
 
                   return new CommandResult(cutResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "connectSpanSegments",
-              description: "Connect the span segments belonging to two different span equipment at the route node specified",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("connectSpanSegments")
+              .Description("Connect the span segments belonging to two different span equipment at the route node specified")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentsToConnect" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                   var spanSegmentToConnect = context.GetArgument<Guid[]>("spanSegmentsToConnect");
@@ -259,17 +250,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var connectResult = await commandDispatcher.HandleAsync<ConnectSpanSegmentsAtRouteNode, Result>(connectCmd);
 
                   return new CommandResult(connectResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "disconnectSpanSegments",
-              description: "Disconnect two span segments belonging to two different span equipment at the route node specified",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("disconnectSpanSegments")
+              .Description("Disconnect two span segments belonging to two different span equipment at the route node specified")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanSegmentsToDisconnect" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                   var spanSegmentToDisconnect = context.GetArgument<Guid[]>("spanSegmentsToDisconnect");
@@ -294,17 +283,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var disconnectResult = await commandDispatcher.HandleAsync<DisconnectSpanSegmentsAtRouteNode, Result>(disconnectCmd);
 
                   return new CommandResult(disconnectResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "addAdditionalInnerSpanStructures",
-              description: "Add inner span structures to an existing span equipment",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("addAdditionalInnerSpanStructures")
+              .Description("Add inner span structures to an existing span equipment")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentOrSegmentId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "spanStructureSpecificationIds" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
                   var specificationsId = context.GetArgument<Guid[]>("spanStructureSpecificationIds");
@@ -332,16 +319,14 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var addStructureResult = await commandDispatcher.HandleAsync<PlaceAdditionalStructuresInSpanEquipment, Result>(addStructure);
 
                   return new CommandResult(addStructureResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "removeSpanStructure",
-              description: "Remove inner or outer span structure of a span equipment. When the outer span structure is removed the entire span equipment is removed from the network.",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("removeSpanStructure")
+              .Description("Remove inner or outer span structure of a span equipment. When the outer span structure is removed the entire span equipment is removed from the network.")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanSegmentId" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanSegmentId = context.GetArgument<Guid>("spanSegmentId");
 
@@ -367,17 +352,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var removeStructureResult = await commandDispatcher.HandleAsync<RemoveSpanStructureFromSpanEquipment, Result>(removeStructure);
 
                   return new CommandResult(removeStructureResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-              "move",
-              description: "Move a span equipment / change its walk in the route network",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("move")
+              .Description("Move a span equipment / change its walk in the route network")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentOrSegmentId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "routeSegmentIds" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
 
@@ -409,21 +392,19 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var moveCmdResult = await commandDispatcher.HandleAsync<MoveSpanEquipment, Result>(moveCmd);
 
                   return new CommandResult(moveCmdResult);
-              }
-            );
+              });
 
-            FieldAsync<CommandResultType>(
-             "updateProperties",
-             description: "Mutation that can be used to change the span equipment specification, manufacturer and/or marking information",
-             arguments: new QueryArguments(
+            Field<CommandResultType>("updateProperties")
+             .Description("Mutation that can be used to change the span equipment specification, manufacturer and/or marking information")
+             .Arguments(new QueryArguments(
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanEquipmentOrSegmentId" },
                  new QueryArgument<IdGraphType> { Name = "spanEquipmentSpecificationId" },
                  new QueryArgument<IdGraphType> { Name = "manufacturerId" },
                  new QueryArgument<NamingInfoInputType> { Name = "namingInfo" },
                  new QueryArgument<MarkingInfoInputType> { Name = "markingInfo" },
                  new QueryArgument<AddressInfoInputType> { Name = "addressInfo" }
-             ),
-             resolve: async context =>
+             ))
+             .ResolveAsync(async context =>
              {
                  var spanEquipmentOrSegmentId = context.GetArgument<Guid>("spanEquipmentOrSegmentId");
 
@@ -452,18 +433,16 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                  var updateResult = await commandDispatcher.HandleAsync<UpdateSpanEquipmentProperties, Result>(updateCmd);
 
                  return new CommandResult(updateResult);
-             }
-           );
+             });
 
-            FieldAsync<CommandResultType>(
-             "affixSpanEquipmentToParent",
-             description: "Affix a span equipment to a parent span equipment - i.e. put a cable inside a conduit",
-             arguments: new QueryArguments(
+            Field<CommandResultType>("affixSpanEquipmentToParent")
+             .Description("Affix a span equipment to a parent span equipment - i.e. put a cable inside a conduit")
+             .Arguments(new QueryArguments(
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanSegmentId1" },
                  new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "spanSegmentId2" }
-             ),
-             resolve: async context =>
+             ))
+             .ResolveAsync(async context =>
              {
                  var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                  var spanSegmentId1 = context.GetArgument<Guid>("spanSegmentId1");
@@ -489,17 +468,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                      return new CommandResult(affixCommandResult);
 
                  return new CommandResult(Result.Ok());
-             }
-           );
+             });
 
-            FieldAsync<CommandResultType>(
-                "connectToTerminalEquipment",
-                description: "Connect one or more span segments inside a span equipment to terminals inside a terminal equipmment",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("connectToTerminalEquipment")
+                .Description("Connect one or more span segments inside a span equipment to terminals inside a terminal equipmment")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<ListGraphType<ConnectSpanSegmentToTerminalOperationInputType>>> { Name = "connects" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var connects = context.GetArgument<ConnectSpanSegmentToTerminalOperation[]>("connects");
@@ -524,17 +501,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                         return new CommandResult(connectCommandResult);
 
                     return new CommandResult(Result.Ok());
-                }
-             );
+                });
 
-            FieldAsync<CommandResultType>(
-               "disconnectFromTerminalEquipment",
-               description: "Disconnect one or more span segments inside a span equipment from terminals inside a terminal equipmment",
-               arguments: new QueryArguments(
+            Field<CommandResultType>("disconnectFromTerminalEquipment")
+               .Description("Disconnect one or more span segments inside a span equipment from terminals inside a terminal equipmment")
+               .Arguments(new QueryArguments(
                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                    new QueryArgument<NonNullGraphType<ListGraphType<DisconnectSpanSegmentFromTerminalOperationInputType>>> { Name = "disconnects" }
-               ),
-               resolve: async context =>
+               ))
+               .ResolveAsync(async context =>
                {
                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                    var connects = context.GetArgument<DisconnectSpanSegmentFromTerminalOperation[]>("disconnects");
@@ -559,8 +534,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                        return new CommandResult(connectCommandResult);
 
                    return new CommandResult(Result.Ok());
-               }
-            );
+               });
         }
 
         private static NamingInfo CalculateSpanEquipmentName(IEventStore eventStore, NamingInfo namingInfo, SpanEquipmentSpecification spec)

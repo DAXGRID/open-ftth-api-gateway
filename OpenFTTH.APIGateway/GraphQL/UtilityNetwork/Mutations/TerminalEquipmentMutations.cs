@@ -22,10 +22,9 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Terminal equipment mutations";
 
-            FieldAsync<CommandResultType>(
-                "updateProperties",
-                description: "Mutation that can be used to change the terminal equipment specification,naming information",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("updateProperties")
+                .Description("Mutation that can be used to change the terminal equipment specification,naming information")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<IdGraphType> { Name = "terminalEquipmentSpecificationId" },
                     new QueryArgument<IdGraphType> { Name = "manufacturerId" },
@@ -33,8 +32,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     new QueryArgument<AddressInfoInputType> { Name = "addressInfo" },
                     new QueryArgument<IdGraphType> { Name = "rackId" },
                     new QueryArgument<IntGraphType> { Name = "rackStartUnitPosition" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
 
@@ -65,20 +64,18 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var updateResult = await commandDispatcher.HandleAsync<UpdateTerminalEquipmentProperties, Result>(updateCmd);
 
                     return new CommandResult(updateResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "updateTerminalStructureProperties",
-                description: "Mutation that can be used to change a terminal structure (card, tray etc) that sits a terminal equipment",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("updateTerminalStructureProperties")
+                .Description("Mutation that can be used to change a terminal structure (card, tray etc) that sits a terminal equipment")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureSpecificationId" },
                     new QueryArgument<IntGraphType> { Name = "position" },
                     new QueryArgument<InterfaceInfoInputType> { Name = "interfaceInfo" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
                     var terminalStructureId = context.GetArgument<Guid>("terminalStructureId");
@@ -107,17 +104,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var updateResult = await commandDispatcher.HandleAsync<UpdateTerminalStructureProperties, Result>(updateCmd);
 
                     return new CommandResult(updateResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "remove",
-                description: "Remove the terminal equipment",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("remove")
+                .Description("Remove the terminal equipment")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -144,19 +139,17 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var removeResult = await commandDispatcher.HandleAsync<RemoveTerminalEquipment, Result>(removeTerminalEquipment);
 
                     return new CommandResult(removeResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "connectTerminals",
-                description: "Connect terminals - i.e. create a patch from one terminal equipment to another",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("connectTerminals")
+                .Description("Connect terminals - i.e. create a patch from one terminal equipment to another")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "fromTerminalId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "toTerminalId" },
                     new QueryArgument<NonNullGraphType<FloatGraphType>> { Name = "fiberCoordLength" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var fromTerminalId = context.GetArgument<Guid>("fromTerminalId");
@@ -183,20 +176,18 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                         return new CommandResult(connectCommandResult);
 
                     return new CommandResult(Result.Ok());
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "addAdditionalStructures",
-                description: "Add additional terminal structure to terminal equipment - i.e. trays, cards etc.",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("addAdditionalStructures")
+                .Description("Add additional terminal structure to terminal equipment - i.e. trays, cards etc.")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "structureSpecificationId" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "numberOfStructures" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "position" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -230,19 +221,17 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var addStructureResult = await commandDispatcher.HandleAsync<PlaceAdditionalStructuresInTerminalEquipment, Result>(addStructure);
 
                     return new CommandResult(addStructureResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "addInterface",
-                description: "Add interface to optical line terminal equipment",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("addInterface")
+                .Description("Add interface to optical line terminal equipment")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "structureSpecificationId" },
                     new QueryArgument<InterfaceInfoInputType> { Name = "interfaceInfo" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -277,18 +266,16 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var addStructureResult = await commandDispatcher.HandleAsync<PlaceAdditionalStructuresInTerminalEquipment, Result>(addStructure);
 
                     return new CommandResult(addStructureResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "removeStructure",
-                description: "Remove terminal structure from equipment",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("removeStructure")
+                .Description("Remove terminal structure from equipment")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalStructureId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -318,8 +305,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var removeStructureResult = await commandDispatcher.HandleAsync<RemoveTerminalStructureFromTerminalEquipment, Result>(removeStructure);
 
                     return new CommandResult(removeStructureResult);
-                }
-            );
+                });
 
         }
     }

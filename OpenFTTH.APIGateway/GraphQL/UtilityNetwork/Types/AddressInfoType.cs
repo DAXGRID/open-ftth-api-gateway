@@ -20,10 +20,9 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.UnitAddressId, type: typeof(IdGraphType)).Description("Internal or external unit address id");
             Field(x => x.Remark, type: typeof(StringGraphType)).Description("Additional address information remark");
 
-            Field<AccessAddressType>(
-               name: "accessAddress",
-               description: "Access address and its containing unit addresses",
-               resolve: context =>
+            Field<AccessAddressType>("accessAddress")
+               .Description("Access address and its containing unit addresses")
+               .Resolve(context =>
                {
                    if (context.Source.AccessAddressId != null && context.Source.AccessAddressId != Guid.Empty)
                    {
@@ -47,13 +46,11 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                    }
                    else
                        return null;
-               }
-           );
+               });
 
-            Field<UnitAddressType>(
-              name: "unitAddress",
-              description: "Access address and its containing unit addresses",
-              resolve: context =>
+            Field<UnitAddressType>("unitAddress")
+              .Description("Access address and its containing unit addresses")
+              .Resolve(context =>
               {
                   if (context.Source.UnitAddressId != null && context.Source.UnitAddressId != Guid.Empty)
                   {
@@ -78,8 +75,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                   }
                   else
                       return null;
-              }
-          );
+              });
 
 
         }

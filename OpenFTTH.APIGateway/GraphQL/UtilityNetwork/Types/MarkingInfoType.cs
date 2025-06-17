@@ -8,7 +8,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
     {
         public MarkingInfoType(ILogger<MarkingInfoType> logger)
         {
-            Field(x => x.MarkingColor, type:typeof(StringGraphType)).Description("Marking color - i.e. stripe, tape etc.");
+            Field(x => x.MarkingColor, type: typeof(StringGraphType)).Description("Marking color - i.e. stripe, tape etc.");
             Field(x => x.MarkingText, type: typeof(StringGraphType)).Description("Marking text - i.e. some utility custom text on the conduit/cable");
         }
     }

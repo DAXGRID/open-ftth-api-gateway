@@ -22,24 +22,21 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Queries
 
             Description = "GraphQL API for querying work order related data";
 
-            Field<ListGraphType<WorkTaskAndProjectType>>(
-                name: "workTasksWithProjectInformation",
-                description: "Retrieve all work tasks including related project information",
-                resolve: context =>
+            Field<ListGraphType<WorkTaskAndProjectType>>("workTasksWithProjectInformation")
+                .Description("Retrieve all work tasks including related project information")
+                .Resolve(context =>
                 {
                     var queryRequest = new GetAllWorkTaskAndProjects();
 
                     var queryResult = this._queryDispatcher.HandleAsync<GetAllWorkTaskAndProjects, Result<List<WorkTaskAndProject>>>(queryRequest).Result;
 
                     return queryResult.Value;
-                }
-            );
+                });
 
-            Field<UserWorkContextType>(
-                name: "userWorkContext",
-                description: "Used to get work task status information specific to a particular user.",
-                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "userName" }),
-                resolve: context =>
+            Field<UserWorkContextType>("userWorkContext")
+                .Description("Used to get work task status information specific to a particular user.")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "userName" }))
+                .Resolve(context =>
                 {
                     var userName = context.GetArgument<string>("userName");
 
@@ -48,8 +45,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Queries
                     var queryResult = this._queryDispatcher.HandleAsync<GetUserWorkContext, Result<UserWorkContext>>(queryRequest).Result;
 
                     return queryResult.Value;
-                }
-            );
+                });
         }
 
     }

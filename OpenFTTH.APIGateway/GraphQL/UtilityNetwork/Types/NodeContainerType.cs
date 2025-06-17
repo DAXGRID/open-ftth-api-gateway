@@ -19,22 +19,19 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.SpecificationId, type: typeof(IdGraphType)).Description("Span equipment specification id");
             Field(x => x.ManufacturerId, type: typeof(IdGraphType)).Description("Span equipment manufacturer id");
 
-            FieldAsync<NodeContainerSpecificationType>(
-               name: "specification",
-               description: "The specification used to create the node container",
-               resolve: async context =>
+            Field<NodeContainerSpecificationType>("specification")
+               .Description("The specification used to create the node container")
+               .ResolveAsync(async context =>
                {
                    var queryResult = await queryDispatcher.HandleAsync<GetNodeContainerSpecifications, Result<LookupCollection<NodeContainerSpecification>>>(
                        new GetNodeContainerSpecifications());
 
                    return queryResult.Value[context.Source.SpecificationId];
-               }
-            );
+               });
 
-            FieldAsync<ManufacturerType>(
-                name: "manufacturer",
-                description: "The manufacturer of the node container",
-                resolve: async context =>
+            Field<ManufacturerType>("manufacturer")
+                .Description("The manufacturer of the node container")
+                .ResolveAsync(async context =>
                 {
                     if (context.Source.ManufacturerId == null || context.Source.ManufacturerId == Guid.Empty)
                         return null;
@@ -42,8 +39,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                     var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
 
                     return queryResult.Value[context.Source.ManufacturerId.Value];
-                }
-            );
+                });
         }
     }
 }

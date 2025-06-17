@@ -23,14 +23,13 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Mutations
 
             Description = "Outage / trouble ticket mutations";
 
-            FieldAsync<CommandResultType>(
-              "sendTroubleTicket",
-              description: "Send trouble ticket information to external systems",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("sendTroubleTicket")
+              .Description("Send trouble ticket information to external systems")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "workTaskId" },
                   new QueryArgument<NonNullGraphType<ListGraphType<StringGraphType>>> { Name = "installationsIds" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   if (_outageServiceSetting == null || _outageServiceSetting.OutageServiceUrl == null)
                       return new CommandResult(Result.Fail(new Error("OutageServiceSetting config is missing.")));
@@ -75,8 +74,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Mutations
                       logger.LogError(ex.Message, ex.StackTrace);
                       return new CommandResult(Result.Fail(new Error(ex.Message)));
                   }
-              }
-            );
+              });
         }
 
         internal sealed record TroubleTicketRequest

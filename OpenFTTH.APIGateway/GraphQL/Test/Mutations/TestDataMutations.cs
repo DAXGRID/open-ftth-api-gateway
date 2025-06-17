@@ -14,16 +14,14 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Test network mutations.";
 
-            Field<CommandResultType>(
-              "createSpecifications",
-              description: "Create a set of specifications for testing",
-              resolve: context =>
+            Field<CommandResultType>("createSpecifications")
+              .Description("Create a set of specifications for testing")
+              .Resolve(context =>
               {
                   var result = new TestSpecifications(loggerFactory, commandDispatcher, queryDispatcher, eventStore).Run();
 
                   return new CommandResult(result);
-              }
-            );
+              });
         }
     }
 }

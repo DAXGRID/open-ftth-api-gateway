@@ -14,22 +14,20 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Schematic mutations/commands";
 
-            Field<CommandResultType>(
-              "triggerDiagramUpdate",
-              description: "Just to test the schematic diagram observer and subscriptions",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("triggerDiagramUpdate")
+              .Description("Just to test the schematic diagram observer and subscriptions")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNeworkElementId" }
-              ),
-              resolve: context =>
+              ))
+              .Resolve(context =>
               {
                   var routeNeworkElementId = context.GetArgument<Guid>("routeNeworkElementId");
 
                   schematicDiagramObserver.Ping(routeNeworkElementId);
 
                   return new CommandResult(Result.Ok());
-              }
-            );
-          
+              });
+
         }
     }
 }

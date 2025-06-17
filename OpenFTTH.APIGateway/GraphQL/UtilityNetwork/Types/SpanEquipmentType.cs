@@ -26,22 +26,19 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.ManufacturerId, type: typeof(IdGraphType)).Description("Span equipment manufacturer id");
             Field(x => x.IsCable, type: typeof(BooleanGraphType)).Description("True if span equipment is a cable. Otherwise it's a conduit.");
 
-            FieldAsync<SpanEquipmentSpecificationType>(
-               name: "specification",
-               description: "The specification used to create the span equipment",
-               resolve: async context =>
+            Field<SpanEquipmentSpecificationType>("specification")
+               .Description("The specification used to create the span equipment")
+               .ResolveAsync(async context =>
                {
                    var queryResult = await queryDispatcher.HandleAsync<GetSpanEquipmentSpecifications,
                        Result<LookupCollection<SpanEquipmentSpecification>>>(new GetSpanEquipmentSpecifications());
 
                    return queryResult.Value[context.Source.SpecificationId];
-               }
-            );
+               });
 
-            FieldAsync<ManufacturerType>(
-                name: "manufacturer",
-                description: "The manufacturer of the span equipment",
-                resolve: async context =>
+            Field<ManufacturerType>("manufacturer")
+                .Description("The manufacturer of the span equipment")
+                .ResolveAsync(async context =>
                 {
                     if (context.Source.ManufacturerId == null || context.Source.ManufacturerId == Guid.Empty)
                         return null;
@@ -49,13 +46,11 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                     var queryResult = await queryDispatcher.HandleAsync<GetManufacturer, Result<LookupCollection<Manufacturer>>>(new GetManufacturer());
 
                     return queryResult.Value[context.Source.ManufacturerId.Value];
-                }
-            );
+                });
 
-            FieldAsync<ListGraphType<IdGraphType>>(
-                name: "routeSegmentIds",
-                description: "The route network walk of the span equipment",
-                resolve: async context =>
+            Field<ListGraphType<IdGraphType>>("routeSegmentIds")
+                .Description("The route network walk of the span equipment")
+                .ResolveAsync(async context =>
                 {
                     var queryResult = await queryDispatcher.HandleAsync<GetRouteNetworkDetails, OpenFTTH.Results.Result<GetRouteNetworkDetailsResult>>(
                         new GetRouteNetworkDetails(new InterestIdList() { context.Source.WalkOfInterestId })
@@ -80,8 +75,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                         segmentIds.Add(routeNetworkElementIds[i]);
 
                     return segmentIds;
-                }
-            );
+                });
         }
     }
 }

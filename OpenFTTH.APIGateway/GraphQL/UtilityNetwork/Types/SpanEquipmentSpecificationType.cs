@@ -17,8 +17,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.IsFixed, type: typeof(BooleanGraphType)).Description("True is the span equipment has a fixed span structure - i.e. you cannot add or remove inner span stuctures.");
             Field(x => x.IsMultiLevel, type: typeof(BooleanGraphType)).Description("True is the span equipment has and/or allows a multi level structure - i.e. it already has a fixed inner span structure or it allows inner spans to be added in case of a non-fixed structure.");
 
-            Field(x => x.RootTemplate.SpanStructureSpecificationId, type: typeof(IdGraphType))
-                .Name("OuterSpanStructureSpecificationId")
+            Field("OuterSpanStructureSpecificationId", x => x.RootTemplate.SpanStructureSpecificationId, type: typeof(IdGraphType))
                 .Description("Root / outer span structure specification.");
         }
     }

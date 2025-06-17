@@ -40,7 +40,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Subscriptions
         {
             var subject = new ObserverSubject(new Subject<TerminalEquipmentAZConnectivityViewModel>(), terminalEquipmentOrRackId, routeNodeId);
 
-            var observableList = _observableByRouteNetworkElementId.GetOrAdd(routeNodeId, new ConcurrentDictionary<Guid,ObserverSubject>());
+            var observableList = _observableByRouteNetworkElementId.GetOrAdd(routeNodeId, new ConcurrentDictionary<Guid, ObserverSubject>());
 
             if (observableList.TryGetValue(terminalEquipmentOrRackId, out var observerSubject))
             {

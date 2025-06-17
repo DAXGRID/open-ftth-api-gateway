@@ -25,16 +25,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
         {
             Description = "Node container mutations";
 
-            FieldAsync<CommandResultType>(
-                "placeNodeContainerInRouteNetwork",
-                description: "Place a node container (i.e. conduit closure, well, cabinet whatwever) in a route network node",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("placeNodeContainerInRouteNetwork")
+                .Description("Place a node container (i.e. conduit closure, well, cabinet whatwever) in a route network node")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerSpecificationId" },
                     new QueryArgument<IdGraphType> { Name = "manufacturerId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
@@ -89,16 +88,14 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     }
 
                     return new CommandResult(placeNodeContainerResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "reverseVerticalContentAlignment",
-                description: "Toggle whether the content in the node container should be drawed from bottom up or top down",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("reverseVerticalContentAlignment")
+                .Description("Toggle whether the content in the node container should be drawed from bottom up or top down")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var userContext = context.UserContext as GraphQLUserContext;
                     var userName = userContext.Username;
@@ -120,18 +117,16 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var reverseAlignmentCmdResult = await commandDispatcher.HandleAsync<ReverseNodeContainerVerticalContentAlignment, Result>(reverseAlignmentCmd);
 
                     return new CommandResult(reverseAlignmentCmdResult);
-                }
-           );
+                });
 
-            FieldAsync<CommandResultType>(
-                "updateProperties",
-                description: "Mutation that can be used to change the node container specification and/or manufacturer",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("updateProperties")
+                .Description("Mutation that can be used to change the node container specification and/or manufacturer")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
                     new QueryArgument<IdGraphType> { Name = "specificationId" },
                     new QueryArgument<IdGraphType> { Name = "manufacturerId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
 
@@ -157,16 +152,14 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var updateResult = await commandDispatcher.HandleAsync<UpdateNodeContainerProperties, Result>(updateCmd);
 
                     return new CommandResult(updateResult);
-                }
-             );
+                });
 
-            FieldAsync<CommandResultType>(
-                "remove",
-                description: "Remove node container from the route network node",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("remove")
+                .Description("Remove node container from the route network node")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
 
@@ -192,21 +185,19 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var removeResult = await commandDispatcher.HandleAsync<RemoveNodeContainerFromRouteNetwork, Result>(removeNodeContainer);
 
                     return new CommandResult(removeResult);
-                }
-            );
+                });
 
 
-            FieldAsync<CommandResultType>(
-                "placeRackInNodeContainer",
-                description: "Place a rack in the node container",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("placeRackInNodeContainer")
+                .Description("Place a rack in the node container")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "nodeContainerId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackSpecificationId" },
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "rackName" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "rackHeightInUnits" }
-              ),
-                resolve: async context =>
+              ))
+                .ResolveAsync(async context =>
                 {
                     var nodeContainerId = context.GetArgument<Guid>("nodeContainerId");
                     var rackId = context.GetArgument<Guid>("rackId");
@@ -240,17 +231,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var removeResult = await commandDispatcher.HandleAsync<PlaceRackInNodeContainer, Result>(placeRackInNodeContainer);
 
                     return new CommandResult(removeResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-              "removeRackFromNodeContainer",
-              description: "Remove a rack from the node container",
-              arguments: new QueryArguments(
+            Field<CommandResultType>("removeRackFromNodeContainer")
+              .Description("Remove a rack from the node container")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" }
-              ),
-              resolve: async context =>
+              ))
+              .ResolveAsync(async context =>
               {
                   var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                   var rackId = context.GetArgument<Guid>("rackId");
@@ -278,14 +267,12 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                   var removeResult = await commandDispatcher.HandleAsync<RemoveRackFromNodeContainer, Result>(removeRackFromNodeContainer);
 
                   return new CommandResult(removeResult);
-              }
-            );
+              });
 
 
-            FieldAsync<CommandResultType>(
-                "placeTerminalEquipmentInNodeContainer",
-                description: "Place a terminal directly in a node container or in a node container rack",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("placeTerminalEquipmentInNodeContainer")
+                .Description("Place a terminal directly in a node container or in a node container rack")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentSpecificationId" },
                     new QueryArgument<IdGraphType> { Name = "manufacturerId" },
@@ -295,8 +282,8 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     new QueryArgument<NamingInfoInputType> { Name = "namingInfo" },
                     new QueryArgument<SubrackPlacementInfoInputType> { Name = "subrackPlacementInfo" },
                     new QueryArgument<AddressInfoInputType> { Name = "addressInfo" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentSpecificationId = context.GetArgument<Guid>("terminalEquipmentSpecificationId");
@@ -353,20 +340,18 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var removeResult = await commandDispatcher.HandleAsync<PlaceTerminalEquipmentInNodeContainer, Result>(placeEquipmentInNodeContainer);
 
                     return new CommandResult(removeResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-               "updateRackProperties",
-               description: "Mutation that can be used to change the properties of a rack inside a node container",
-               arguments: new QueryArguments(
+            Field<CommandResultType>("updateRackProperties")
+               .Description("Mutation that can be used to change the properties of a rack inside a node container")
+               .Arguments(new QueryArguments(
                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "rackId" },
                    new QueryArgument<IdGraphType> { Name = "specificationId" },
                    new QueryArgument<StringGraphType> { Name = "name" },
                    new QueryArgument<IntGraphType> { Name = "heightInUnits" }
-               ),
-               resolve: async context =>
+               ))
+               .ResolveAsync(async context =>
                {
                    var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                    var rackId = context.GetArgument<Guid>("rackId");
@@ -394,19 +379,17 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                    var updateResult = await commandDispatcher.HandleAsync<UpdateRackProperties, Result>(updateCmd);
 
                    return new CommandResult(updateResult);
-               }
-            );
+               });
 
-            FieldAsync<CommandResultType>(
-                "moveRackEquipment",
-                description: "Mutation that moves a terminal equipment within or between racks",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("moveRackEquipment")
+                .Description("Mutation that moves a terminal equipment within or between racks")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "moveToRackId" },
                     new QueryArgument<IntGraphType> { Name = "moveToRackPosition" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -439,19 +422,17 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var cmdResult = await commandDispatcher.HandleAsync<MoveRackEquipmentInNodeContainer, Result>(cmd);
 
                     return new CommandResult(cmdResult);
-                }
-            );
+                });
 
-            FieldAsync<CommandResultType>(
-                "arrangeRackEquipment",
-                description: "Mutation that can move terminal equipments up/down in a rack",
-                arguments: new QueryArguments(
+            Field<CommandResultType>("arrangeRackEquipment")
+                .Description("Mutation that can move terminal equipments up/down in a rack")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalEquipmentId" },
                     new QueryArgument<NonNullGraphType<RackEquipmentArrangeMethodEnumType>> { Name = "arrangeMethod" },
                     new QueryArgument<IntGraphType> { Name = "numberOfRackPositions" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNodeId = context.GetArgument<Guid>("routeNodeId");
                     var terminalEquipmentId = context.GetArgument<Guid>("terminalEquipmentId");
@@ -484,8 +465,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     var cmdResult = await commandDispatcher.HandleAsync<ArrangeRackEquipmentInNodeContainer, Result>(cmd);
 
                     return new CommandResult(cmdResult);
-                }
-            );
+                });
         }
     }
 }

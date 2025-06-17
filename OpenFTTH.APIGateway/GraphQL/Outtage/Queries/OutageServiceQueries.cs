@@ -27,10 +27,9 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Queries
 
             Description = "GraphQL API for querying outage / trouble ticket related data";
 
-            Field<ListGraphType<WorkTaskAndProjectType>>(
-                 name: "latestTenTroubleTicketsOrderedByDate",
-                 description: "Retrieve the latest 10 trouble ticket work tasks ordered by date",
-                 resolve: context =>
+            Field<ListGraphType<WorkTaskAndProjectType>>("latestTenTroubleTicketsOrderedByDate")
+                 .Description("Retrieve the latest 10 trouble ticket work tasks ordered by date")
+                 .Resolve(context =>
                  {
                      var queryRequest = new GetAllWorkTaskAndProjects();
 
@@ -39,17 +38,15 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Queries
                      var orderedTroubleTicketWorkTrask = queryResult.Value.Where(w => w.WorkTask.Type != null && w.WorkTask.Type == "Trouble ticket").OrderByDescending(w => w.WorkTask.CreatedDate).Take(10);
 
                      return orderedTroubleTicketWorkTrask;
-                 }
-             );
+                 });
 
-            FieldAsync<OutageViewNodeType>(
-                name: "outageView",
-                description: "Information needed to show outage tree to the user",
-                arguments: new QueryArguments(
+            Field<OutageViewNodeType>("outageView")
+                .Description("Information needed to show outage tree to the user")
+                .Arguments(new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "routeNetworkElementId" },
                     new QueryArgument<IdGraphType> { Name = "equipmentId" }
-                ),
-                resolve: async context =>
+                ))
+                .ResolveAsync(async context =>
                 {
                     var routeNetworkElementId = context.GetArgument<Guid>("routeNetworkElementId");
                     var equipmentId = context.GetArgument<Guid?>("equipmentId");
@@ -87,8 +84,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Queries
 
                         return queryResult.Value;
                     }
-                }
-             );
+                });
         }
 
     }

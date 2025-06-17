@@ -20,10 +20,9 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries
         {
             Description = "GraphQL API for querying data owned by route nodes and route segments";
 
-            FieldAsync<RouteNetworkElementType>(
-                "routeElement",
-                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "Id" }),
-                resolve: async context =>
+            Field<RouteNetworkElementType>("routeElement")
+                .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "Id" }))
+                .ResolveAsync(async context =>
                 {
                     if (!Guid.TryParse(context.GetArgument<string>("id"), out Guid routeNodeId))
                     {
@@ -45,8 +44,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries
                     }
 
                     return queryResult.Value.RouteNetworkElements[routeNodeId];
-                }
-            );
+                });
 
             Field<ListGraphType<IdGraphType>>("shortestPathBetweenSegments")
                 .Description("Returns the shortest path (route segment ids) between two segments, including those segments.")
@@ -76,16 +74,15 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries
                     return shortestPathBetweenSegmentsResult.Value.RouteSegmentElementIds;
                 });
 
-            FieldAsync<ListGraphType<RouteNetworkTraceType>>(
-                 "nearestNeighborNodes",
-                 arguments: new QueryArguments(
+            Field<ListGraphType<RouteNetworkTraceType>>("nearestNeighborNodes")
+                 .Arguments(new QueryArguments(
                      new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "sourceRouteNodeId" },
                      new QueryArgument<NonNullGraphType<ListGraphType<RouteNodeKindEnumType>>> { Name = "stops" },
                      new QueryArgument<NonNullGraphType<ListGraphType<RouteNodeKindEnumType>>> { Name = "interests" },
                      new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "maxHits" },
                      new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "maxBirdFlyDistanceMeters" }
-                 ),
-                 resolve: async context =>
+                 ))
+                 .ResolveAsync(async context =>
                  {
                      Guid routeNodeId = context.GetArgument<Guid>("sourceRouteNodeId");
                      List<RouteNodeKindEnum> stops = context.GetArgument<List<RouteNodeKindEnum>>("stops");
@@ -105,8 +102,7 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Queries
                      }
 
                      return nearestNodeQueryResult.Value.RouteNetworkTraces;
-                 }
-            );
+                 });
         }
     }
 }

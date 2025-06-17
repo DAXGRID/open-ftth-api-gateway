@@ -8,7 +8,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
     {
         public InterfaceInfoType(ILogger<InterfaceInfo> logger)
         {
-            Field(x => x.InterfaceType, type:typeof(StringGraphType)).Description("Interface type - i.e. GE");
+            Field(x => x.InterfaceType, type: typeof(StringGraphType)).Description("Interface type - i.e. GE");
             Field(x => x.SlotNumber, type: typeof(IntGraphType)).Description("Slot number");
             Field(x => x.SubSlotNumber, type: typeof(IntGraphType)).Description("Sub slot number");
             Field(x => x.PortNumber, type: typeof(IntGraphType)).Description("Port number");

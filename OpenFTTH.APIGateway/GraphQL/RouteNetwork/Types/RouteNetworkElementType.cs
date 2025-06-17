@@ -17,15 +17,13 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Types
             Field(x => x.MappingInfo, type: typeof(MappingInfoType)).Description("Mapping/digitizing method info");
             Field(x => x.SafetyInfo, type: typeof(SafetyInfoType)).Description("Safety info");
 
-            Field<BooleanGraphType>(
-              name: "hasRelatedEquipment",
-              description: "The specification used to create the span equipment",
-              resolve: context =>
+            Field<BooleanGraphType>("hasRelatedEquipment")
+              .Description("The specification used to create the span equipment")
+              .Resolve(context =>
               {
                   return (context.Source.InterestRelations != null && context.Source.InterestRelations.Length > 0);
-              }
-           );
+              });
 
         }
     }
- }
+}

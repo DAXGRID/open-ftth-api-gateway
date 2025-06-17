@@ -18,6 +18,6 @@ namespace OpenFTTH.APIGateway.GraphQL.Search.Types
         }
     }
 
-    
+
 }
 

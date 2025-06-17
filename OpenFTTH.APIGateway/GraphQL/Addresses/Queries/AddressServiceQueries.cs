@@ -29,18 +29,16 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
             Description = "GraphQL API for querying address information";
 
-            FieldAsync<ListGraphType<NearestAddressSearchHitType>>(
-                "nearestAccessAddresses",
-                arguments:
-                new QueryArguments(
+            Field<ListGraphType<NearestAddressSearchHitType>>("nearestAccessAddresses")
+                .Arguments(new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "routeNodeId" },
                     new QueryArgument<IdGraphType> { Name = "spanEquipmentOrSegmentId" },
                     new QueryArgument<FloatGraphType> { Name = "x" },
                     new QueryArgument<FloatGraphType> { Name = "y" },
                     new QueryArgument<IntGraphType> { Name = "srid" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "maxHits" }
-                ),
-                resolve: async (context) =>
+                ))
+                .ResolveAsync(async (context) =>
                 {
                     double x = context.GetArgument<double>("x");
                     double y = context.GetArgument<double>("y");
@@ -101,8 +99,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
 
                         return MapToGraphQLAddressHits(result.Value, coordinateConverter);
                     }
-                }
-           );
+                });
         }
 
         private async Task<(double, double)> GetNodeCoordinates(Guid nodeId, IQueryDispatcher queryDispatcher)

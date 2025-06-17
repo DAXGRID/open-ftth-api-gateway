@@ -20,35 +20,31 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Types
             Field(x => x.Label, type: typeof(StringGraphType)).Description("Label");
             Field(x => x.DrawingOrder, type: typeof(IntGraphType)).Description("DrawingOrder");
 
-            Field<GeometryType>(
-              "geometry",
-              resolve: context =>
+            Field<GeometryType>("geometry")
+              .Resolve(context =>
               {
                   return MapGeometry(context.Source.Geometry);
               });
 
-            Field<IdGraphType>(
-              "refId",
-              resolve: context =>
+            Field<IdGraphType>("refId")
+              .Resolve(context =>
               {
                   if (context.Source.IdentifiedObject != null)
                       return context.Source.IdentifiedObject.RefId;
                   return null;
               });
 
-            Field<StringGraphType>(
-            "refClass",
-            resolve: context =>
+            Field<StringGraphType>("refClass")
+            .Resolve(context =>
             {
                 if (context.Source.IdentifiedObject != null)
                     return context.Source.IdentifiedObject.RefClass;
                 return null;
             });
 
-            Field<ListGraphType<DynamicPropertyType>>(
-              name: "properties",
-              description: "eventually extra dynamic properties defined on this object",
-              resolve: context =>
+            Field<ListGraphType<DynamicPropertyType>>("properties")
+              .Description("eventually extra dynamic properties defined on this object")
+              .Resolve(context =>
               {
                   if (context.Source.Properties != null)
                   {
@@ -63,9 +59,8 @@ namespace OpenFTTH.APIGateway.GraphQL.Schematic.Types
                   }
 
                   return null;
-                  
-              }
-          );
+
+              });
 
         }
 

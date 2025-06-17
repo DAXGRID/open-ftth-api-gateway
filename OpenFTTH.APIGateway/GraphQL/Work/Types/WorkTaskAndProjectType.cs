@@ -13,186 +13,149 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Types
         {
             var coordinateConverter = new UTM32WGS84Converter();
 
-            Field<IdGraphType>(
-                name: "WorkTaskId",
-                description: "Work Task GUID",
-                resolve: context =>
+            Field<IdGraphType>("WorkTaskId")
+                .Description("Work Task GUID")
+                .Resolve(context =>
                 {
                     return context.Source.WorkTask.Id;
-                }
-            );
+                });
 
-            Field<IdGraphType>(
-               name: "ProjectId",
-               description: "Work Project Id",
-               resolve: context =>
+            Field<IdGraphType>("ProjectId")
+               .Description("Work Project Id")
+               .Resolve(context =>
                {
                    return context.Source.WorkProject != null ? context.Source.WorkProject.Id : null;
-               }
-           );
+               });
 
-            Field<StringGraphType>(
-                name: "ProjectNumber",
-                description: "Project Number",
-                resolve: context =>
+            Field<StringGraphType>("ProjectNumber")
+                .Description("Project Number")
+                .Resolve(context =>
                 {
                     return context.Source.WorkProject != null ? context.Source.WorkProject.Number : null;
-                }
-            );
+                });
 
-            Field<StringGraphType>(
-                name: "ProjectName",
-                description: "Project Name",
-                resolve: context =>
+            Field<StringGraphType>("ProjectName")
+                .Description("Project Name")
+                .Resolve(context =>
                 {
                     return context.Source.WorkProject != null ? context.Source.WorkProject.Name : null;
-                }
-            );
+                });
 
-            Field<StringGraphType>(
-                name: "ProjectOwner",
-                description: "Project Owner",
-                resolve: context =>
+            Field<StringGraphType>("ProjectOwner")
+                .Description("Project Owner")
+                .Resolve(context =>
                 {
                     return context.Source.WorkProject != null ? context.Source.WorkProject.Owner : null;
-                }
-            );
+                });
 
-            Field<StringGraphType>(
-                name: "ProjectType",
-                description: "Project Type",
-                resolve: context =>
+            Field<StringGraphType>("ProjectType")
+                .Description("Project Type")
+                .Resolve(context =>
                 {
                     return context.Source.WorkProject != null ? context.Source.WorkProject.Type : null;
-                }
-            );
+                });
 
-            Field<StringGraphType>(
-               name: "ProjectStatus",
-               description: "Project Status",
-               resolve: context =>
+            Field<StringGraphType>("ProjectStatus")
+               .Description("Project Status")
+               .Resolve(context =>
                {
                    return context.Source.WorkProject != null ? context.Source.WorkProject.Status : null;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "Number",
-               description: "Work Task Number",
-               resolve: context =>
+            Field<StringGraphType>("Number")
+               .Description("Work Task Number")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.Number;
-               }
-            );
+               });
 
-            Field<DateGraphType>(
-               name: "CreatedDate",
-               description: "Work Task Created Date",
-               resolve: context =>
+            Field<DateGraphType>("CreatedDate")
+               .Description("Work Task Created Date")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.CreatedDate.Date;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "Name",
-               description: "Work Task Name",
-               resolve: context =>
+            Field<StringGraphType>("Name")
+               .Description("Work Task Name")
+               .Resolve(context =>
                {
                    if (context.Source.AddressString != null && string.IsNullOrEmpty(context.Source.WorkTask.Name))
                        return context.Source.AddressString;
                    else
                        return context.Source.WorkTask.Name;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "SubtaskName",
-               description: "Work Task Subtask Name",
-               resolve: context =>
+            Field<StringGraphType>("SubtaskName")
+               .Description("Work Task Subtask Name")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.SubtaskName;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "Type",
-               description: "Work Task Type",
-               resolve: context =>
+            Field<StringGraphType>("Type")
+               .Description("Work Task Type")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.Type;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "Status",
-               description: "Work Task Status",
-               resolve: context =>
+            Field<StringGraphType>("Status")
+               .Description("Work Task Status")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.Status;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "Owner",
-               description: "Work Task Owner",
-               resolve: context =>
+            Field<StringGraphType>("Owner")
+               .Description("Work Task Owner")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.Owner;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "InstallationId",
-               description: "Work Task Installation Id",
-               resolve: context =>
+            Field<StringGraphType>("InstallationId")
+               .Description("Work Task Installation Id")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.InstallationId;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-               name: "AreaId",
-               description: "Work Task Area Id",
-               resolve: context =>
+            Field<StringGraphType>("AreaId")
+               .Description("Work Task Area Id")
+               .Resolve(context =>
                {
                    return context.Source.WorkTask.AreaId;
-               }
-            );
+               });
 
-            Field<IdGraphType>(
-              name: "UnitAddressId",
-              description: "Work Task Unit Address Id",
-              resolve: context =>
+            Field<IdGraphType>("UnitAddressId")
+              .Description("Work Task Unit Address Id")
+              .Resolve(context =>
               {
                   return context.Source.WorkTask.UnitAddressId;
-              }
-           );
+              });
 
-            Field<GeometryType>(
-               name: "Geometry",
-               description: "Work Task Geometry",
-               resolve: context =>
+            Field<GeometryType>("Geometry")
+               .Description("Work Task Geometry")
+               .Resolve(context =>
                {
                    if (context.Source.X > 0)
                    {
                        var coordinatConversionResult = coordinateConverter.ConvertFromUTM32NToWGS84(context.Source.X, context.Source.Y);
 
-                       return Geometry.MapToPointFromXY(coordinatConversionResult[0],coordinatConversionResult[1]);
+                       return Geometry.MapToPointFromXY(coordinatConversionResult[0], coordinatConversionResult[1]);
                    }
                    else
                        return null;
-               }
-            );
+               });
 
-            Field<StringGraphType>(
-              name: "ModifiedBy",
-              description: "Users modifying the task",
-              resolve: context =>
+            Field<StringGraphType>("ModifiedBy")
+              .Description("Users modifying the task")
+              .Resolve(context =>
               {
                   var userList = workContextManager.GetUsersAssignedToWorkTask(context.Source.WorkTask.Id);
 
-                  if (userList.Count > 0 )
+                  if (userList.Count > 0)
                   {
                       return string.Join(",", userList);
 
@@ -202,8 +165,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Types
                       return null;
                   }
 
-              }
-           );
+              });
 
         }
     }

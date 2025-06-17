@@ -14,10 +14,9 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.Hops, type: typeof(ListGraphType<ConnectivityTraceViewHopInfoType>)).Description("The trace hops");
 
 
-            Field<CoordinateEnvelopeType>(
-               name: "Envelope",
-               description: "Envelope",
-               resolve: context =>
+            Field<CoordinateEnvelopeType>("Envelope")
+               .Description("Envelope")
+               .Resolve(context =>
                {
                    var coordinateConverterResult = coordinateConverter.ConvertGeoJsonLineStringsToWgs84(
                        context.Source.Hops.SelectMany(h => h.RouteSegmentGeometries).ToArray());
@@ -34,8 +33,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
                    envelope.WGS84MaxY = coordinateConverterResult.WGS84BoundingBox.MaxY;
 
                    return envelope;
-               }
-            );
+               });
         }
     }
 }

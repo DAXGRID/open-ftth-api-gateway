@@ -19,14 +19,13 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Mutations
 
             Description = "User context information mutations";
 
-            Field<UserWorkContextType>(
-              "setCurrentWorkTask",
-              description: "Mutation used set work task id on given user",
-              arguments: new QueryArguments(
+            Field<UserWorkContextType>("setCurrentWorkTask")
+              .Description("Mutation used set work task id on given user")
+              .Arguments(new QueryArguments(
                   new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "userName" },
                   new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "workTaskId" }
-              ),
-              resolve: context =>
+              ))
+              .Resolve(context =>
               {
                   var userName = context.GetArgument<string>("userName");
                   var workTaskId = context.GetArgument<Guid>("workTaskId");
@@ -34,8 +33,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Work.Mutations
                   var mutationResult = this._commandDispatcher.HandleAsync<SetUserCurrentWorkTask, Result<UserWorkContext>>(new SetUserCurrentWorkTask(userName, workTaskId)).Result;
 
                   return mutationResult.Value;
-              }
-            );
+              });
         }
     }
 }

@@ -17,15 +17,13 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
             Field(x => x.HeightInUnits, type: typeof(IntGraphType)).Description("Height in rack units");
             Field(x => x.SpecificationId, type: typeof(IdGraphType)).Description("Rack specification id");
 
-            FieldAsync<RackSpecificationType>(
-               name: "specification",
-               description: "The specification used to create the rack",
-               resolve: async context =>
+            Field<RackSpecificationType>("specification")
+               .Description("The specification used to create the rack")
+               .ResolveAsync(async context =>
                {
                    var queryResult = await queryDispatcher.HandleAsync<GetRackSpecifications, Result<LookupCollection<RackSpecification>>>(new GetRackSpecifications());
                    return queryResult.Value[context.Source.SpecificationId];
-               }
-            );
+               });
         }
     }
 }
