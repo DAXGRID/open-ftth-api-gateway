@@ -27,15 +27,23 @@ namespace OpenFTTH.APIGateway.GraphQL.Outage.Queries
 
             Description = "GraphQL API for querying outage / trouble ticket related data";
 
-            Field<ListGraphType<WorkTaskAndProjectType>>("latestTenTroubleTicketsOrderedByDate")
-                 .Description("Retrieve the latest 10 trouble ticket work tasks ordered by date")
+            Field<ListGraphType<WorkTaskAndProjectType>>("latestTroubleTicketsOrderedByDate")
+                .Arguments(
+                    new QueryArguments(
+                        new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "count" }
+                    ))
+                 .Description("Retrieve the latest n trouble ticket work tasks ordered by date.")
                  .Resolve(context =>
                  {
-                     var queryRequest = new GetAllWorkTaskAndProjects();
+                     var count = context.GetArgument<int?>("count") ?? 10;
 
+                     var queryRequest = new GetAllWorkTaskAndProjects();
                      var queryResult = this._queryDispatcher.HandleAsync<GetAllWorkTaskAndProjects, Result<List<WorkTaskAndProject>>>(queryRequest).Result;
 
-                     var orderedTroubleTicketWorkTrask = queryResult.Value.Where(w => w.WorkTask.Type != null && w.WorkTask.Type == "Trouble ticket").OrderByDescending(w => w.WorkTask.CreatedDate).Take(10);
+                     var orderedTroubleTicketWorkTrask = queryResult.Value
+                         .Where(w => w.WorkTask.Type != null && w.WorkTask.Type == "Trouble ticket")
+                         .OrderByDescending(w => w.WorkTask.CreatedDate)
+                         .Take(count);
 
                      return orderedTroubleTicketWorkTrask;
                  });
