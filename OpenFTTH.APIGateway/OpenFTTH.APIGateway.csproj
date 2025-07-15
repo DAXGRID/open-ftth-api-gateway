@@ -7,11 +7,11 @@
   <ItemGroup>
     <PackageReference Include="DAX.EventProcessing.Dispatcher" Version="2.6.0" />
     <PackageReference Include="GraphQL.DataLoader" Version="8.5.0" />
-    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="8.2.0" />
-    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="8.2.0" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="8.3.0" />
+    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="8.3.0" />
     <PackageReference Include="GraphQL.SystemReactive" Version="4.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
     <PackageReference Include="OpenFTTH.Address.API" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.Address.Business" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.CQRS" Version="4.1.0" />
@@ -27,7 +27,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-    <PackageReference Include="Typesense" Version="7.33.0" />
+    <PackageReference Include="Typesense" Version="7.34.1" />
   </ItemGroup>
 
   <ItemGroup>
