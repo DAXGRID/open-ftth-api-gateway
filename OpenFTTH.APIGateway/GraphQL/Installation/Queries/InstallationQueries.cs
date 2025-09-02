@@ -15,7 +15,7 @@ public class InstallationQueries : ObjectGraphType
     {
         Description = "GraphQL API for querying installation information";
 
-        Field<ListGraphType<InstallaionSearchResponseType>>("nearestUndocumentedInstallations")
+        Field<ListGraphType<InstallationSearchResponseType>>("nearestUndocumentedInstallations")
                 .Arguments(new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "routeNodeId" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "maxHits" },
@@ -37,5 +37,4 @@ public class InstallationQueries : ObjectGraphType
                     return result;
                 });
     }
-
 }

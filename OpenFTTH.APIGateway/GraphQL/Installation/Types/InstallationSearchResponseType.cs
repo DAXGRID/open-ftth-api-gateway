@@ -5,9 +5,9 @@ namespace OpenFTTH.APIGateway.GraphQL.Installation.Types;
 /// <summary>
 /// Used for returning installation search result
 /// </summary>
-public sealed class InstallaionSearchResponseType : ObjectGraphType<InstallationSearchResponse>
+public sealed class InstallationSearchResponseType : ObjectGraphType<InstallationSearchResponse>
 {
-    public InstallaionSearchResponseType()
+    public InstallationSearchResponseType()
     {
         Description = "Installation search result";
 
