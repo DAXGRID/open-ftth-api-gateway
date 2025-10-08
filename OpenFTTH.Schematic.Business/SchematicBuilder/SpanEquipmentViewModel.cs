@@ -173,7 +173,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             return spanDiagramInfo;
         }
 
-        public string GetFromRouteNodeName(Guid conduitSpanSegmentId)
+        public string GetFromRouteNodeName(Guid conduitSpanSegmentId, Guid? cableId)
         {
             if (_spanEquipment.IsCable)
             {
@@ -187,7 +187,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             if (_data.ConduitSegmentToCableChildRelations.ContainsKey(conduitSpanSegmentId))
             {
-                var cableEndLabel = GetCableEndLabel(conduitSpanSegmentId, trace, true);
+                var cableEndLabel = GetCableEndLabel(conduitSpanSegmentId, cableId, trace, true);
 
                 if (cableEndLabel != null)
                     return cableEndLabel;
@@ -196,7 +196,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             return trace.FromRouteNodeName;
         }
 
-        public string GetToRouteNodeName(Guid conduitSpanSegmentId)
+        public string GetToRouteNodeName(Guid conduitSpanSegmentId, Guid? cableId)
         {
             var trace = GetTraceInfo(conduitSpanSegmentId);
 
@@ -210,7 +210,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             if (_data.ConduitSegmentToCableChildRelations.ContainsKey(conduitSpanSegmentId))
             {
-                var cableEndLabel = GetCableEndLabel(conduitSpanSegmentId, trace, false);
+                var cableEndLabel = GetCableEndLabel(conduitSpanSegmentId, cableId, trace, false);
 
                 if (cableEndLabel != null)
                     return cableEndLabel;
@@ -243,13 +243,13 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             return fromNodeInConduitIsFromNodeInCable;
         }
 
-        private string? GetCableEndLabel(Guid conduitSpanSegmentId, RouteNetworkTraceResult trace, bool upstream)
+        private string? GetCableEndLabel(Guid conduitSpanSegmentId, Guid? cableId, RouteNetworkTraceResult trace, bool upstream)
         {
             var cables = _data.ConduitSegmentToCableChildRelations[conduitSpanSegmentId];
 
             if (cables.Count > 0)
             {
-                var cable = _data.SpanEquipments[cables.First()];
+                var cable = cableId == null ? _data.SpanEquipments[cables.First()] : _data.SpanEquipments[(Guid)cableId];
 
                 bool fromNodeInConduitSameAsCable = IsFromNodeInCableSameDirectionAsFromNodeInConduit(trace, cable);
 
@@ -272,14 +272,14 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             return null;
         }
 
-        public string GetOutgoingLabel(Guid spanSegmentId)
+        public string GetOutgoingLabel(Guid spanSegmentId, Guid? cableId)
         {
-            return InterestRelationKind() == RouteNetworkInterestRelationKindEnum.End ? GetFromRouteNodeName(spanSegmentId) : GetToRouteNodeName(spanSegmentId);
+            return InterestRelationKind() == RouteNetworkInterestRelationKindEnum.End ? GetFromRouteNodeName(spanSegmentId, cableId) : GetToRouteNodeName(spanSegmentId, cableId);
         }
 
-        public string GetIngoingLabel(Guid spanSegmentId)
+        public string GetIngoingLabel(Guid spanSegmentId, Guid? cableId)
         {
-            return InterestRelationKind() != RouteNetworkInterestRelationKindEnum.End ? GetFromRouteNodeName(spanSegmentId) : GetToRouteNodeName(spanSegmentId);
+            return InterestRelationKind() != RouteNetworkInterestRelationKindEnum.End ? GetFromRouteNodeName(spanSegmentId, cableId) : GetToRouteNodeName(spanSegmentId, cableId);
         }
 
         public bool IsAttachedToNodeContainer()

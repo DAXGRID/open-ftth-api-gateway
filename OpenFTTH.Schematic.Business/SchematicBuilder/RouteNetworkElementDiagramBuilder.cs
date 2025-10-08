@@ -103,7 +103,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                 OrderBy(s => s.SpanEquipment.IsPassThrough(_data)).
                 ThenBy(s => s.SpanEquipment.IsCable).
                 ThenBy(s => s.SpanEquipment.IsMultiLevel(_data)).
-                ThenBy(s => s.GetOutgoingLabel(s.SpanEquipment.SpanStructures[0].SpanSegments[0].Id))
+                ThenBy(s => s.GetOutgoingLabel(s.SpanEquipment.SpanStructures[0].SpanSegments[0].Id, null))
                 .Reverse();
 
 
