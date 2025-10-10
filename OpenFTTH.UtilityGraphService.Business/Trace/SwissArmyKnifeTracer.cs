@@ -497,13 +497,6 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
             // Trace all fiber segments in all cables
             foreach (var spanEquipment in spanEquipmentsToTrace.Where(s => s.IsCable))
             {
-
-                // TODO: slet
-                if (spanEquipment.Name == "K1398160")
-                {
-
-                }
-
                 var upstreamNode = (RouteNode)_routeNetwork.NetworkState.GetRouteNetworkElement(spanEquipment.NodesOfInterestIds.First());
                 var downstreamNode = (RouteNode)_routeNetwork.NetworkState.GetRouteNetworkElement(spanEquipment.NodesOfInterestIds.Last());
 
@@ -585,6 +578,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
                     if (label != null)
                         cableUpstreamLabels.Add(spanEquipment.Id, label);
                 }
+                else if (upstreamEquipmentsFound.Count > 1)
+                {
+                    var label = GetCableEndLabel(upstreamEquipmentsFound.ToList());
+
+                    if (label != null)
+                        cableUpstreamLabels.Add(spanEquipment.Id, label);
+                }
 
                 if (downstreamEquipmentsFound.Count == 1)
                 {
@@ -593,7 +593,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
                     if (label != null)
                         cableDownstreamLabels.Add(spanEquipment.Id, label);
                 }
+                else if (downstreamEquipmentsFound.Count > 1)
+                {
+                    var label = GetCableEndLabel(downstreamEquipmentsFound.ToList());
 
+                    if (label != null)
+                        cableDownstreamLabels.Add(spanEquipment.Id, label);
+                }
             }
         }
 
@@ -621,9 +627,59 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
             return null;
         }
 
-        private string GetAddressLabel(Guid unitAddressId)
+        private string? GetCableEndLabel(List<TerminalEquipment> terminalEquipments)
         {
-            if (_addressInfo.UnitAddressesById.TryGetValue(unitAddressId, out var unitAddress))
+            HashSet<Guid> accessAddresses = new HashSet<Guid>();
+
+            HashSet<string> installationIds = new HashSet<string>();
+
+            foreach (var terminalEquipment in terminalEquipments)
+            {
+                var installationInfo = _installationInfo.GetInstallationInfo(terminalEquipment.Name, _utilityNetwork);
+
+                if (installationInfo != null)
+                {
+                    if (installationInfo.InstallationId != null)
+                    {
+                        installationIds.Add(installationInfo.InstallationId);
+                    }
+
+                    if (installationInfo.UnitAddressId != null)
+                    {
+                        var addressInfo = _addressInfo.GetAddressInfo((Guid)installationInfo.UnitAddressId);
+
+                        if (addressInfo != null && addressInfo.AccessAddressId != null)
+                            accessAddresses.Add((Guid)addressInfo.AccessAddressId);
+                    }
+                }
+            }
+
+            // All equipment has the same access address
+            if (accessAddresses.Count == 1)
+            {
+                var label = GetAddressLabel(accessAddresses.First());
+
+                label += (" (" + installationIds.Count + " installationer)");
+
+                return label;
+            }
+            else
+            {
+                return "(" + installationIds.Count + " installationer)";
+            }
+        }
+
+        private string GetAddressLabel(Guid accessOrUnitAddressId)
+        {
+            if (_addressInfo.AccessAddressesById.TryGetValue(accessOrUnitAddressId, out var accessAddressOnly))
+            {
+                if (accessAddressOnly.RoadId != null && _addressInfo.RoadsById.TryGetValue((Guid)accessAddressOnly.RoadId, out var road))
+                {
+                    return (road.Name + " " + accessAddressOnly.HouseNumber).Trim();
+                }
+            }
+
+            if (_addressInfo.UnitAddressesById.TryGetValue(accessOrUnitAddressId, out var unitAddress))
             {
                 if (_addressInfo.AccessAddressesById.TryGetValue(unitAddress.AccessAddressId, out var accessAddress))
                 {
@@ -636,6 +692,8 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
 
             return null;
         }
+
+
 
         private void AddCustomerTermination(HashSet<TerminalEquipment> customerTerminations, TerminalEquipment terminalEquipment)
         {

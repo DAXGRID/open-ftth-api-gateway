@@ -553,7 +553,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             {
                 var terminal = new BlockPortTerminal(outerConduitPort)
                 {
-                    IsVisible = viewModel.IsSingleSpan && viewModel.SpanEquipment.SpanStructures.Length == 1,
+                    IsVisible = viewModel.SpanEquipment.SpanStructures.Length == 1,
                     ShapeType = TerminalShapeTypeEnum.Point,
                     PointStyle = outerConduitPort.Side + "TerminalLabel",
                     PointLabel = viewModel.InterestRelationKind() == RouteNetworkInterestRelationKindEnum.End ? viewModel.GetFromRouteNodeName(routeSpanDiagramInfo.SegmentId, null) : viewModel.GetToRouteNodeName(routeSpanDiagramInfo.SegmentId, null),
