@@ -556,7 +556,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                     IsVisible = viewModel.SpanEquipment.SpanStructures.Length == 1,
                     ShapeType = TerminalShapeTypeEnum.Point,
                     PointStyle = outerConduitPort.Side + "TerminalLabel",
-                    PointLabel = viewModel.InterestRelationKind() == RouteNetworkInterestRelationKindEnum.End ? viewModel.GetFromRouteNodeName(routeSpanDiagramInfo.SegmentId, null) : viewModel.GetToRouteNodeName(routeSpanDiagramInfo.SegmentId, null),
+                    PointLabel = viewModel.InterestRelationKind() == RouteNetworkInterestRelationKindEnum.End ? viewModel.GetFromRouteNodeName(routeSpanDiagramInfo.SegmentId, cableId) : viewModel.GetToRouteNodeName(routeSpanDiagramInfo.SegmentId, cableId),
                     PolygonStyle = routeSpanDiagramInfo.StyleName,
                     DrawingOrder = 620
                 };
