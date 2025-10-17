@@ -119,6 +119,113 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
             return viewModels;
         }
 
+        public string GetLabelForEquipmentConnectedToCable(Guid cableId)
+        {
+            var foundTerminalEquipment = FindEquipmentConnectedToCableSegment(cableId);
+
+            if (foundTerminalEquipment != null)
+            {
+                // If more than one rack, show rack name as well
+                if (Data.NodeContainer.Racks != null && Data.NodeContainer.Racks.Length > 1)
+                {
+                    var rack = FindRackContainingEquipment(foundTerminalEquipment.Id);
+
+                    if (rack != null && rack.Name != null)
+                        return rack.Name + " " + foundTerminalEquipment.Name;
+                }
+
+                return foundTerminalEquipment.Name;
+            }
+
+
+            return null;
+        }
+
+        private Rack FindRackContainingEquipment(Guid terminalEquipmentId)
+        {
+            if (Data.NodeContainer.Racks != null)
+            {
+                foreach (var rack in Data.NodeContainer.Racks)
+                {
+                    foreach (var subRack in rack.SubrackMounts)
+                    {
+                        if (subRack.TerminalEquipmentId == terminalEquipmentId)
+                            return rack;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private TerminalEquipment FindEquipmentConnectedToCableSegment(Guid cableId)
+        {
+            // Create hash with cable terminal ids for quick lookup
+            var cable = Data.SpanEquipments[cableId];
+
+            HashSet<Guid> cableTerminalIds = new HashSet<Guid>();
+
+            foreach (var cableStructure in cable.SpanStructures)
+            {
+                if (cableStructure.SpanSegments.Length > 0)
+                {
+                    if (cableStructure.SpanSegments[0].FromTerminalId != Guid.Empty)
+                        cableTerminalIds.Add(cableStructure.SpanSegments[0].FromTerminalId);
+
+                    if (cableStructure.SpanSegments[0].ToTerminalId != Guid.Empty)
+                        cableTerminalIds.Add(cableStructure.SpanSegments[0].ToTerminalId);
+                }
+            }
+
+            TerminalEquipment foundTerminalEquipment = null;
+
+            if (NodeContainer.TerminalEquipmentReferences != null)
+            {
+                foreach (var terminalEquipmentId in NodeContainer.TerminalEquipmentReferences)
+                {
+                    var terminalEquipment = Data.TerminalEquipments[terminalEquipmentId];
+
+                    foreach (var terminalStructure in terminalEquipment.TerminalStructures)
+                    {
+                        foreach (var terminal in terminalStructure.Terminals)
+                        {
+                            if (cableTerminalIds.Contains(terminal.Id))
+                            {
+                                foundTerminalEquipment = terminalEquipment;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (NodeContainer.Racks != null)
+            {
+                foreach (var rack in NodeContainer.Racks)
+                {
+                    foreach (var subRack in rack.SubrackMounts)
+                    {
+                        var terminalEquipment = Data.TerminalEquipments[subRack.TerminalEquipmentId];
+
+                        foreach (var terminalStructure in terminalEquipment.TerminalStructures)
+                        {
+                            foreach (var terminal in terminalStructure.Terminals)
+                            {
+                                if (cableTerminalIds.Contains(terminal.Id))
+                                {
+                                    foundTerminalEquipment = terminalEquipment;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return foundTerminalEquipment;
+        }
+
+
         public List<NodeContainerBlockPortViewModel> PortViewModels = new();
     }
  }

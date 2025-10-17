@@ -13,6 +13,9 @@ namespace OpenFTTH.Schematic.Business.Lines
         public string Style { get; set; }
         public int DrawingOrder { get; set; }
 
+        // Label on the cable end sticking out
+        public string EndLabel { get; set; }
+
         public double LineLength { get; set; }
 
         private Guid _refId;
@@ -39,6 +42,35 @@ namespace OpenFTTH.Schematic.Business.Lines
                 Geometry = curve,
                 DrawingOrder = DrawingOrder
             });
+
+            if (EndLabel != null)
+            {
+                var endPoint = curve.GetPointN(curve.NumPoints - 1);
+
+                var style = "unknown";
+
+                if (FromTerminal.Port.Side == BlockSideEnum.West)
+                    style = "EastTerminalLabel";
+                else if (FromTerminal.Port.Side == BlockSideEnum.North)
+                    style = "SouthTerminalLabel";
+                else if (FromTerminal.Port.Side == BlockSideEnum.East)
+                    style = "WestTerminalLabel";
+                else if (FromTerminal.Port.Side == BlockSideEnum.South)
+                    style = "NorthTerminalLabel";
+
+                // Create point diagram object at connection point object
+                result.Add(
+                        new DiagramObject(diagram)
+                        {
+                            Style = style,
+                            Label = EndLabel,
+                            Geometry = endPoint,
+                            IdentifiedObject = _refClass != null ? new IdentifiedObjectReference() { RefId = _refId, RefClass = _refClass } : null,
+                            DrawingOrder = DrawingOrder
+                        }
+                    );
+            }
+
 
             return result;
         }

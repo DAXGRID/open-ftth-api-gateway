@@ -8,12 +8,12 @@ namespace OpenFTTH.Schematic.Business.Lines
 {
     public class BlockPortTerminal
     {
-        public bool IsVisible { get; init; }
-        public TerminalShapeTypeEnum ShapeType { get; init; }
-        public string PointStyle { get; init; }
-        public string PolygonStyle { get; init; }
-        public string PointLabel { get; init; }
-        public string PolygonLabel { get; init; }
+        public bool IsVisible { get; set; }
+        public TerminalShapeTypeEnum ShapeType { get; set; }
+        public string PointStyle { get; set; }
+        public string PolygonStyle { get; set; }
+        public string PointLabel { get; set; }
+        public string PolygonLabel { get; set; }
         public int DrawingOrder { get; set; }
 
         public BlockPortTerminal(BlockPort port)

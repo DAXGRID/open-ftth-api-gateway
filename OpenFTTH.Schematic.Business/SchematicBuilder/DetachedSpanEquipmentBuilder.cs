@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using OpenFTTH.Core.Address;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
 using OpenFTTH.Schematic.Business.Drawing;
 using OpenFTTH.Schematic.Business.Layout;
 using OpenFTTH.Schematic.Business.Lines;
 using OpenFTTH.Schematic.Business.QueryHandler;
+using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +20,18 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
     {
         private readonly ILogger<GetDiagramQueryHandler> _logger;
         private readonly SpanEquipmentViewModel _spanEquipmentViewModel;
+        private readonly NodeContainerViewModel _nodeContainerViewModel;
 
         private readonly double _spanEquipmentAreaWidth = 300;
         private readonly double _spanEquipmentBlockMargin = 5;
         private readonly double _spanEquipmentLabelOffset = 5;
 
 
-        public DetachedSpanEquipmentBuilder(ILogger<GetDiagramQueryHandler> logger, SpanEquipmentViewModel spanEquipmentViewModel)
+        public DetachedSpanEquipmentBuilder(ILogger<GetDiagramQueryHandler> logger, SpanEquipmentViewModel spanEquipmentViewModel, NodeContainerViewModel nodeContainerViewModel = null)
         {
             _logger = logger;
             _spanEquipmentViewModel = spanEquipmentViewModel;
+            _nodeContainerViewModel = nodeContainerViewModel;
         }
 
         public Size CreateDiagramObjects(Diagram diagram, double offsetX, double offsetY)
@@ -328,11 +332,11 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
                 fromTerminal.SetReference(data.SegmentId, "SpanSegment");
 
-                new BlockPortTerminal(toPort)
+                var toTerminal = new BlockPortTerminal(toPort)
                 {
                     IsVisible = true,
                     ShapeType = TerminalShapeTypeEnum.None,
-                    DrawingOrder = 520
+                    DrawingOrder = 620
                 };
 
                 var terminalConnection = spanEquipmentBlock.AddTerminalConnection(BlockSideEnum.West, 1, terminalNo, BlockSideEnum.East, 1, terminalNo, null, data.StyleName, LineShapeTypeEnum.Polygon);
@@ -345,7 +349,16 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                     var cableId = _spanEquipmentViewModel.Data.ConduitSegmentToCableChildRelations[data.SegmentId].First();
                     var fiberCableLineLabel = _spanEquipmentViewModel.Data.GetCableEquipmentLineLabel(cableId);
 
+                    // Label with the equipment that cable is connected to
+                    var cableEqLabel = _nodeContainerViewModel == null ? null : _nodeContainerViewModel.GetLabelForEquipmentConnectedToCable(cableId);
 
+                    if (cableEqLabel != null)
+                    {
+                        toTerminal.ShapeType = TerminalShapeTypeEnum.Point;
+                        toTerminal.PointStyle = "EastTerminalLabel";
+                        toTerminal.PointLabel = cableEqLabel;
+                    }
+                                   
                     var cableTerminalConnection = spanEquipmentBlock.AddTerminalConnection(BlockSideEnum.West, 1, terminalNo, BlockSideEnum.East, 1, terminalNo, fiberCableLineLabel, "FiberCable", LineShapeTypeEnum.Line);
                     cableTerminalConnection.DrawingOrder = 600;
                     cableTerminalConnection.SetReference(cableId, "SpanSegment");
@@ -359,8 +372,6 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             if (!innerSpansFound)
             {
-               
-
                 // If a single conduit
                 if (_spanEquipmentViewModel.IsSingleSpan)
                 {
@@ -422,12 +433,32 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
                             fromTerminal.SetReference(rootSpanInfo.IngoingSegmentId, "SpanSegment");
 
-                            var toTerminal = new BlockPortTerminal(toPort)
+
+                            // Label with equipment that cable is connected to
+                            var cableEqLabel = _nodeContainerViewModel == null ? null : _nodeContainerViewModel.GetLabelForEquipmentConnectedToCable(cableId);
+
+                            BlockPortTerminal toTerminal;
+
+                            if (cableEqLabel != null)
                             {
-                                IsVisible = true,
-                                ShapeType = TerminalShapeTypeEnum.None,
-                                DrawingOrder = 620
-                            };
+                                toTerminal = new BlockPortTerminal(toPort)
+                                {
+                                    IsVisible = true,
+                                    ShapeType = TerminalShapeTypeEnum.Point,
+                                    PointStyle = "EastTerminalLabel",
+                                    PointLabel = cableEqLabel,
+                                    DrawingOrder = 620
+                                };
+                            }
+                            else
+                            {
+                                toTerminal = new BlockPortTerminal(toPort)
+                                {
+                                    IsVisible = true,
+                                    ShapeType = TerminalShapeTypeEnum.None,
+                                    DrawingOrder = 620
+                                };
+                            }
 
                             var fiberCableLineLabel = _spanEquipmentViewModel.Data.GetCableEquipmentLineLabel(cableId);
                             var cableTerminalConnection = spanEquipmentBlock.AddTerminalConnection(BlockSideEnum.West, 1, fromTerminal.Index, BlockSideEnum.East, 1, toTerminal.Index, fiberCableLineLabel, "FiberCable", LineShapeTypeEnum.Line);

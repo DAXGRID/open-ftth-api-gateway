@@ -14,6 +14,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
     {
         private readonly ILogger<GetDiagramQueryHandler> _logger;
         private readonly IQueryDispatcher _queryDispatcher;
+        private NodeContainerViewModel _nodeContainerReadModel;
 
         private readonly Diagram _diagram = new Diagram()
         {
@@ -51,6 +52,11 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             double yOffset = 0;
 
+            if (_data.NodeContainer != null)
+            {
+                _nodeContainerReadModel = new NodeContainerViewModel(_data);
+            }
+
             yOffset = AddDetachedSpanEquipmentsToDiagram(yOffset);
             yOffset = AddNodeContainerToDiagram(yOffset);
 
@@ -65,11 +71,9 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
         {
             double yOffset = yOffsetInitial + _extraSpaceBetweenNodeContainerAndDetachedSpanSections;
 
-            if (_data.NodeContainer != null)
+            if (_nodeContainerReadModel != null)
             {
-                var readModel = new NodeContainerViewModel(_data);
-
-                var builder = new NodeContainerBuilder(_logger, readModel);
+                var builder = new NodeContainerBuilder(_logger, _nodeContainerReadModel);
 
                 var size = builder.CreateDiagramObjects(_diagram, 0, yOffset);
 
@@ -89,11 +93,11 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             foreach (var spanEquipment in detachedSpanEquipments)
             {
-                var readModel = new SpanEquipmentViewModel(_logger, _routeNetworkElementId, spanEquipment.Id, _data);
+                var spanEquipmentReadModel = new SpanEquipmentViewModel(_logger, _routeNetworkElementId, spanEquipment.Id, _data);
 
-                if (!readModel.IsCableWithinConduit)
+                if (!spanEquipmentReadModel.IsCableWithinConduit)
                 {
-                    unorderedReadModels.Add(readModel);
+                    unorderedReadModels.Add(spanEquipmentReadModel);
                 }
             }
 
@@ -109,7 +113,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             foreach (var readModel in orderedReadModels)
             {
-                var builder = new DetachedSpanEquipmentBuilder(_logger, readModel);
+                var builder = new DetachedSpanEquipmentBuilder(_logger, readModel, _nodeContainerReadModel);
 
                 var size = builder.CreateDiagramObjects(_diagram, 0, yOffset);
 

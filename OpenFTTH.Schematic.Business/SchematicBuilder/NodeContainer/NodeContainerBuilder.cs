@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LamarCodeGeneration.Frames;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
@@ -9,6 +10,7 @@ using OpenFTTH.Schematic.Business.Layout;
 using OpenFTTH.Schematic.Business.Lines;
 using OpenFTTH.Schematic.Business.QueryHandler;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
+using Remotion.Linq.Clauses.ResultOperators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -311,7 +313,6 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             if (innerSpanData.Count == 6)
             {
-
             }
 
             foreach (var innerSpan in innerSpanData)
@@ -748,7 +749,6 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                                         // Only make half-connection if the cable is not running between two parent span segments
                                         if (segmentIds.Count == 1)
                                         {
-
                                             System.Diagnostics.Debug.WriteLine($"Will connect cable: {cableId} half connection. Number of segment relations: {segmentIds.Count}");
 
                                             var cableTerminalConnection = nodeContainerBlock.AddTerminalHalfConnection(
@@ -759,6 +759,14 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                                                style: "FiberCable",
                                                50
                                             );
+
+                                            // Create cable end label if connected to equipment inside node
+                                            var cable = _nodeContainerViewModel.Data.SpanEquipments[cableId];
+
+                                            if (cable.NodesOfInterestIds.First() == _nodeContainerViewModel.NodeContainer.RouteNodeId || cable.NodesOfInterestIds.Last() == _nodeContainerViewModel.NodeContainer.RouteNodeId)
+                                            {
+                                                cableTerminalConnection.EndLabel = _nodeContainerViewModel.GetLabelForEquipmentConnectedToCable(cableId);
+                                            }
 
                                             cableTerminalConnection.SetReference(cableId, "SpanSegment");
 
@@ -772,7 +780,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                 }
             }
         }
-
+      
         private void AddToTerminalEnds(Guid terminalId, SpanSegment spanSegment, BlockPortTerminal digramTerminal, string style, bool isCableInsideOuterConduitTerminal = false)
         {
             var terminalEndHolder = new TerminalEndHolder()
