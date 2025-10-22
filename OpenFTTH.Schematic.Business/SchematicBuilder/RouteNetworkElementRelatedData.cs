@@ -219,7 +219,7 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
 
             string label = SpanEquipmentSpecifications[cable.SpecificationId].Name;
 
-            return cable.Name + " (" + (cable.SpanStructures.Length - 1).ToString() + ")";
+            return cable.Name + " (" + (cable.SpanStructures.Length - 1).ToString() + ") " + cable.Description;
         }
 
     }

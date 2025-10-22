@@ -80,6 +80,11 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                 label += " " + _spanEquipment.MarkingInfo.MarkingText;
             }
 
+            if (_spanEquipment.Description != null)
+            {
+                label += (" (" + _spanEquipment.Description + ")");
+            }
+
             return label;
         }
 
