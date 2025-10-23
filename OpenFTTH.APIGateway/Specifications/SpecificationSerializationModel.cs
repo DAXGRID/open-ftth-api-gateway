@@ -37,6 +37,8 @@ namespace OpenFTTH.APIGateway.Specifications
         public bool IsCustomerTermination { get; set; }
         public bool IsLineTermination { get; set; }
         public bool Deprecated { get; set; }
+        public bool TerminalStructuresIsNameable { get; set; }
+
         public List<TerminalStructureTemplateSpec> Structures { get; set; }
     }
 
@@ -56,7 +58,11 @@ namespace OpenFTTH.APIGateway.Specifications
         public List<string>? Manufacturers { get; set; }
         public List<TerminalTemplateSpec> Terminals { get; set; }
         public bool Deprecated { get; set; }
+        public bool IsCustomerSplitter { get; init; }
         public bool IsInterfaceModule { get; set; }
+        public bool IsPassThrough { get; set; }
+        public string SlotTypeAlias { get; set; }
+        public string PortTypeAlias { get; set; }
     }
 
     public record TerminalTemplateSpec

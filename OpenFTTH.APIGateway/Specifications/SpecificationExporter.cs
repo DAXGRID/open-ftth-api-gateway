@@ -115,7 +115,11 @@ namespace OpenFTTH.APIGateway.Specifications
                         Manufacturers = GetManufacturesFromIds(manufacturerSpecs, terminalStructureSpec.ManufacturerRefs),
                         Deprecated = terminalStructureSpec.Deprecated,
                         Terminals = GetTerminals(terminalStructureSpec.TerminalTemplates),
-                        IsInterfaceModule = terminalStructureSpec.IsInterfaceModule
+                        IsCustomerSplitter = terminalStructureSpec.IsCustomerSplitter,
+                        IsInterfaceModule = terminalStructureSpec.IsInterfaceModule,
+                        IsPassThrough = terminalStructureSpec.IsPassThrough,
+                        SlotTypeAlias = terminalStructureSpec.SlotTypeAlias,
+                        PortTypeAlias = terminalStructureSpec.PortTypeAlias
                     }
                 );
             }
@@ -142,6 +146,7 @@ namespace OpenFTTH.APIGateway.Specifications
                         IsAddressable = terminalEquipmentSpec.IsAddressable,
                         IsCustomerTermination = terminalEquipmentSpec.IsCustomerTermination,
                         IsLineTermination = terminalEquipmentSpec.IsLineTermination,
+                        TerminalStructuresIsNameable = terminalEquipmentSpec.TerminalStructuresIsNameable,
                         Structures = GetTerminalStructures(terminalEquipmentSpec.StructureTemplates, terminalStructureSpecs)
                     }
                 );

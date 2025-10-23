@@ -328,14 +328,22 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             {
                 var terminal = terminalEquipment.TerminalStructures[0].Terminals[0];
                 var terminalEquipmentSpecification = _terminalEquipmentSpecifications[terminalEquipment.SpecificationId];
+                var terminalStructureSpecification = _terminalStructureSpecifications[terminalEquipment.TerminalStructures[0].SpecificationId];
 
                 // If rack equipment where type is not put into name
                 if (IsTerminalEquipmentRackTray(terminalEquipment, terminalEquipmentSpecification))
                 {
+                    string slotType = null;
+
                     if (terminal.IsSplice)
-                        return "Bakke " + terminalEquipment.Name;
+                        slotType = "Bakke";
                     else
-                        return "Kort " + terminalEquipment.Name;
+                        slotType = "Kort";
+
+                    if (!String.IsNullOrEmpty(terminalStructureSpecification.SlotTypeAlias))
+                        slotType = terminalStructureSpecification.SlotTypeAlias;
+
+                    return slotType + " " + terminalEquipment.Name;
                 }
             }
 
@@ -423,9 +431,20 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             {
                 if (terminalStructure.interfaceInfo == null)
                 {
+                    if (terminalStructureSpec.IsPassThrough)
+                        return "Gennemsplidsning";
+
                     string slotType = terminalStructureSpec.Category.ToLower().Contains("splice") ? "Bakke" : "Kort";
 
-                    return $"{slotType} {terminalStructure.Position}";
+                    if (terminalStructureSpec.SlotTypeAlias != null)
+                        slotType = terminalStructureSpec.SlotTypeAlias;
+
+                    string posName = terminalStructure.Position.ToString();
+
+                    if (terminalEquipmentSpecification.TerminalStructuresIsNameable)
+                        posName = terminalStructure.Name;
+
+                    return $"{slotType} {posName}";
                 }
                 else
                 {
@@ -503,7 +522,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             }
             else
             {
+                if (terminalStructureSpec.IsPassThrough)
+                    return "";
+
                 string pinType = terminalStructureSpec.Category.ToLower().Contains("splice") ? "Søm" : "Port";
+
+                if (!String.IsNullOrEmpty(terminalStructureSpec.PortTypeAlias))
+                    pinType = terminalStructureSpec.PortTypeAlias;
 
                 return $"{pinType} {terminal.Name}";
             }
