@@ -129,6 +129,7 @@ namespace OpenFTTH.APIGateway.Specifications
         public int? OuterDiameter { get; set; }
         public bool Deprecated { get; set; }
         public string? Description { get; set; }
+        public string RefName { get { return Name + "_" + Color; } }
     }
 
     public record CableTubeSpec

@@ -155,12 +155,12 @@ namespace OpenFTTH.APIGateway.Specifications
             // Create dict with span structure specs
             var spanStructureSpecs = _eventStore.Projections.Get<SpanStructureSpecificationsProjection>().Specifications;
 
-            Dictionary<string, SpanStructureSpecification> spanStructureSpecByName = new();
+            Dictionary<string, SpanStructureSpecification> spanStructureSpecByRefName = new();
 
             foreach (var spanStructureSpec in spanStructureSpecs)
             {
-                if (!spanStructureSpecByName.ContainsKey(spanStructureSpec.Name.ToLower()))
-                    spanStructureSpecByName.Add(spanStructureSpec.Name.ToLower(), spanStructureSpec);
+                if (!spanStructureSpecByRefName.ContainsKey(spanStructureSpec.RefName.ToLower()))
+                    spanStructureSpecByRefName.Add(spanStructureSpec.RefName.ToLower(), spanStructureSpec);
             }
 
 
@@ -303,13 +303,12 @@ namespace OpenFTTH.APIGateway.Specifications
             {
                 foreach (var spanStructureSpec in specifications.SpanStructures)
                 {
-                    if (!spanStructureSpecByName.ContainsKey(spanStructureSpec.Name.ToLower()))
+                    if (!spanStructureSpecByRefName.ContainsKey(spanStructureSpec.RefName.ToLower()))
                     {
-                        _logger.LogInformation($"Creating span structure: " + spanStructureSpec.Name);
+                        _logger.LogInformation($"Creating span structure: " + spanStructureSpec.RefName);
 
                         try
                         {
-
                             AddSpecification(
                             new SpanStructureSpecification(
                                 Guid.NewGuid(),
@@ -346,12 +345,12 @@ namespace OpenFTTH.APIGateway.Specifications
             // Reload span structures
             spanStructureSpecs = _eventStore.Projections.Get<SpanStructureSpecificationsProjection>().Specifications;
 
-            spanStructureSpecByName = new();
+            spanStructureSpecByRefName = new();
 
             foreach (var spanStructureSpec in spanStructureSpecs)
             {
-                if (!spanStructureSpecByName.ContainsKey(spanStructureSpec.Name.ToLower()))
-                    spanStructureSpecByName.Add(spanStructureSpec.Name.ToLower(), spanStructureSpec);
+                if (!spanStructureSpecByRefName.ContainsKey(spanStructureSpec.RefName.ToLower()))
+                    spanStructureSpecByRefName.Add(spanStructureSpec.RefName.ToLower(), spanStructureSpec);
             }
 
             if (!terminalAndSpanStructuresOnly)
@@ -419,7 +418,7 @@ namespace OpenFTTH.APIGateway.Specifications
                                         Guid.NewGuid(),
                                         spanEquipmentSpec.Category,
                                         spanEquipmentSpec.Name,
-                                        CreateSpanStructureTemplates(spanEquipmentSpec.OuterStructure, spanStructureSpecByName)
+                                        CreateSpanStructureTemplates(spanEquipmentSpec.OuterStructure, spanStructureSpecByRefName)
                                     )
                                     {
                                         Description = spanEquipmentSpec.Description,

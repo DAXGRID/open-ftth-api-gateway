@@ -133,7 +133,6 @@ namespace OpenFTTH.APIGateway.Specifications
                 specificationData.TerminalEquipments.Add(
                     new TerminalEquipmentSpec()
                     {
-                        //Id = terminalEquipment.Id,
                         Category = terminalEquipmentSpec.Category,
                         Name = terminalEquipmentSpec.Name,
                         ShortName = terminalEquipmentSpec.ShortName,
@@ -158,22 +157,18 @@ namespace OpenFTTH.APIGateway.Specifications
 
             foreach (var spanStructureSpec in spanStructureSpecs)
             {
-
-                if (spanStructureSpec.SpanClassType.ToLower() != "fibercable")
-                {
-                    specificationData.SpanStructures.Add(
-                        new SpanStructureSpec()
-                        {
-                            SpanClassType = spanStructureSpec.SpanClassType,
-                            Name = spanStructureSpec.RefName,
-                            Color = spanStructureSpec.Color,
-                            InnerDiameter = spanStructureSpec.InnerDiameter,
-                            OuterDiameter = spanStructureSpec.OuterDiameter,
-                            Description = spanStructureSpec.Description,
-                            Deprecated = spanStructureSpec.Deprecated,
-                        }
-                    );
-                }
+                specificationData.SpanStructures.Add(
+                    new SpanStructureSpec()
+                    {
+                        SpanClassType = spanStructureSpec.SpanClassType,
+                        Name = spanStructureSpec.Name,
+                        Color = spanStructureSpec.Color,
+                        InnerDiameter = spanStructureSpec.InnerDiameter,
+                        OuterDiameter = spanStructureSpec.OuterDiameter,
+                        Description = spanStructureSpec.Description,
+                        Deprecated = spanStructureSpec.Deprecated,
+                    }
+                );
             }
 
 
@@ -182,9 +177,7 @@ namespace OpenFTTH.APIGateway.Specifications
 
             foreach (var spanEquipmentSpec in spanEquipmentSpecs)
             {
-                if (spanEquipmentSpec.Category.ToLower() != "fibercable")
-                {
-                    specificationData.SpanEquipments.Add(
+                specificationData.SpanEquipments.Add(
                     new SpanEquipmentSpec()
                     {
                         //Id = terminalEquipment.Id,
@@ -199,9 +192,7 @@ namespace OpenFTTH.APIGateway.Specifications
                         OuterStructure = GetSpanStructures(spanEquipmentSpec.RootTemplate, spanStructureSpecs)
                     }
                 );
-                }
             }
-
 
             // Eksport to file
             string json = JsonConvert.SerializeObject(specificationData, Formatting.Indented);
