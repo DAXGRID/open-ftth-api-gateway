@@ -181,6 +181,9 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             // Prepare address info if available
             string? addressInfo = GetTerminalEquipmentAddressLabel(terminalEquipment);
 
+            if (addressInfo != null)
+                addressInfo = " (" + addressInfo + ")";
+
             var equipmentName = GetEquipmentWithStructureInfoString(terminalRef);
 
             return $"{nodeName}{equipmentName}{addressInfo}";
@@ -562,9 +565,6 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             if (addressLabel == null && terminalEquipment.AddressInfo != null)
             {
                 addressLabel = GetAddressLabel(GetTerminalEquipmentMostAccurateAddressId(terminalEquipment));
-
-                if (addressLabel != null)
-                    addressLabel = " (" + addressLabel + ")";
             }
 
             return addressLabel;
