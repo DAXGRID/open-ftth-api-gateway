@@ -442,10 +442,8 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
             var tracedTerminals = TraceAllTerminals(terminalEquipment);
 
             var endNodesIds = GetEndNodeIdsFromTraceResult(tracedTerminals.Values);
-
-            var addressIds = GetAddressIdsFromTraceResult(tracedTerminals.Values);
-
-            RelevantEquipmentData relevantEquipmentData = new RelevantEquipmentData(_eventStore, _utilityNetwork, _queryDispatcher, endNodesIds, addressIds);
+       
+            RelevantEquipmentData relevantEquipmentData = new RelevantEquipmentData(_eventStore, _utilityNetwork, _queryDispatcher, endNodesIds);
 
             relevantEquipmentData.TracedTerminals = tracedTerminals;
 
@@ -682,8 +680,8 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
         {
             public Dictionary<Guid, TraceInfo> TracedTerminals { get; set; }
 
-            public RelevantEquipmentData(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds, HashSet<Guid> addressIds) 
-                : base(eventStore, utilityNetwork, queryDispatcher, nodeOfInterestIds, addressIds)
+            public RelevantEquipmentData(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds) 
+                : base(eventStore, utilityNetwork, queryDispatcher, nodeOfInterestIds)
             {
             }
         }

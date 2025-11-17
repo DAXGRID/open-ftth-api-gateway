@@ -29,7 +29,6 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
         private readonly UtilityNetworkProjection _utilityNetwork;
         private LookupCollection<TerminalEquipmentSpecification> _terminalEquipmentSpecifications;
 
-
         public GetConnectivityTraceQueryHandler(IEventStore eventStore, IQueryDispatcher queryDispatcher)
         {
             _eventStore = eventStore;
@@ -65,12 +64,10 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
             if (traceResult.Downstream.Length > 0)
                 traceElements.AddRange(traceResult.Downstream);
 
-            var addressIds = GetAddressIdsFromTraceResult(traceResult);
-
             var routeNodeIds = traceElements.OfType<IUtilityGraphTerminalRef>().Select(t => t.RouteNodeId).ToArray();
             var routeSegmentInterestIds = traceElements.OfType<IUtilityGraphSegmentRef>().Select(s => s.SpanEquipment(_utilityNetwork).WalkOfInterestId).ToArray();
 
-            var relatedData = new RelatedDataHolder(_eventStore, _utilityNetwork, _queryDispatcher, routeNodeIds, addressIds, routeSegmentInterestIds);
+            var relatedData = new RelatedDataHolder(_eventStore, _utilityNetwork, _queryDispatcher, routeNodeIds, routeSegmentInterestIds);
 
             var terminalEquipment = sourceTerminalRef.TerminalEquipment(_utilityNetwork);
 
@@ -150,11 +147,9 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
 
             List<IGraphObject> traceElements = traceResult.All;
 
-            var addressIds = GetAddressIdsFromTraceResult(traceResult);
             var routeSegmentInterestIds = traceElements.OfType<IUtilityGraphSegmentRef>().Select(s => s.SpanEquipment(_utilityNetwork).WalkOfInterestId).ToArray();
 
-
-            var relatedData = new RelatedDataHolder(_eventStore, _utilityNetwork, _queryDispatcher, traceElements.OfType<IUtilityGraphTerminalRef>().Select(t => t.RouteNodeId).ToArray(), addressIds, routeSegmentInterestIds);
+            var relatedData = new RelatedDataHolder(_eventStore, _utilityNetwork, _queryDispatcher, traceElements.OfType<IUtilityGraphTerminalRef>().Select(t => t.RouteNodeId).ToArray(), routeSegmentInterestIds);
 
             ReverseIfNeeded(traceElements, relatedData.RouteNetworkElementById);
 
@@ -343,12 +338,6 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
             return new LineString(coordinates.ToArray()).Length;
         }
 
-
-
-      
-
-      
-
         private string GetConnectionInfo(RelatedDataHolder relatedData, List<IGraphObject> traceElements, int graphElementIndex)
         {
             // If segment follow terminal, then write span segment information in connection info
@@ -371,29 +360,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
 
                 if (terminalRef != null && !terminalRef.IsDummyEnd)
                 {
-                    var addressId = GetTerminalEquipmentMostAccurateAddressId(terminalRef.TerminalEquipment(_utilityNetwork));
-
-                    if (addressId != null)
-                    {
-                        var addressString = relatedData.GetAddressString(addressId);
-                        if (addressString != null)
-                            return addressString;
-                    }
+                    return relatedData.GetTerminalEquipmentAddressLabel(terminalRef.TerminalEquipment(_utilityNetwork));
                 }
             }
 
             return "";
         }
-
-        private Guid? GetTerminalEquipmentMostAccurateAddressId(TerminalEquipment terminalEquipment)
-        {
-            if (terminalEquipment.AddressInfo != null && terminalEquipment.AddressInfo.UnitAddressId != null)
-                return terminalEquipment.AddressInfo.UnitAddressId.Value;
-            else if (terminalEquipment.AddressInfo != null && terminalEquipment.AddressInfo.AccessAddressId != null)
-                return terminalEquipment.AddressInfo.AccessAddressId.Value;
-
-            return null;
-        }
+            
 
         private string GetSpanConnectionInfo(RelatedDataHolder relatedData, IUtilityGraphSegmentRef? utilityGraphSegmentRef)
         {

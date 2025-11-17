@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenFTTH.UtilityGraphService.Business.SpanEquipments.Projections;
+using OpenFTTH.UtilityGraphService.Business.Graph.Projections;
 
 namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 {
@@ -22,6 +23,9 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
         private readonly IEventStore _eventStore;
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly UtilityNetworkProjection _utilityNetwork;
+        private readonly AddressInfoProjection _addressInfo;
+        private readonly InstallationProjection _installationInfo;
+
         private LookupCollection<TerminalEquipmentSpecification> _terminalEquipmentSpecifications;
         private LookupCollection<TerminalStructureSpecification> _terminalStructureSpecifications;
         private LookupCollection<SpanEquipmentSpecification> _spanEquipmentSpecifications;
@@ -29,10 +33,9 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 
         public Dictionary<Guid, RouteNetworkElement> RouteNetworkElementById { get; }
         public Dictionary<Guid, NodeContainer> NodeContainerById  { get; }
-        public Dictionary<Guid, string> AddressStringById { get; }
         public Dictionary<Guid, RouteNetworkInterest> RouteNetworkInterestById { get; }
 
-        public RelatedDataHolder(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds, HashSet<Guid>? addressIds = null, IEnumerable<Guid>? segmentWalkOfInterestIds = null)
+        public RelatedDataHolder(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds, IEnumerable<Guid>? segmentWalkOfInterestIds = null)
         {
             _eventStore = eventStore;
             _queryDispatcher = queryDispatcher;
@@ -42,13 +45,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             _terminalStructureSpecifications = _eventStore.Projections.Get<TerminalStructureSpecificationsProjection>().Specifications;
             _spanEquipmentSpecifications = _eventStore.Projections.Get<SpanEquipmentSpecificationsProjection>().Specifications;
             _spanStructureSpecifications = _eventStore.Projections.Get<SpanStructureSpecificationsProjection>().Specifications;
+            _addressInfo = eventStore.Projections.Get<AddressInfoProjection>();
+            _installationInfo = eventStore.Projections.Get<InstallationProjection>();
 
 
             RouteNetworkElementById = GatherRouteNetworkElementInformation(nodeOfInterestIds);
 
             NodeContainerById = GatcherNodeContainerInformation(RouteNetworkElementById.Values.ToList());
-
-            AddressStringById = GatherAddressInformation(addressIds);
 
             // Now fetch span segment interests and related route network elements
             if (segmentWalkOfInterestIds != null)
@@ -119,65 +122,6 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             return result;
         }
 
-        private Dictionary<Guid, string> GatherAddressInformation(HashSet<Guid>? addressIdsToQuery)
-        {
-            if (addressIdsToQuery == null)
-                return new Dictionary<Guid, string>();
-
-            var getAddressInfoQuery = new GetAddressInfo(addressIdsToQuery.ToArray());
-
-            var addressResult = _queryDispatcher.HandleAsync<GetAddressInfo, Result<GetAddressInfoResult>>(getAddressInfoQuery).Result;
-
-            Dictionary<Guid, string> result = new();
-
-            if (addressResult.IsSuccess)
-            {
-                foreach (var addressHit in addressResult.Value.AddressHits)
-                {
-                    if (addressHit.RefClass == AddressEntityClass.UnitAddress)
-                    {
-                        var unitAddress = addressResult.Value.UnitAddresses[addressHit.RefId];
-                        var accessAddress = addressResult.Value.AccessAddresses[unitAddress.AccessAddressId];
-
-                        var addressStr = accessAddress.RoadName + " " + accessAddress.HouseNumber;
-
-                        if (unitAddress.FloorName != null)
-                            addressStr += (", " + unitAddress.FloorName);
-
-                        if (unitAddress.SuitName != null)
-                            addressStr += (" " + unitAddress.SuitName);
-
-                        result.Add(addressHit.Key, addressStr);
-                    }
-                    else
-                    {
-                        var accessAddress = addressResult.Value.AccessAddresses[addressHit.RefId];
-
-                        var addressStr = accessAddress.RoadName + " " + accessAddress.HouseNumber;
-
-                        result.Add(addressHit.Key, addressStr);
-                    }
-                }
-            }
-            else
-            {
-                throw new ApplicationException($"Error calling address service from trace. Error: " + addressResult.Errors.First().Message);
-            }
-
-            return result;
-        }
-
-        public string? GetAddressString(Guid? addressId)
-        {
-            if (addressId == null || addressId.Value == Guid.Empty)
-                return null;
-
-            if (AddressStringById.ContainsKey(addressId.Value))
-                return AddressStringById[addressId.Value];
-            else
-                return null;
-        }
-
         public string? GetNodeName(Guid routeNodeId)
         {
             if (RouteNetworkElementById != null && RouteNetworkElementById.ContainsKey(routeNodeId))
@@ -229,21 +173,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
                 return $"{nodeName} løs ende";
 
             var terminalEquipment = terminalRef.TerminalEquipment(_utilityNetwork);
-
+       
             // Prepare node name if available
             if (nodeName != null)
                 nodeName += " ";
 
             // Prepare address info if available
-            string? addressInfo = null;
-
-            if (terminalEquipment.AddressInfo != null)
-            {
-                addressInfo = GetAddressString(GetTerminalEquipmentMostAccurateAddressId(terminalEquipment));
-
-                if (addressInfo != null)
-                    addressInfo = " (" + addressInfo + ")";
-            }
+            string? addressInfo = GetTerminalEquipmentAddressLabel(terminalEquipment);
 
             var equipmentName = GetEquipmentWithStructureInfoString(terminalRef);
 
@@ -268,8 +204,8 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 
             if (includeAddressInfo && terminalEquipment.AddressInfo != null && terminalEquipment.AddressInfo.AccessAddressId != null)
             {
-                addressInfo = GetAddressString(GetTerminalEquipmentMostAccurateAddressId(terminalEquipment));
-
+                addressInfo = GetTerminalEquipmentAddressLabel(terminalEquipment);
+                    
                 if (addressInfo != null)
                     addressInfo = " (" + addressInfo + ")";
             }
@@ -604,5 +540,62 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             else
                 return false;
         }
+
+        public string GetTerminalEquipmentAddressLabel(TerminalEquipment terminalEquipment)
+        {
+            string? addressLabel = null;
+
+            var terminalEquipmentSpecification = _terminalEquipmentSpecifications[terminalEquipment.SpecificationId];
+
+            // In case of a customer termination, try find address info through installation information retrieved from external system
+            if (terminalEquipmentSpecification.IsCustomerTermination)
+            {
+                var instInfo = _installationInfo.GetInstallationInfo(terminalEquipment.Name, _utilityNetwork);
+
+                if (instInfo != null && instInfo.UnitAddressId != null && instInfo.UnitAddressId != Guid.Empty)
+                {
+                    addressLabel = GetAddressLabel((Guid)instInfo.UnitAddressId);
+                }
+            }
+
+            // Try find address info related to terminal equipment
+            if (addressLabel == null && terminalEquipment.AddressInfo != null)
+            {
+                addressLabel = GetAddressLabel(GetTerminalEquipmentMostAccurateAddressId(terminalEquipment));
+
+                if (addressLabel != null)
+                    addressLabel = " (" + addressLabel + ")";
+            }
+
+            return addressLabel;
+        }
+        
+        public string? GetAddressLabel(Guid? accessOrUnitAddressId)
+        {
+            if (accessOrUnitAddressId == null)
+                return null;
+
+            if (_addressInfo.UnitAddressesById.TryGetValue((Guid)accessOrUnitAddressId, out var unitAddress))
+            {
+                if (_addressInfo.AccessAddressesById.TryGetValue(unitAddress.AccessAddressId, out var accessAddress))
+                {
+                    if (accessAddress.RoadId != null && _addressInfo.RoadsById.TryGetValue((Guid)accessAddress.RoadId, out var road))
+                    {
+                        return (road.Name + " " + accessAddress.HouseNumber + " " + unitAddress.FloorName + " " + unitAddress.SuitName).Trim();
+                    }
+                }
+            }
+
+            if (_addressInfo.AccessAddressesById.TryGetValue((Guid)accessOrUnitAddressId, out var accessAddressOnly))
+            {
+                if (accessAddressOnly.RoadId != null && _addressInfo.RoadsById.TryGetValue((Guid)accessAddressOnly.RoadId, out var road))
+                {
+                    return (road.Name + " " + accessAddressOnly.HouseNumber).Trim();
+                }
+            }
+
+            return null;
+        }
+
     }
 }

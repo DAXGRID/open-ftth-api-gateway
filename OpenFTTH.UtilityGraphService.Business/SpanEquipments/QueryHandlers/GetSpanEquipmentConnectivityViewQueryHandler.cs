@@ -229,9 +229,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
 
             var endNodesIds = GetEndNodeIdsFromTraceResult(tracedSegments.Values);
 
-            var addressIds = GetAddressIdsFromTraceResult(tracedSegments.Values);
-
-            RelevantEquipmentData relevantEquipmentData = new RelevantEquipmentData(_eventStore, _utilityNetwork, _queryDispatcher, endNodesIds, addressIds);
+            RelevantEquipmentData relevantEquipmentData = new RelevantEquipmentData(_eventStore, _utilityNetwork, _queryDispatcher, endNodesIds);
 
             relevantEquipmentData.TracedSegments = tracedSegments;
 
@@ -409,8 +407,8 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
         {
             public Dictionary<Guid, TraceInfo> TracedSegments { get; set; }
 
-            public RelevantEquipmentData(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds, HashSet<Guid> addressIds)
-               : base(eventStore, utilityNetwork, queryDispatcher, nodeOfInterestIds, addressIds)
+            public RelevantEquipmentData(IEventStore eventStore, UtilityNetworkProjection utilityNetwork, IQueryDispatcher queryDispatcher, IEnumerable<Guid> nodeOfInterestIds)
+               : base(eventStore, utilityNetwork, queryDispatcher, nodeOfInterestIds)
             {
             }
         }
