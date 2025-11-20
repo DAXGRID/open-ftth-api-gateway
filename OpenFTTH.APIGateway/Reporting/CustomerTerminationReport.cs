@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Marten.Linq.SoftDeletes;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
 using OpenFTTH.Events.RouteNetwork.Infos;
@@ -50,9 +51,9 @@ namespace OpenFTTH.APIGateway.Reporting
             {
                 var equipmentSpec = terminalEquipmentSpecifications[terminalEquipment.SpecificationId];
 
-                if (equipmentSpec.IsCustomerTermination && terminalEquipment.TerminalStructures.Count() > 0)
+                if (equipmentSpec.IsCustomerTermination && terminalEquipment.TerminalStructures.Where(t => !t.Deleted).Count() > 0)
                 {
-                    var sourceTerminalStructure = terminalEquipment.TerminalStructures[0];
+                    var sourceTerminalStructure = terminalEquipment.TerminalStructures.First(t => !t.Deleted);
 
                     for (int i = 0; i < sourceTerminalStructure.Terminals.Count(); i++)
                     {
