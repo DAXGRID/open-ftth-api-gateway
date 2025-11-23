@@ -62,7 +62,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             }
             else
             {
-                return CutConduits(command, utilityNetwork, spanSegmentGraphElement);
+                return CutConduits(command, utilityNetwork, interestsProjection, spanSegmentGraphElement);
             }
         }
 
@@ -342,7 +342,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
         }
 
 
-        private Task<Result> CutConduits(CutSpanSegmentsAtRouteNode command, UtilityNetworkProjection utilityNetwork, IUtilityGraphSegmentRef spanSegmentGraphElement)
+        private Task<Result> CutConduits(CutSpanSegmentsAtRouteNode command, UtilityNetworkProjection utilityNetwork, InterestsProjection interestsProjection, IUtilityGraphSegmentRef spanSegmentGraphElement)
         {
             foreach (var spanSegmentToCut in command.SpanSegmentsToCut)
             {
@@ -353,6 +353,19 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             var spanEquipment = spanSegmentGraphElement.SpanEquipment(utilityNetwork);
             var firstSpanSegment = spanSegmentGraphElement.SpanSegment(utilityNetwork);
 
+            // If conduit containing only one span structure, then cut the whole span equipment
+            if (spanEquipment.SpanStructures.Length == 1 && spanEquipment.SpanStructures[0].SpanSegments.Length == 1)
+            {
+                return CutConduitEquipment(command, utilityNetwork, interestsProjection, spanEquipment);
+            }
+            else
+            {
+                return CutConduitSpanSegments(command, spanEquipment);
+            }
+        }
+
+        private Task<Result> CutConduitSpanSegments(CutSpanSegmentsAtRouteNode command, SpanEquipment spanEquipment)
+        {
             // Get walk of interest of the span equipment
             var interestQueryResult = _queryDispatcher.HandleAsync<GetRouteNetworkDetails, Result<GetRouteNetworkDetailsResult>>(
                 new GetRouteNetworkDetails(new InterestIdList() { spanEquipment.WalkOfInterestId })
@@ -382,6 +395,159 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             }
 
             return Task.FromResult(cuteSpanEquipmentsResult);
+        }
+
+        private Task<Result> CutConduitEquipment(CutSpanSegmentsAtRouteNode command, UtilityNetworkProjection utilityNetwork, InterestsProjection interestsProjection, SpanEquipment spanEquipment)
+        {
+            var spanEquipments = _eventStore.Projections.Get<UtilityNetworkProjection>().SpanEquipmentsByEquipmentId;
+            var spanEquipmentSpecifications = _eventStore.Projections.Get<SpanEquipmentSpecificationsProjection>().Specifications;
+
+            // Check that only one conduit is selected
+            if (command.SpanSegmentsToCut.Length > 1)
+            {
+                return Task.FromResult(Result.Fail(new CutSpanSegmentsAtRouteNodeError(CutSpanSegmentsAtRouteNodeErrorCodes.EXPECTED_ONLY_ONE_CONDUIT, $"Expected only one whole conduit to be cut. Cutting multiple conduits entirely at once is not allowed.")));
+            }
+
+            utilityNetwork.TryGetEquipment<SpanEquipment>(command.SpanSegmentsToCut[0], out var conduitToBeCut);
+
+            if (IsAffixedToNodeContainer(conduitToBeCut))
+            {
+                return Task.FromResult(Result.Fail(new CutSpanSegmentsAtRouteNodeError(CutSpanSegmentsAtRouteNodeErrorCodes.CUTTING_CONDUIT_AFFIXED_TO_CONTAINER_NOT_ALLOWED, $"Cutting conduits affixed to a container is not allowed")));
+            }
+
+            var utilityCmdContext = new CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
+            var networkCmdContext = new RouteNetwork.Business.CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
+
+            var existingWalk = GetInterestInformation(conduitToBeCut);
+
+            // Only cut cables not starting or ending in the node (where to cut)
+            if (existingWalk.NodeIds.Contains(command.RouteNodeId) && existingWalk.NodeIds.First() != command.RouteNodeId && existingWalk.NodeIds.Last() != command.RouteNodeId)
+            {
+
+                // Disconnect eventually to terminals
+                var disconnects = FindCableEndDisconnects(utilityNetwork, conduitToBeCut);
+
+                var existingConduitEquipmentAR = _eventStore.Aggregates.Load<SpanEquipmentAR>(conduitToBeCut.Id);
+
+                if (disconnects.Count > 0)
+                {
+                    // Disconnect the segments
+                    var disconnectResult = existingConduitEquipmentAR.DisconnectSegmentsFromTerminals(
+                           cmdContext: utilityCmdContext,
+                           disconnects.Values.ToArray()
+                    );
+
+                    if (!disconnectResult.IsSuccess)
+                    {
+                        return Task.FromResult(disconnectResult);
+                    }
+                }
+
+                ////////////////////////////
+                // Shrink existing conduit
+
+                var existingConduitWalkAfterShrink = GetWalkBeforeNode(existingWalk.RouteNetworkElementRefs, command.RouteNodeId);
+
+                var newCableWalk = GetWalkAfterNode(existingWalk.RouteNetworkElementRefs, command.RouteNodeId);
+
+
+                // Shrink conduit and update update utility hops
+                var moveSpanEquipmentResult = existingConduitEquipmentAR.Shrink(utilityCmdContext, existingConduitWalkAfterShrink, existingWalk, null);
+
+                if (moveSpanEquipmentResult.IsFailed)
+                    return Task.FromResult(Result.Fail(moveSpanEquipmentResult.Errors.First()));
+
+                // Update interest
+                var existingConduitInterestAR = _eventStore.Aggregates.Load<InterestAR>(conduitToBeCut.WalkOfInterestId);
+
+                var updateInterestResult = existingConduitInterestAR.UpdateRouteNetworkElements(networkCmdContext, existingConduitWalkAfterShrink.GetRouteNetworkInterest(conduitToBeCut.WalkOfInterestId), interestsProjection, new WalkValidator(_routeNetworkRepository));
+
+                if (updateInterestResult.IsFailed)
+                    throw new ApplicationException($"Failed to update interest: {conduitToBeCut.WalkOfInterestId} of span equipment: {conduitToBeCut.Id} in RemoveSpanStructureFromSpanEquipmentCommandHandler Error: {updateInterestResult.Errors.First().Message}");
+
+                ////////////////////////////
+                // Create new conduit
+
+                var newConduitWalkOfInterestId = Guid.NewGuid();
+
+                var newConduitEquipmentAR = new SpanEquipmentAR();
+
+                var commandContext = new CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
+
+                var placeSpanEquipmentResult = newConduitEquipmentAR.PlaceSpanEquipmentInUtilityNetwork(
+                    cmdContext: commandContext,
+                    spanEquipments,
+                    spanEquipmentSpecifications,
+                    Guid.NewGuid(),
+                    conduitToBeCut.SpecificationId,
+                    newConduitWalkOfInterestId,
+                    newCableWalk.RouteNetworkElementRefs,
+                    null,
+                    conduitToBeCut.ManufacturerId,
+                    conduitToBeCut.NamingInfo,
+                    conduitToBeCut.LifecycleInfo,
+                    conduitToBeCut.MarkingInfo,
+                    conduitToBeCut.AddressInfo
+                );
+
+                if (placeSpanEquipmentResult.IsFailed)
+                    return Task.FromResult(Result.Fail(placeSpanEquipmentResult.Errors.First()));
+
+                // create the interest
+                var newCableInterestAR = new InterestAR();
+
+                var interestProjection = _eventStore.Projections.Get<InterestsProjection>();
+
+                OpenFTTH.RouteNetwork.Business.CommandContext routeNetworkCommandContext = new RouteNetwork.Business.CommandContext(commandContext.CorrelationId, commandContext.CmdId, commandContext.UserContext);
+
+                var walkOfInterest = new RouteNetworkInterest(newConduitWalkOfInterestId, RouteNetworkInterestKindEnum.WalkOfInterest, newCableWalk.RouteNetworkElementRefs);
+
+                var registerWalkOfInterestResult = newCableInterestAR.RegisterWalkOfInterest(routeNetworkCommandContext, walkOfInterest, interestProjection, new WalkValidator(_routeNetworkRepository));
+
+                if (registerWalkOfInterestResult.IsFailed)
+                    throw new ApplicationException($"Failed to register walk of interest of span equipment in split in CutSpanSegmentsCommandHandler Error: {registerWalkOfInterestResult.Errors.First().Message}");
+
+                var connects = CreateConnectedFromDisconnects(newConduitEquipmentAR.SpanEquipment, disconnects);
+
+                if (connects.Count > 0)
+                {
+                    // Connect the segments
+                    var connectResult = newConduitEquipmentAR.ConnectCableSpanSegmentsWithTerminals(
+                           cmdContext: utilityCmdContext,
+                           spanEquipmentSpecifications[newConduitEquipmentAR.SpanEquipment.SpecificationId],
+                           newCableWalk.ToNodeId,
+                           connects.ToArray()
+                    );
+
+                    if (!connectResult.IsSuccess)
+                    {
+                        return Task.FromResult(connectResult);
+                    }
+                }
+
+                _eventStore.Aggregates.Store(existingConduitInterestAR);
+                _eventStore.Aggregates.Store(existingConduitEquipmentAR);
+
+                _eventStore.Aggregates.Store(newCableInterestAR);
+                _eventStore.Aggregates.Store(newConduitEquipmentAR);
+
+                NotifyExternalServicesAboutChange(conduitToBeCut.Id, command.RouteNodeId);
+            }
+
+            return Task.FromResult(Result.Ok());
+        }
+
+        private bool IsAffixedToNodeContainer(SpanEquipment spanEquipment)
+        {
+            if (spanEquipment.NodeContainerAffixes == null)
+                return false;
+
+            foreach (var affix in spanEquipment.NodeContainerAffixes)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private ValidatedRouteNetworkWalk GetInterestInformation(SpanEquipment spanEquipment)
