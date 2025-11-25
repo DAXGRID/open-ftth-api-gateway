@@ -514,6 +514,20 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
                 if (downstreamNode != null && downstreamNode.RouteNodeInfo != null && downstreamNode.RouteNodeInfo.Kind != null && dontTraceCablesConnectedToTheseNodeKinds.Contains((RouteNodeKindEnum)downstreamNode.RouteNodeInfo.Kind))
                     continue;
 
+                // Don't trace between two cabinets
+                if (downstreamNode != null &&
+                    downstreamNode.RouteNodeInfo != null &&
+                    downstreamNode.RouteNodeInfo.Kind != null &&
+                    downstreamNode.RouteNodeInfo.Kind == RouteNodeKindEnum.CabinetSmall &&
+                    upstreamNode != null &&
+                    upstreamNode.RouteNodeInfo != null &&
+                    upstreamNode.RouteNodeInfo.Kind != null &&
+                    upstreamNode.RouteNodeInfo.Kind == RouteNodeKindEnum.CabinetSmall)
+                {
+                    continue;
+                }
+
+
                 HashSet<TerminalEquipment> upstreamEquipmentsFound = [];
                 HashSet<TerminalEquipment> downstreamEquipmentsFound = [];
 
