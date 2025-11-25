@@ -354,6 +354,9 @@ namespace OpenFTTH.APIGateway.Specifications
             {
                 if (!spanStructureSpecByRefName.ContainsKey(spanStructureSpec.RefName.ToLower()))
                     spanStructureSpecByRefName.Add(spanStructureSpec.RefName.ToLower(), spanStructureSpec);
+
+                if (!spanStructureSpecByRefName.ContainsKey(spanStructureSpec.Name.ToLower()))
+                    spanStructureSpecByRefName.Add(spanStructureSpec.Name.ToLower(), spanStructureSpec);
             }
 
             if (!terminalAndSpanStructuresOnly)
