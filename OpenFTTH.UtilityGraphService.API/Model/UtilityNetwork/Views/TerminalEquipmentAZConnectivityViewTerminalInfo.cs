@@ -7,10 +7,13 @@ namespace OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views
         public Guid Id { get; init; }
         public string Name { get; init; }
 
-        public TerminalEquipmentAZConnectivityViewTerminalInfo(Guid id, string name)
+        public bool HasTags { get; init; }
+
+        public TerminalEquipmentAZConnectivityViewTerminalInfo(Guid id, string name, bool hasTags)
         {
             Id = id;
             Name = name;
+            HasTags = hasTags;
         }
     }
 }

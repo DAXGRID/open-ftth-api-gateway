@@ -142,8 +142,8 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
                         lineInfos.Add(
                             new TerminalEquipmentAZConnectivityViewLineInfo(GetConnectorSymbol(terminal, terminal))
                             {
-                                A = GetAEndInfo(equipmentData, terminal),
-                                Z = GetZEndInfo(equipmentData, terminal)
+                                A = GetAEndInfo(equipmentData, terminalEquipment, terminal),
+                                Z = GetZEndInfo(equipmentData, terminalEquipment, terminal)
                             }
                         );
                     }
@@ -153,7 +153,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
                         lineInfos.Add(
                             new TerminalEquipmentAZConnectivityViewLineInfo(GetConnectorSymbol(terminal, terminal))
                             {
-                                A = GetAEndInfo(equipmentData, terminal),
+                                A = GetAEndInfo(equipmentData, terminalEquipment, terminal),
                                 Z = null
                             }
                         );
@@ -165,7 +165,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
                             new TerminalEquipmentAZConnectivityViewLineInfo(GetConnectorSymbol(terminal, terminal))
                             {
                                 A = null,
-                                Z = GetOutEndInfo(equipmentData, terminal)
+                                Z = GetOutEndInfo(equipmentData, terminalEquipment, terminal)
                             }
                         );
                     }
@@ -268,9 +268,11 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
             return compactedLines;
         }
 
-        private TerminalEquipmentAZConnectivityViewEndInfo GetAEndInfo(RelevantEquipmentData relevantEquipmentData, Terminal terminal)
+        private TerminalEquipmentAZConnectivityViewEndInfo GetAEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
-            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name);
+            bool hasTags = terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0;
+
+            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, hasTags);
 
             var traceInfo = relevantEquipmentData.TracedTerminals[terminal.Id].A;
 
@@ -284,9 +286,11 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
             };
         }
 
-        private TerminalEquipmentAZConnectivityViewEndInfo GetZEndInfo(RelevantEquipmentData relevantEquipmentData, Terminal terminal)
+        private TerminalEquipmentAZConnectivityViewEndInfo GetZEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
-            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name);
+            bool hasTags = terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0 && terminalEquipment.EquipmentTags.Any(t => t.TerminalOrSpanId == terminal.Id);
+
+            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, hasTags);
 
             var traceInfo = relevantEquipmentData.TracedTerminals[terminal.Id].Z;
 
@@ -301,9 +305,11 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
         }
 
 
-        private TerminalEquipmentAZConnectivityViewEndInfo GetOutEndInfo(RelevantEquipmentData relevantEquipmentData, Terminal terminal)
+        private TerminalEquipmentAZConnectivityViewEndInfo GetOutEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
-            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name);
+            bool hasTags = terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0 && terminalEquipment.EquipmentTags.Any(t => t.TerminalOrSpanId == terminal.Id);
+
+            var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, hasTags);
 
             var traceInfo = relevantEquipmentData.TracedTerminals[terminal.Id].Z;
 

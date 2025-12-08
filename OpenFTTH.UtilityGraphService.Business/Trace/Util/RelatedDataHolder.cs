@@ -597,5 +597,17 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             return null;
         }
 
+        public bool EquipmentHasTags(UtilityGraphConnectedTerminal terminalRef)
+        {
+            if (terminalRef.IsDummyEnd)
+                return false;
+
+            var terminalEquipment = terminalRef.TerminalEquipment(_utilityNetwork);
+
+            if (terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0)
+                return true;
+
+            return false;
+        }
     }
 }
