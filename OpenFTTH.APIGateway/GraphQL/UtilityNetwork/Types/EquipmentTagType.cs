@@ -7,7 +7,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
 {
     public class EquipmentTagType : ObjectGraphType<EquipmentTag>
     {
-        public EquipmentTagType(ILogger<EquipmentDisplayTagType> logger, IQueryDispatcher queryDispatcher)
+        public EquipmentTagType(ILogger<EquipmentTagType> logger, IQueryDispatcher queryDispatcher)
         {
             Field(x => x.TerminalOrSpanId, type: typeof(IdGraphType)).Description("Master Resource Identifier UUID Property");
             Field(x => x.Tags, type: typeof(ListGraphType<StringGraphType>)).Description("Tags");
