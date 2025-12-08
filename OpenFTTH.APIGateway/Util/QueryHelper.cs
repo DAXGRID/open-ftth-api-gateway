@@ -74,5 +74,30 @@ namespace OpenFTTH.APIGateway.Util
 
             return Result.Fail(new Error($"Failed to find node container with id: {nodeContainerId}"));
         }
+
+        public static Result<EquipmentTag[]> GetEquipmentTags(IQueryDispatcher queryDispatcher, Guid terminalOrSpanEquipmentId)
+        {
+            var equipmentIdList = new EquipmentIdList();
+            equipmentIdList.Add(terminalOrSpanEquipmentId);
+
+            // Query all the equipments related to the route network element
+            var equipmentQueryResult = queryDispatcher.HandleAsync<GetEquipmentDetails, Result<GetEquipmentDetailsResult>>(
+                new GetEquipmentDetails(equipmentIdList)
+                {
+                    EquipmentDetailsFilter = new EquipmentDetailsFilterOptions() { IncludeRouteNetworkTrace = false }
+                }
+            ).Result;
+
+            if (equipmentQueryResult.IsFailed)
+                return Result.Fail(equipmentQueryResult.Errors.First());
+
+            if (equipmentQueryResult.Value.NodeContainers != null && equipmentQueryResult.Value.NodeContainers.Count > 0)
+            {
+                return Result.Ok(equipmentQueryResult.Value.TerminalEquipment.First().EquipmentTags);
+            }
+
+            return Result.Fail(new Error($"Failed to find tags for terminal or span equipment with id: {terminalOrSpanEquipmentId}"));
+        }
+
     }
 }

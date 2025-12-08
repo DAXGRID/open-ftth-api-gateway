@@ -32,6 +32,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments
             Register<AdditionalStructuresAddedToTerminalEquipment>(Apply);
             Register<TerminalStructureRemoved>(Apply);
             Register<TerminalStructureInterfaceInfoChanged>(Apply);
+            Register<TagsUpdated>(Apply);
         }
 
         #region Place equipment
@@ -478,6 +479,35 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments
 
         #endregion
 
+        #region Update Tags
+        public Result UpdateTags(CommandContext cmdContext, EquipmentTag[] tags)
+        {
+            var @event = new TagsUpdated(
+                   terminalOrSpanEquipmentId: this.Id,
+                   tags: tags
+                 )
+            {
+                CorrelationId = cmdContext.CorrelationId,
+                IncitingCmdId = cmdContext.CmdId,
+                UserName = cmdContext.UserContext?.UserName,
+                WorkTaskId = cmdContext.UserContext?.WorkTaskId
+            };
+
+            RaiseEvent(@event);
+
+            return Result.Ok();
+        }
+
+        private void Apply(TagsUpdated @event)
+        {
+            if (_terminalEquipment == null)
+                throw new ApplicationException($"Invalid internal state. Terminal equipment property cannot be null. Seems that terminal equipment has never been placed. Please check command handler logic.");
+
+            _terminalEquipment = TerminalEquipmentProjectionFunctions.Apply(_terminalEquipment, @event);
+        }
+
+        #endregion
+
         #region Helper functions
 
         private TerminalStructure[] CreateTerminalStructuresFromSpecification(TerminalEquipmentSpecification terminalEquipmentSpecification, LookupCollection<TerminalStructureSpecification> terminalStructureSpecifications)
@@ -599,7 +629,9 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments
             return false;
         }
 
-      
+       
+
+
 
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Events;
+using System;
 using System.Collections.Generic;
 
 namespace OpenFTTH.UtilityGraphService.Business.Graph.Projections
@@ -102,5 +103,12 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph.Projections
             };
         }
 
+        public static TerminalEquipment Apply(TerminalEquipment existingSpanEquipment, TagsUpdated @event)
+        {
+            return existingSpanEquipment with
+            {
+                EquipmentTags = @event.Tags
+            };
+        }
     }
 }

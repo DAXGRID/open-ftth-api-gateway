@@ -1,5 +1,6 @@
 ﻿using OpenFTTH.Events.Core.Infos;
 using System;
+using System.Formats.Asn1;
 
 namespace OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork
 {
@@ -13,6 +14,7 @@ namespace OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork
         public NamingInfo? NamingInfo { get; init; }
         public LifecycleInfo? LifecycleInfo { get; init; }
         public AddressInfo? AddressInfo { get; init; }
+        public EquipmentTag[] EquipmentTags { get; init; }
 
         public string? Name => NamingInfo?.Name;
         public string? Description => NamingInfo?.Description;

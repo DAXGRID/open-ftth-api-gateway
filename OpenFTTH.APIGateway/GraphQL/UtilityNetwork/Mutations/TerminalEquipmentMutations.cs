@@ -352,6 +352,37 @@ namespace OpenFTTH.APIGateway.GraphQL.RouteNetwork.Mutations
                     return new CommandResult(removeStructureResult);
                 });
 
+
+            Field<CommandResultType>("updateTags")
+           .Description("Mutation that update tags on a specific terminal og span equipment")
+           .Arguments(new QueryArguments(
+               new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalOrSpanEquipmentId" },
+               new QueryArgument<NonNullGraphType<ListGraphType<EquipmentTagType>>> { Name = "tags" }
+           ))
+           .ResolveAsync(async context =>
+           {
+               var terminalOrSpanEquipmentId = context.GetArgument<Guid>("terminalOrSpanEquipmentId");
+               var tags = context.GetArgument<EquipmentTag[]>("tags");
+
+               var correlationId = Guid.NewGuid();
+
+               var userContext = context.UserContext as GraphQLUserContext;
+               var userName = userContext.Username;
+
+               // Get the users current work task (will fail, if user has not selected a work task)
+               var currentWorkTaskIdResult = WorkQueryHelper.GetUserCurrentWorkId(userName, queryDispatcher);
+
+               if (currentWorkTaskIdResult.IsFailed)
+                   return new CommandResult(currentWorkTaskIdResult);
+
+               var commandUserContext = new UserContext(userName, currentWorkTaskIdResult.Value);
+
+               var updateCmd = new UpdateTags(correlationId, commandUserContext, terminalOrSpanEquipmentId: terminalOrSpanEquipmentId, tags: tags);
+
+               var updateResult = await commandDispatcher.HandleAsync<UpdateTags, Result>(updateCmd);
+
+               return new CommandResult(updateResult);
+           });
         }
     }
 }

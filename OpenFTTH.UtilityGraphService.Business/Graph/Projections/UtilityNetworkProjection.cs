@@ -79,6 +79,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph
             ProjectEventAsync<AdditionalStructuresAddedToTerminalEquipment>(ProjectAsync);
             ProjectEventAsync<TerminalStructureRemoved>(ProjectAsync);
             ProjectEventAsync<TerminalStructureInterfaceInfoChanged>(ProjectAsync);
+            ProjectEventAsync<TagsUpdated>(ProjectAsync);
 
             // Node container
             ProjectEventAsync<NodeContainerPlacedInRouteNetwork>(ProjectAsync);
@@ -307,6 +308,10 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph
                     TryUpdate(TerminalEquipmentProjectionFunctions.Apply(_terminalEquipmentByEquipmentId[@event.TerminalEquipmentId], @event));
                     break;
 
+                case (TagsUpdated @event):
+                    ProcessTagsUpdated(@event);
+                    break;
+
 
                 // Node container events
                 case (NodeContainerPlacedInRouteNetwork @event):
@@ -377,6 +382,12 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph
             return Task.CompletedTask;
         }
 
+        private void ProcessTagsUpdated(TagsUpdated @event)
+        {
+            var existingTerminalEquipment = _terminalEquipmentByEquipmentId[@event.TerminalOrSpanEquipmentId];
+            var after = TerminalEquipmentProjectionFunctions.Apply(existingTerminalEquipment, @event);
+            TryUpdate(after);
+        }
 
         private void ProcessTerminalsConnected(NodeContainerTerminalsConnected @event)
         {

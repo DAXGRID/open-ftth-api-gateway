@@ -14,6 +14,7 @@ using OpenFTTH.UtilityGraphService.API.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuikGraph;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 {
@@ -549,6 +550,49 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
                 return "AFK" + nextConduitSeqStr.PadLeft(6, '0');
             });
+
+            Field<ListGraphType<EquipmentDisplayTagType>>("tags")
+              .Description("Query all tags belonging to a specific terminal or span equipment")
+              .Arguments(new QueryArguments(
+                             new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalOrSpanEquipmentId" }))
+              .Resolve(context =>
+              {
+                  var terminalOrSpanEquipmentId = context.GetArgument<Guid>("terminalOrSpanEquipmentId");
+                  
+                  var getTagsResult = QueryHelper.GetEquipmentTags(queryDispatcher, terminalOrSpanEquipmentId);
+
+                  if (getTagsResult.IsFailed)
+                  {
+                      foreach (var error in getTagsResult.Errors)
+                          context.Errors.Add(new ExecutionError(error.Message));
+
+                      return null;
+                  }
+
+                  var tags = getTagsResult.Value;
+
+
+                  if (tags == null)
+                  {
+                      return new EquipmentDisplayTag[] { };
+                  }
+                  else
+                  {
+                      List<EquipmentDisplayTag> displayTags = new();
+
+                      int i = 1;
+
+                      foreach (var tag in tags)
+                      {
+                          // TODO: Create proper terminal or span display name
+                          displayTags.Add(new EquipmentDisplayTag(tag.TerminalOrSpanId, "hest " + i, tag.Tags, tag.Comment));
+                          i++;
+                      }
+
+                      return tags;
+                  }
+                 
+              });
         }
     }
 }
