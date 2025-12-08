@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using QuikGraph;
+using OpenFTTH.UtilityGraphService.Business.Graph;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 {
@@ -569,30 +570,42 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                       return null;
                   }
 
-                  var tags = getTagsResult.Value;
-
-
-                  if (tags == null)
-                  {
-                      return new EquipmentDisplayTag[] { };
-                  }
-                  else
-                  {
-                      List<EquipmentDisplayTag> displayTags = new();
-
-                      int i = 1;
-
-                      foreach (var tag in tags)
-                      {
-                          // TODO: Create proper terminal or span display name
-                          displayTags.Add(new EquipmentDisplayTag(tag.TerminalOrSpanId, "hest " + i, tag.Tags, tag.Comment));
-                          i++;
-                      }
-
-                      return tags;
-                  }
-                 
+                  return CreateDisplayTags(eventStore, terminalOrSpanEquipmentId, getTagsResult.Value);
               });
+        }
+
+        private static EquipmentDisplayTag[] CreateDisplayTags(IEventStore eventStore, Guid terminalOrSpanEquipmentId, EquipmentTag[] tags)
+        {
+            var utilityNetwork = eventStore.Projections.Get<UtilityNetworkProjection>();
+        
+            if (utilityNetwork.TryGetEquipment<TerminalEquipment>(terminalOrSpanEquipmentId, out var terminalEquipment))
+            {
+                Dictionary<Guid, EquipmentTag> tagByTerminalIdDict = tags == null ? [] : tags.ToDictionary(tag => tag.TerminalOrSpanId);
+
+                List<EquipmentDisplayTag> displayTags = new();
+
+                foreach (var structure in terminalEquipment.TerminalStructures)
+                {
+                    if (!structure.Deleted)
+                    {
+                        foreach (var terminal in structure.Terminals)
+                        {
+                            var equipmentTag = !tagByTerminalIdDict.TryGetValue(terminal.Id, out EquipmentTag value) ? null : value;
+
+                            var displayName = "Kassette/bakke " + structure.Name + " Søm/Port " + terminal.Name;
+
+                            if (equipmentTag != null)
+                                displayTags.Add(new EquipmentDisplayTag(terminal.Id, displayName, equipmentTag.Tags, equipmentTag.Comment));
+                            else
+                                displayTags.Add(new EquipmentDisplayTag(terminal.Id, displayName, null, null));
+                        }
+                    }
+                }
+
+                return displayTags.ToArray();
+            }
+
+            return Array.Empty<EquipmentDisplayTag>();
         }
     }
 }
