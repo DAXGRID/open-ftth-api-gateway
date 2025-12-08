@@ -5,7 +5,7 @@ using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
 {
-    public class EquipmentTagType : ObjectGraphType<EquipmentTag>
+    public class EquipmentTagType : InputObjectGraphType<EquipmentTag>
     {
         public EquipmentTagType()
         {
