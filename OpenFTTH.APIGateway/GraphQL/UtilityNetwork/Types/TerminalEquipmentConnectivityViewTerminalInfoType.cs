@@ -10,7 +10,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types
         {
             Field(x => x.Id, type: typeof(IdGraphType)).Description("Master Resource Identifier UUID Property");
             Field(x => x.Name, type: typeof(StringGraphType)).Description("Terminal name");
-            Field(x => x.HasTags, type: typeof(StringGraphType)).Description("Terminal has tag(s)");
+            Field(x => x.HasTags, type: typeof(BooleanGraphType)).Description("Terminal has tag(s)");
         }
     }
 }
