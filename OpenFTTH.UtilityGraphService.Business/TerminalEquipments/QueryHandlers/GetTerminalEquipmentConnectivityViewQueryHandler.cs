@@ -270,7 +270,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
 
         private TerminalEquipmentAZConnectivityViewEndInfo GetAEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
-            bool hasTags = terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0;
+            bool hasTags = CheckOfTerminalHasTags(terminalEquipment, terminal);
 
             var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, hasTags);
 
@@ -288,7 +288,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
 
         private TerminalEquipmentAZConnectivityViewEndInfo GetZEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
-            bool hasTags = terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0 && terminalEquipment.EquipmentTags.Any(t => t.TerminalOrSpanId == terminal.Id);
+            bool hasTags = CheckOfTerminalHasTags(terminalEquipment, terminal);
 
             var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, hasTags);
 
@@ -304,6 +304,10 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
             };
         }
 
+        private static bool CheckOfTerminalHasTags(TerminalEquipment terminalEquipment, Terminal terminal)
+        {
+            return terminalEquipment.EquipmentTags != null && terminalEquipment.EquipmentTags.Count() > 0 && terminalEquipment.EquipmentTags.Any(t => t.TerminalOrSpanId == terminal.Id);
+        }
 
         private TerminalEquipmentAZConnectivityViewEndInfo GetOutEndInfo(RelevantEquipmentData relevantEquipmentData, TerminalEquipment terminalEquipment, Terminal terminal)
         {
