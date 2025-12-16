@@ -81,7 +81,6 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                 spanEquipmentInterest: interestQueryResult.Value.Interests[spanEquipment.WalkOfInterestId],
                 nodeContainerRouteNodeId: interestQueryResult.Value.Interests[nodeContainer.InterestId].RouteNetworkElementRefs[0],
                 nodeContainerId: command.NodeContainerId,
-                spanSegmentId: command.SpanEquipmentOrSegmentId,
                 nodeContainerIngoingSide: command.NodeContainerIngoingSide
             );
 

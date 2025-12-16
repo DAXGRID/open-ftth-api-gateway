@@ -705,7 +705,6 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments
             RouteNetworkInterest spanEquipmentInterest,
             Guid nodeContainerRouteNodeId,
             Guid nodeContainerId,
-            Guid spanSegmentId,
             NodeContainerSideEnum nodeContainerIngoingSide)
         {
             if (!spanEquipmentInterest.RouteNetworkElementRefs.Contains(nodeContainerRouteNodeId))

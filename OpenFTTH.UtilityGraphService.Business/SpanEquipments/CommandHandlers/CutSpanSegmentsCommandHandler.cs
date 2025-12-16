@@ -98,16 +98,16 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             {
 
                 // Disconnect eventually to terminals
-                var disconnects = FindCableEndDisconnects(utilityNetwork, cableToBeCut);
+                var toTerminalsToDisconnect = FindSpanEquipmentToTerminalsToDisconnect(utilityNetwork, cableToBeCut);
 
                 var existingCableEquipmentAR = _eventStore.Aggregates.Load<SpanEquipmentAR>(cableToBeCut.Id);
 
-                if (disconnects.Count > 0)
+                if (toTerminalsToDisconnect.Count > 0)
                 {
                     // Disconnect the segments
                     var disconnectResult = existingCableEquipmentAR.DisconnectSegmentsFromTerminals(
                            cmdContext: utilityCmdContext,
-                           disconnects.Values.ToArray()
+                           toTerminalsToDisconnect.Values.ToArray()
                     );
 
                     if (!disconnectResult.IsSuccess)
@@ -188,7 +188,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                 if (registerWalkOfInterestResult.IsFailed)
                     throw new ApplicationException($"Failed to register walk of interest of span equipment in split in CutSpanSegmentsCommandHandler Error: {registerWalkOfInterestResult.Errors.First().Message}");
 
-                var connects = CreateConnectedFromDisconnects(newCableEquipmentAR.SpanEquipment, disconnects);
+                var connects = CreateConnectedFromDisconnects(newCableEquipmentAR.SpanEquipment, toTerminalsToDisconnect);
 
                 if (connects.Count > 0)
                 {
@@ -306,7 +306,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             return new ValidatedRouteNetworkWalk(newWalk);
         }
 
-        private Dictionary<int, DisconnectSpanSegmentFromTerminalOperation> FindCableEndDisconnects(UtilityNetworkProjection utilityNetwork, SpanEquipment cableToBeCut)
+        private Dictionary<int, DisconnectSpanSegmentFromTerminalOperation> FindSpanEquipmentToTerminalsToDisconnect(UtilityNetworkProjection utilityNetwork, SpanEquipment cableToBeCut)
         {
             Dictionary<int, DisconnectSpanSegmentFromTerminalOperation> disconnects = new();
 
@@ -410,31 +410,34 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
 
             utilityNetwork.TryGetEquipment<SpanEquipment>(command.SpanSegmentsToCut[0], out var conduitToBeCut);
 
-            if (IsAffixedToNodeContainer(conduitToBeCut))
+            if (IsAffixedToNodeContainerInThisNode(conduitToBeCut, command.RouteNodeId))
             {
                 return Task.FromResult(Result.Fail(new CutSpanSegmentsAtRouteNodeError(CutSpanSegmentsAtRouteNodeErrorCodes.CUTTING_CONDUIT_AFFIXED_TO_CONTAINER_NOT_ALLOWED, $"Cutting conduits affixed to a container is not allowed")));
             }
+
+
 
             var utilityCmdContext = new CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
             var networkCmdContext = new RouteNetwork.Business.CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
 
             var existingWalk = GetInterestInformation(conduitToBeCut);
 
-            // Only cut cables not starting or ending in the node (where to cut)
+            // Only cut conduts not starting or ending in the node (where to cut)
             if (existingWalk.NodeIds.Contains(command.RouteNodeId) && existingWalk.NodeIds.First() != command.RouteNodeId && existingWalk.NodeIds.Last() != command.RouteNodeId)
             {
+                var commandContext = new CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
 
                 // Disconnect eventually to terminals
-                var disconnects = FindCableEndDisconnects(utilityNetwork, conduitToBeCut);
+                var toTerminalsToDisconnect = FindSpanEquipmentToTerminalsToDisconnect(utilityNetwork, conduitToBeCut);
 
                 var existingConduitEquipmentAR = _eventStore.Aggregates.Load<SpanEquipmentAR>(conduitToBeCut.Id);
 
-                if (disconnects.Count > 0)
+                if (toTerminalsToDisconnect.Count > 0)
                 {
                     // Disconnect the segments
                     var disconnectResult = existingConduitEquipmentAR.DisconnectSegmentsFromTerminals(
                            cmdContext: utilityCmdContext,
-                           disconnects.Values.ToArray()
+                           toTerminalsToDisconnect.Values.ToArray()
                     );
 
                     if (!disconnectResult.IsSuccess)
@@ -442,6 +445,20 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                         return Task.FromResult(disconnectResult);
                     }
                 }
+
+                ////////////////////////////
+                // Detach to end from eventually affixed container
+
+                var endContainerAffix = FindEndContainerToDetach(utilityNetwork, conduitToBeCut, existingWalk, command.RouteNodeId);
+
+                if (endContainerAffix != null)
+                {
+                    if (utilityNetwork.TryGetEquipment<NodeContainer>(endContainerAffix.NodeContainerId, out NodeContainer nodeContainer))
+                    {
+                        existingConduitEquipmentAR.DetachFromNodeContainer(commandContext, nodeContainer);
+                    }
+                }
+
 
                 ////////////////////////////
                 // Shrink existing conduit
@@ -471,9 +488,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                 var newConduitWalkOfInterestId = Guid.NewGuid();
 
                 var newConduitEquipmentAR = new SpanEquipmentAR();
-
-                var commandContext = new CommandContext(command.CorrelationId, command.CmdId, command.UserContext);
-
+                       
                 var placeSpanEquipmentResult = newConduitEquipmentAR.PlaceSpanEquipmentInUtilityNetwork(
                     cmdContext: commandContext,
                     spanEquipments,
@@ -494,7 +509,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                     return Task.FromResult(Result.Fail(placeSpanEquipmentResult.Errors.First()));
 
                 // create the interest
-                var newCableInterestAR = new InterestAR();
+                var newConduitInterestAR = new InterestAR();
 
                 var interestProjection = _eventStore.Projections.Get<InterestsProjection>();
 
@@ -502,12 +517,12 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
 
                 var walkOfInterest = new RouteNetworkInterest(newConduitWalkOfInterestId, RouteNetworkInterestKindEnum.WalkOfInterest, newCableWalk.RouteNetworkElementRefs);
 
-                var registerWalkOfInterestResult = newCableInterestAR.RegisterWalkOfInterest(routeNetworkCommandContext, walkOfInterest, interestProjection, new WalkValidator(_routeNetworkRepository));
+                var registerWalkOfInterestResult = newConduitInterestAR.RegisterWalkOfInterest(routeNetworkCommandContext, walkOfInterest, interestProjection, new WalkValidator(_routeNetworkRepository));
 
                 if (registerWalkOfInterestResult.IsFailed)
                     throw new ApplicationException($"Failed to register walk of interest of span equipment in split in CutSpanSegmentsCommandHandler Error: {registerWalkOfInterestResult.Errors.First().Message}");
 
-                var connects = CreateConnectedFromDisconnects(newConduitEquipmentAR.SpanEquipment, disconnects);
+                var connects = CreateConnectedFromDisconnects(newConduitEquipmentAR.SpanEquipment, toTerminalsToDisconnect);
 
                 if (connects.Count > 0)
                 {
@@ -525,10 +540,22 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
                     }
                 }
 
+                ////////////////////////////
+                // Attach to end from eventually affixed container
+
+                if (endContainerAffix != null)
+                {
+                    if (utilityNetwork.TryGetEquipment<NodeContainer>(endContainerAffix.NodeContainerId, out NodeContainer nodeContainer))
+                    {
+                        newConduitEquipmentAR.AffixToNodeContainer(commandContext, new List<NodeContainer> { nodeContainer }.ToDictionary(n => n.Id), walkOfInterest, command.RouteNodeId, nodeContainer.Id, endContainerAffix.NodeContainerIngoingSide);
+                    }
+                }
+
+
                 _eventStore.Aggregates.Store(existingConduitInterestAR);
                 _eventStore.Aggregates.Store(existingConduitEquipmentAR);
 
-                _eventStore.Aggregates.Store(newCableInterestAR);
+                _eventStore.Aggregates.Store(newConduitInterestAR);
                 _eventStore.Aggregates.Store(newConduitEquipmentAR);
 
                 NotifyExternalServicesAboutChange(conduitToBeCut.Id, command.RouteNodeId);
@@ -537,7 +564,25 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             return Task.FromResult(Result.Ok());
         }
 
-        private bool IsAffixedToNodeContainer(SpanEquipment spanEquipment)
+        private SpanEquipmentNodeContainerAffix? FindEndContainerToDetach(UtilityNetworkProjection utilityNetwork, SpanEquipment conduitToBeCut, ValidatedRouteNetworkWalk existingWalk, Guid routeNodeId)
+        {
+            var toNode = existingWalk.ToNodeId;
+
+            if (conduitToBeCut.NodeContainerAffixes != null)
+            {
+                foreach (var affix in conduitToBeCut.NodeContainerAffixes)
+                {
+                    if (affix.RouteNodeId == toNode)
+                    {
+                        return affix;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private bool IsAffixedToAnyNodeContainer(SpanEquipment spanEquipment)
         {
             if (spanEquipment.NodeContainerAffixes == null)
                 return false;
@@ -545,6 +590,20 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.CommandHandlers
             foreach (var affix in spanEquipment.NodeContainerAffixes)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool IsAffixedToNodeContainerInThisNode(SpanEquipment spanEquipment, Guid routeNodeId)
+        {
+            if (spanEquipment.NodeContainerAffixes == null)
+                return false;
+
+            foreach (var affix in spanEquipment.NodeContainerAffixes)
+            {
+                if (affix.RouteNodeId == routeNodeId)
+                    return true;
             }
 
             return false;
