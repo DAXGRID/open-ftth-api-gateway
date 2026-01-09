@@ -773,7 +773,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments
 
             foreach (var affix in _spanEquipment.NodeContainerAffixes)
             {
-                if (nodeContainers[affix.NodeContainerId].RouteNodeId == nodeContainerRouteNodeId)
+                if (nodeContainers.ContainsKey(affix.NodeContainerId) && nodeContainers[affix.NodeContainerId].RouteNodeId == nodeContainerRouteNodeId)
                     return true;
             }
 
