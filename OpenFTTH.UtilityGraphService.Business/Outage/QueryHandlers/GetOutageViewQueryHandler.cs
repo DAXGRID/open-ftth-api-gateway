@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenFTTH.UtilityGraphService.Business.Trace.Util;
 
 namespace OpenFTTH.UtilityGraphService.Business.Outage.QueryHandlers
 {
@@ -124,7 +125,9 @@ namespace OpenFTTH.UtilityGraphService.Business.Outage.QueryHandlers
 
                 var terminalStructureSpecification = _terminalStructureSpecifications[terminalStructure.SpecificationId];
 
-                var terminalStructureNode = new OutageViewNode(Guid.NewGuid(), terminalStructure.Name + " (" + terminalStructureSpecification.Name + ")");
+                var structureName = (terminalStructure.interfaceInfo != null ? RelatedDataHolder.GetInterfaceName(terminalStructure) : terminalStructure.Name) + " (" + terminalStructureSpecification.Name + ")";
+
+                var terminalStructureNode = new OutageViewNode(Guid.NewGuid(), structureName);
                 
                 terminalStructureNode.Expanded = false;
 
