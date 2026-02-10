@@ -55,12 +55,14 @@ namespace OpenFTTH.APIGateway.Reporting
                 {
                     var sourceTerminalStructure = terminalEquipment.TerminalStructures.First(t => !t.Deleted);
 
+                    Console.Out.WriteLine(terminalEquipment.Name);
+
                     for (int i = 0; i < sourceTerminalStructure.Terminals.Count(); i++)
                     {
                         // trace terminal
-                        var sourceTerminal = terminalEquipment.TerminalStructures[0].Terminals[i];
+                        var sourceTerminal = sourceTerminalStructure.Terminals[i];
 
-                        var traceResult = _utilityNetwork.Graph.SimpleTrace(terminalEquipment.TerminalStructures[0].Terminals[i].Id);
+                        var traceResult = _utilityNetwork.Graph.SimpleTrace(sourceTerminal.Id);
 
                         // Collect installation information
                         var traceLine = new InstallationTraceResultLine();
