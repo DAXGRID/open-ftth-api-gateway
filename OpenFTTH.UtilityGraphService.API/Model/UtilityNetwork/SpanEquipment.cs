@@ -22,6 +22,7 @@ namespace OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork
         public SpanEquipmentNodeContainerAffix[]? NodeContainerAffixes { get; init; }
 
         public UtilityNetworkHop[]? UtilityNetworkHops { get; init; }
+        public EquipmentTag[] EquipmentTags { get; init; }
 
         public string? Name => NamingInfo?.Name;
         public string? Description => NamingInfo?.Description;

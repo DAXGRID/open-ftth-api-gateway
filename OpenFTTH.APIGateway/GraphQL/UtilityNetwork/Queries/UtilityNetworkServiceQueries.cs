@@ -567,7 +567,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
         private static EquipmentDisplayTag[] CreateDisplayTags(IEventStore eventStore, Guid terminalOrSpanEquipmentId)
         {
             var utilityNetwork = eventStore.Projections.Get<UtilityNetworkProjection>();
-        
+
             if (utilityNetwork.TryGetEquipment<TerminalEquipment>(terminalOrSpanEquipmentId, out var terminalEquipment))
             {
                 Dictionary<Guid, EquipmentTag> tagByTerminalIdDict = terminalEquipment.EquipmentTags == null ? [] : terminalEquipment.EquipmentTags.ToDictionary(tag => tag.TerminalOrSpanId);
@@ -594,8 +594,34 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
                 return displayTags.ToArray();
             }
+            else if (utilityNetwork.TryGetEquipment<SpanEquipment>(terminalOrSpanEquipmentId, out var spanEquipment))
+            {
+                Dictionary<Guid, EquipmentTag> tagByTerminalIdDict = spanEquipment.EquipmentTags == null ? [] : terminalEquipment.EquipmentTags.ToDictionary(tag => tag.TerminalOrSpanId);
+
+                List<EquipmentDisplayTag> displayTags = new();
+
+                foreach (var structure in spanEquipment.SpanStructures)
+                {
+                    if (!structure.Deleted)
+                    {
+                        var equipmentTag = !tagByTerminalIdDict.TryGetValue(structure.Id, out EquipmentTag value) ? null : value;
+
+                        var displayName = "Rør/fiber " + structure.Name;
+
+                        if (equipmentTag != null)
+                            displayTags.Add(new EquipmentDisplayTag(structure.Id, displayName, equipmentTag.Tags, equipmentTag.Comment));
+                        else
+                            displayTags.Add(new EquipmentDisplayTag(structure.Id, displayName, null, null));
+                    }
+                }
+
+                return displayTags.ToArray();
+            }
+
 
             return Array.Empty<EquipmentDisplayTag>();
         }
+
+      
     }
 }

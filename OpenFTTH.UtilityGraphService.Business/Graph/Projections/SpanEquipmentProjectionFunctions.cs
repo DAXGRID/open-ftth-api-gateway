@@ -582,5 +582,13 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph.Projections
                 UtilityNetworkHops = @event.NewUtilityHopList
             };
         }
+
+        public static SpanEquipment Apply(SpanEquipment existingSpanEquipment, TagsUpdated @event)
+        {
+            return existingSpanEquipment with
+            {
+                EquipmentTags = @event.Tags
+            };
+        }
     }
 }

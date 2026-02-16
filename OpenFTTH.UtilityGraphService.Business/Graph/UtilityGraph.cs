@@ -304,7 +304,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph
 
                     var lastEq = ((UtilityGraphConnectedTerminal)LastVisit).TerminalEquipment(_utilityNetworkProjection);
 
-                    System.Diagnostics.Debug.WriteLine("TRACE STEP: " + lastEq.Name + " - " + lastTerminal.Name);
+                    //System.Diagnostics.Debug.WriteLine("TRACE STEP: " + lastEq.Name + " - " + lastTerminal.Name);
                 }
 
                 // If trace through splitters disallow tracing upstream a splitter

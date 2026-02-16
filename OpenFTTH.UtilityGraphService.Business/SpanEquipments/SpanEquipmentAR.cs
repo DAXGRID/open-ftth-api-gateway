@@ -48,6 +48,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments
             Register<SpanEquipmentSpecificationChanged>(Apply);
             Register<SpanEquipmentAffixedToParent>(Apply);
             Register<SpanEquipmentNamingInfoChanged>(Apply);
+            Register<TagsUpdated>(Apply);
         }
 
         #region Place Span Equipment
@@ -3004,6 +3005,35 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments
         }
 
         private void Apply(SpanEquipmentSpecificationChanged @event)
+        {
+            if (_spanEquipment == null)
+                throw new ApplicationException($"Invalid internal state. Span equipment property cannot be null. Seems that span equipment has never been placed. Please check command handler logic.");
+
+            _spanEquipment = SpanEquipmentProjectionFunctions.Apply(_spanEquipment, @event);
+        }
+
+        #endregion
+
+        #region Update Tags
+        public Result UpdateTags(CommandContext cmdContext, EquipmentTag[] tags)
+        {
+            var @event = new TagsUpdated(
+                   terminalOrSpanEquipmentId: this.Id,
+                   tags: tags
+                 )
+            {
+                CorrelationId = cmdContext.CorrelationId,
+                IncitingCmdId = cmdContext.CmdId,
+                UserName = cmdContext.UserContext?.UserName,
+                WorkTaskId = cmdContext.UserContext?.WorkTaskId
+            };
+
+            RaiseEvent(@event);
+
+            return Result.Ok();
+        }
+
+        private void Apply(TagsUpdated @event)
         {
             if (_spanEquipment == null)
                 throw new ApplicationException($"Invalid internal state. Span equipment property cannot be null. Seems that span equipment has never been placed. Please check command handler logic.");
