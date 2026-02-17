@@ -384,9 +384,18 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph
 
         private void ProcessTagsUpdated(TagsUpdated @event)
         {
-            var existingTerminalEquipment = _terminalEquipmentByEquipmentId[@event.TerminalOrSpanEquipmentId];
-            var after = TerminalEquipmentProjectionFunctions.Apply(existingTerminalEquipment, @event);
-            TryUpdate(after);
+            if (_terminalEquipmentByEquipmentId.ContainsKey(@event.TerminalOrSpanEquipmentId))
+            {
+                var existingTerminalEquipment = _terminalEquipmentByEquipmentId[@event.TerminalOrSpanEquipmentId];
+                var after = TerminalEquipmentProjectionFunctions.Apply(existingTerminalEquipment, @event);
+                TryUpdate(after);
+            }
+            else if (_spanEquipmentByEquipmentId.ContainsKey(@event.TerminalOrSpanEquipmentId))
+            {
+                var existingSpanEquipment = _spanEquipmentByEquipmentId[@event.TerminalOrSpanEquipmentId];
+                var after = SpanEquipmentProjectionFunctions.Apply(existingSpanEquipment, @event);
+                TryUpdate(after);
+            }
         }
 
         private void ProcessTerminalsConnected(NodeContainerTerminalsConnected @event)
