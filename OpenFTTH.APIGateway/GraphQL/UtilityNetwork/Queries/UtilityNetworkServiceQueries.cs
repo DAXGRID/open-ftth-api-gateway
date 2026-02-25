@@ -1,21 +1,21 @@
-﻿using OpenFTTH.Results;
-using GraphQL;
+﻿using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Types;
 using OpenFTTH.APIGateway.Util;
 using OpenFTTH.CQRS;
 using OpenFTTH.EventSourcing;
+using OpenFTTH.Results;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Util;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork.Views;
 using OpenFTTH.UtilityGraphService.API.Queries;
+using OpenFTTH.UtilityGraphService.Business.Graph;
+using QuikGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using QuikGraph;
-using OpenFTTH.UtilityGraphService.Business.Graph;
 
 namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 {
@@ -553,14 +553,12 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
             });
 
             Field<ListGraphType<EquipmentDisplayTagType>>("tags")
-              .Description("Query all tags belonging to a specific terminal or span equipment")
-              .Arguments(new QueryArguments(
-                             new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "terminalOrSpanEquipmentId" }))
+              .Description("Query all tags belonging to a set of terminals or span equipments.")
+              .Arguments(new QueryArguments(new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "terminalOrSpanEquipmentIds" }))
               .Resolve(context =>
               {
-                  var terminalOrSpanEquipmentId = context.GetArgument<Guid>("terminalOrSpanEquipmentId");
-               
-                  return CreateDisplayTags(eventStore, terminalOrSpanEquipmentId);
+                  var terminalOrSpanEquipmentIds = context.GetArgument<List<Guid>>("terminalOrSpanEquipmentIds");
+                  return terminalOrSpanEquipmentIds.SelectMany(terminalOrSpanEquipmentId => CreateDisplayTags(eventStore, terminalOrSpanEquipmentId)).ToArray();
               });
         }
 
@@ -618,10 +616,7 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
                 return displayTags.ToArray();
             }
 
-
             return Array.Empty<EquipmentDisplayTag>();
         }
-
-      
     }
 }
