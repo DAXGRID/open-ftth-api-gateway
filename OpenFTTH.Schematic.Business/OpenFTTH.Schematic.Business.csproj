@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="OpenFTTH.Address.API" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.Address.Business" Version="3.0.0" />
     <PackageReference Include="OpenFTTH.CQRS" Version="4.1.0" />

@@ -11,7 +11,7 @@
     <PackageReference Include="OpenFTTH.Core.Address" Version="1.0.0" />
     <PackageReference Include="OpenFTTH.Installation" Version="0.1.0" />
     <PackageReference Include="OpenFTTH.Results" Version="0.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
     <PackageReference Include="OpenFTTH.Core" Version="3.0.0" />
