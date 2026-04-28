@@ -660,7 +660,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             {
                 if (traceItem is UtilityGraphConnectedTerminal terminal)
                 {
-                    if (!terminal.IsDummyEnd)
+                    if (!terminal.IsDummyEnd && !terminal.IsSimpleTerminal)
                     {
                         var equipment = terminal.TerminalEquipment(utilityNetwork);
 
