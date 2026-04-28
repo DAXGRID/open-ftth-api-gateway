@@ -275,7 +275,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
 
             var traceEndInfo = traceInfo.A;
 
-            var tags = traceInfo.Tags != null ? String.Join(',', traceInfo.Tags.ToArray()) : null;
+            var tags = traceInfo.Tags != null && traceInfo.Tags.Count > 0 ? String.Join(',', traceInfo.Tags.ToArray()) : null;
 
             var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, tags);
 
@@ -295,8 +295,8 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
 
             var traceEndInfo = traceInfo.Z;
 
-            var tags = traceInfo.Tags != null ? String.Join(',', traceInfo.Tags.ToArray()) : null;
-                   
+            var tags = traceInfo.Tags != null && traceInfo.Tags.Count > 0 ? String.Join(',', traceInfo.Tags.ToArray()) : null;
+
             var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, tags);
 
             FaceKindEnum faceKind = GetZEndFaceKind(relevantEquipmentData, terminal);
@@ -315,7 +315,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
 
             var traceEndInfo = traceInfo.Z;
 
-            var tags = traceInfo.Tags != null ? String.Join(',', traceInfo.Tags.ToArray()) : null;
+            var tags = traceInfo.Tags != null && traceInfo.Tags.Count > 0 ? String.Join(',', traceInfo.Tags.ToArray()) : null;
 
             var terminalInfo = new TerminalEquipmentAZConnectivityViewTerminalInfo(terminal.Id, terminal.Name, tags);
 

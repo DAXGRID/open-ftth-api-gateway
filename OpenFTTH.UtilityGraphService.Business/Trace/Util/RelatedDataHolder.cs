@@ -656,6 +656,29 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
         {
             HashSet<string> tags = new HashSet<string>();
 
+            if (terminalTraceResult.Source is UtilityGraphConnectedTerminal sourceTerminal)
+            {
+                if (!sourceTerminal.IsDummyEnd && !sourceTerminal.IsSimpleTerminal)
+                {
+                    var equipment = sourceTerminal.TerminalEquipment(utilityNetwork);
+
+                    foreach (var terminalTags in RelatedDataHolder.GetTagsByTerminal(equipment, sourceTerminal.Id))
+                    {
+                        tags.Add(terminalTags);
+                    }
+                }
+            }
+            else if (terminalTraceResult.Source is UtilityGraphConnectedSegment sourceSegment)
+            {
+                var equipment = sourceSegment.SpanEquipment(utilityNetwork);
+
+                foreach (var spanSegmentTags in RelatedDataHolder.GetTagsBySpanSegment(equipment, sourceSegment.Id))
+                {
+                    tags.Add(spanSegmentTags);
+                }
+            }
+
+
             foreach (var traceItem in terminalTraceResult.All)
             {
                 if (traceItem is UtilityGraphConnectedTerminal terminal)
