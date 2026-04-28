@@ -413,11 +413,11 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.QueryHandling
 
                 HashSet<string> tags = new HashSet<string>();
 
-                foreach (var terminalTag in terminalEquipment.EquipmentTags)
+                foreach (var terminalTag in terminalTags)
                 {
                     if (terminalTag.Tags != null)
                     {
-                        foreach (var  tag in tags)
+                        foreach (var tag in terminalTag.Tags)
                             tags.Add(tag);
                     }
                 }

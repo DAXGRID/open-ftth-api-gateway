@@ -88,24 +88,24 @@ namespace OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork
             return null;
         }
 
-        private int GetTubeNumber(int fiberPosition)
+        public int GetTubeNumber(int fiberPosition)
         {
-            if (CableTubes == null)
-                return 0;
+            int numberOfFibersPerTube = 12;
 
-            int numberOfFibersPerTube = RootTemplate.ChildTemplates.Count() / CableTubes.Count();
+            if (CableTubes != null)
+                numberOfFibersPerTube = RootTemplate.ChildTemplates.Count() / CableTubes.Count();
 
             int tubeNo = ((fiberPosition - 1) / numberOfFibersPerTube) + 1;
 
             return tubeNo;
         }
 
-        private int GetFiberNumber(int fiberPosition)
+        public int GetFiberNumber(int fiberPosition)
         {
-            if (CableTubes == null)
-                return fiberPosition;
+            int numberOfFibersPerTube = 12;
 
-            int numberOfFibersPerTube = RootTemplate.ChildTemplates.Count() / CableTubes.Count();
+            if (CableTubes != null)
+                numberOfFibersPerTube = RootTemplate.ChildTemplates.Count() / CableTubes.Count();
 
             int fiberNo = ((fiberPosition - 1) % numberOfFibersPerTube) + 1;
 

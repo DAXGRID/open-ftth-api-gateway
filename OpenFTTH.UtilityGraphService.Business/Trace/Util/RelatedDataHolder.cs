@@ -483,8 +483,8 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             if (formattedText != null)
                 return formattedText;
 
-            int fiber = ((fiberNo - 1) % 12) + 1;
-            int tube = ((fiberNo - 1) / 12) + 1;
+            int fiber = spanEquipmentSpecification.GetFiberNumber(fiberNo);
+            int tube = spanEquipmentSpecification.GetTubeNumber(fiberNo);
 
             return $"{spanEquipment.Name} ({spanEquipment.SpanStructures.Length - 1}) Tube {tube} Fiber {fiber}";
         }
