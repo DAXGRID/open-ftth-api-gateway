@@ -254,7 +254,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
         {
             HashSet<string> tags = new HashSet<string>();
 
-            foreach (var segment in spanTraceResult.All)
+            foreach (var segment in spanTraceResult.AllIncludingSource)
             {
                 if (segment is IUtilityGraphSegmentRef traceSegmentRef)
                 {

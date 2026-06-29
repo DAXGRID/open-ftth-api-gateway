@@ -655,6 +655,11 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
         public static List<string> GetTagsFromTrace(UtilityNetworkProjection utilityNetwork, TerminalEquipment sourceEquipment, Terminal sourceTerminal, UtilityGraphTraceResult terminalTraceResult)
         {
             HashSet<string> tags = new HashSet<string>();
+
+            if (sourceTerminal.Id == Guid.Parse("2e2b6ed8-88c2-4cb0-b898-364e44cb190a"))
+            {
+
+            }
      
             foreach (var terminalTags in RelatedDataHolder.GetTagsByTerminal(sourceEquipment, sourceTerminal.Id))
             {
@@ -662,7 +667,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             }
 
 
-            foreach (var traceItem in terminalTraceResult.All)
+            foreach (var traceItem in terminalTraceResult.AllIncludingSource)
             {
                 if (traceItem is UtilityGraphConnectedTerminal terminal)
                 {
@@ -703,7 +708,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
             }
 
 
-            foreach (var traceItem in terminalTraceResult.All)
+            foreach (var traceItem in terminalTraceResult.AllIncludingSource)
             {
                 if (traceItem is UtilityGraphConnectedTerminal terminal)
                 {

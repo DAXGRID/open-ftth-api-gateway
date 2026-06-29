@@ -261,7 +261,8 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments.QueryHandling
                 {
                     if (hop is UtilityGraphConnectedTerminal connectedTerminal)
                     {
-                        AddTagsFromTerminal(connectedTerminal.Terminal(_utilityNetwork), connectedTerminal.TerminalEquipment(_utilityNetwork), tags);
+                        if (!connectedTerminal.IsDummyEnd)
+                            AddTagsFromTerminal(connectedTerminal.Terminal(_utilityNetwork), connectedTerminal.TerminalEquipment(_utilityNetwork), tags);
                     }
                     else if (hop is UtilityGraphConnectedSegment connectedSegment)
                     {

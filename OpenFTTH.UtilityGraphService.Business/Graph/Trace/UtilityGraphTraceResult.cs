@@ -41,5 +41,32 @@ namespace OpenFTTH.UtilityGraphService.Business.Graph.Trace
                 return result;
             }
         }
+        public List<IGraphObject> AllIncludingSource
+        {
+            get
+            {
+                List<IGraphObject> result = new();
+
+                // First add upstreams in reverse
+                foreach (var graphElement in Upstream.Reverse())
+                {
+                    result.Add(graphElement);
+                }
+
+                // add source
+                if (Source != null)
+                {
+                    result.Add(Source);
+                }
+
+                //  add downstreams
+                foreach (var graphElement in Downstream)
+                {
+                    result.Add(graphElement);
+                }
+
+                return result;
+            }
+        }
     }
 }
