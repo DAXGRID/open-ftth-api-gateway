@@ -499,7 +499,7 @@ namespace OpenFTTH.UtilityGraphService.Tests.UtilityNetwork
             var viewModel = connectivityQueryResult.Value;
             var firstSpanEquipment = viewModel.SpanEquipments.First();
 
-            firstSpanEquipment.Lines[11].A.End.Should().Contain("1:2 Split");
+            firstSpanEquipment.Lines[12].A.End.Should().Contain("1:2 Split");
         }
 
         [Fact, Order(7)]

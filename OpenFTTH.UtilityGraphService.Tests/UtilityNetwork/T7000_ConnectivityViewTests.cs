@@ -59,9 +59,9 @@ namespace OpenFTTH.UtilityGraphService.Tests.UtilityNetwork
             var viewModel = connectivityQueryResult.Value;
             var firstSpanEquipment = viewModel.SpanEquipments.First();
 
-            firstSpanEquipment.Lines[0].Name.Should().Be("Tube 1 Fiber 1");
-            firstSpanEquipment.Lines[11].Name.Should().Be("Tube 1 Fiber 12");
-            firstSpanEquipment.Lines[12].Name.Should().Be("Tube 2 Fiber 1");
+            firstSpanEquipment.Lines[1].Name.Should().Be("Tube 1 Fiber 1");
+            firstSpanEquipment.Lines[12].Name.Should().Be("Tube 1 Fiber 12");
+            firstSpanEquipment.Lines[13].Name.Should().Be("Tube 2 Fiber 1");
         }
 
         [Fact, Order(2)]
