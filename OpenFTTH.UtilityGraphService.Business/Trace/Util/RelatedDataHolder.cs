@@ -491,6 +491,16 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 
         public string GetSpanEquipmentTubeFiberString(SpanEquipment spanEquipment, int fiberNo)
         {
+            if (fiberNo == 0 && spanEquipment.IsCable)
+            {
+                return "Kappe";
+            }
+            else if (fiberNo == 0 && !spanEquipment.IsCable)
+            {
+                return "Ydrerør";
+            }
+            
+
             var spanEquipmentSpecification = _spanEquipmentSpecifications[spanEquipment.SpecificationId];
 
             var formattedText = spanEquipmentSpecification.GetFormattedCableString(spanEquipment.Name, fiberNo, false, _spanStructureSpecifications);
@@ -655,17 +665,11 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
         public static List<string> GetTagsFromTrace(UtilityNetworkProjection utilityNetwork, TerminalEquipment sourceEquipment, Terminal sourceTerminal, UtilityGraphTraceResult terminalTraceResult)
         {
             HashSet<string> tags = new HashSet<string>();
-
-            if (sourceTerminal.Id == Guid.Parse("2e2b6ed8-88c2-4cb0-b898-364e44cb190a"))
-            {
-
-            }
      
             foreach (var terminalTags in RelatedDataHolder.GetTagsByTerminal(sourceEquipment, sourceTerminal.Id))
             {
                 tags.Add(terminalTags);
             }
-
 
             foreach (var traceItem in terminalTraceResult.AllIncludingSource)
             {

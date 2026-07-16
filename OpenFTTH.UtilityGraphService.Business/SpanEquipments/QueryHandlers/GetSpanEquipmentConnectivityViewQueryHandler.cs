@@ -80,7 +80,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
 
             List<SpanEquipmentAZConnectivityViewLineInfo> lineInfos = new();
 
-            for (int spanStructureIndex = 1; spanStructureIndex < spanEquipment.SpanStructures.Length; spanStructureIndex++)
+            for (int spanStructureIndex = 0; spanStructureIndex < spanEquipment.SpanStructures.Length; spanStructureIndex++)
             {
                 var spanStructure = spanEquipment.SpanStructures[spanStructureIndex];
 

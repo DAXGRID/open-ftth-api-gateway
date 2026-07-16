@@ -109,6 +109,7 @@ namespace OpenFTTH.APIGateway
             // This are needed for WebsocketAuthService
             services.AddHttpClient<WebSocketAuthService>();
 
+            /*
             // Auth
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
@@ -127,6 +128,7 @@ namespace OpenFTTH.APIGateway
                     x.MetadataAddress = $"{configuration.GetSection("Auth").GetValue<string>("Host")}/.well-known/openid-configuration";
                     x.RequireHttpsMetadata = configuration.GetSection("Auth").GetValue<bool>("RequireHttps");
                 });
+            */
 
             // Settings
             services.Configure<EventStoreDatabaseSetting>(
