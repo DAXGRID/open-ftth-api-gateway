@@ -491,17 +491,12 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 
         public string GetSpanEquipmentTubeFiberString(SpanEquipment spanEquipment, int fiberNo)
         {
-            if (fiberNo == 0 && spanEquipment.IsCable)
+            var spanEquipmentSpecification = _spanEquipmentSpecifications[spanEquipment.SpecificationId];
+
+            if (fiberNo == 0)
             {
                 return "Kappe";
             }
-            else if (fiberNo == 0 && !spanEquipment.IsCable)
-            {
-                return "Ydrerør";
-            }
-            
-
-            var spanEquipmentSpecification = _spanEquipmentSpecifications[spanEquipment.SpecificationId];
 
             var formattedText = spanEquipmentSpecification.GetFormattedCableString(spanEquipment.Name, fiberNo, false, _spanStructureSpecifications);
 
@@ -516,7 +511,14 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace.Util
 
         public string GetSpanStructureConduitString(SpanEquipment spanEquipment, int conduitNo, SpanStructureSpecification spanStructureSpecification)
         {
-            return spanStructureSpecification.Name.Replace("_", " ");
+            var displayName = $"Inderrør {conduitNo} ({spanStructureSpecification.Name} {spanStructureSpecification.Color})";
+
+            if (conduitNo == 0)
+            {
+                displayName = $"Yderrør ({spanStructureSpecification.Name} {spanStructureSpecification.Color})";
+            }
+
+            return displayName;
         }
 
         private Guid? GetTerminalEquipmentMostAccurateAddressId(TerminalEquipment terminalEquipment)

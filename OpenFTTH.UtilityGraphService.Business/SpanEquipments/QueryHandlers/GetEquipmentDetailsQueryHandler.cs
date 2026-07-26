@@ -205,7 +205,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandlers
                         spanEquipment.DownstreamLabel = downLabel;
                     }
 
-                    spanEquipment.TagsByBySpanSegmentId = GetTagsBySpanSegmentId(traceInfo, spanEquipment.Id);
+                    spanEquipment.TagsByBySpanSegmentId = GetAllTagsFromTrace(traceInfo);
                 }
 
                 return new LookupCollection<API.Model.Trace.RouteNetworkTraceResult>(traceInfo.RouteNetworkTraces);
@@ -214,13 +214,43 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandlers
                 return new LookupCollection<API.Model.Trace.RouteNetworkTraceResult>();
         }
 
-        private static Dictionary<Guid, string[]> GetTagsBySpanSegmentId(SwissArmyKnifeTraceResult traceInfo, Guid spanSegmentId)
+        private static Dictionary<Guid, string[]> GetTagsFromTraceBySpanSegmentId(SwissArmyKnifeTraceResult traceInfo, Guid spanSegmentId)
         {
             Dictionary<Guid, string[]> tagsBySpanId = new();
 
             foreach (var spanTrace in traceInfo.UtilityNetworkTraceBySpanSegmentId)
             {
                 if (spanTrace.Key == spanSegmentId && spanTrace.Value.Tags != null)
+                {
+                    foreach (var tag in spanTrace.Value.Tags)
+                    {
+                        if (tagsBySpanId.ContainsKey(spanTrace.Key))
+                        {
+                            var existingTags = tagsBySpanId[spanTrace.Key];
+
+                            if (!existingTags.Contains(tag))
+                            {
+                                existingTags = existingTags.Append(tag).ToArray();
+                            }
+                        }
+                        else
+                        {
+                            tagsBySpanId[spanTrace.Key] = [tag];
+                        }
+                    }
+                }
+            }
+
+            return tagsBySpanId;
+        }
+
+        private static Dictionary<Guid, string[]> GetAllTagsFromTrace(SwissArmyKnifeTraceResult traceInfo)
+        {
+            Dictionary<Guid, string[]> tagsBySpanId = new();
+
+            foreach (var spanTrace in traceInfo.UtilityNetworkTraceBySpanSegmentId)
+            {
+                if (spanTrace.Value.Tags != null)
                 {
                     foreach (var tag in spanTrace.Value.Tags)
                     {

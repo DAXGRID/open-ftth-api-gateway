@@ -1,4 +1,5 @@
-﻿using DAX.ObjectVersioning.Graph.Traversal;
+﻿using Baseline;
+using DAX.ObjectVersioning.Graph.Traversal;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Schematic.Business.Lines;
@@ -391,20 +392,40 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                 return BlockSideEnum.North;
         }
 
-        public List<KeyValuePair<string, string>>? GetTagsPropertiesFromSpanInfo(Guid spanSegmentId)
+        public List<KeyValuePair<string, string>>? GetUniqueTagsBySpanSegmentId(Guid spanSegmentId)
         {
+            HashSet<string> uniqueTags = new HashSet<string>();
+          
             if (SpanEquipment.TagsByBySpanSegmentId.ContainsKey(spanSegmentId))
             {
-                var tags = SpanEquipment.TagsByBySpanSegmentId[spanSegmentId];
+                var traceTags = SpanEquipment.TagsByBySpanSegmentId[spanSegmentId];
 
+                foreach (var traceTag in traceTags)
+                    uniqueTags.Add(traceTag);
+            }
+
+            if (SpanEquipment.EquipmentTags != null)
+            {
+                foreach (var tag in SpanEquipment.EquipmentTags)
+                {
+                    if (tag.TerminalOrSpanId == spanSegmentId && tag.Tags != null)
+                    {
+                        foreach (var equipmentTag in tag.Tags)
+                            uniqueTags.Add(equipmentTag);
+                    }
+                }
+            }
+
+            if (uniqueTags.Count > 0)
+            {
                 List<KeyValuePair<string, string>> properties = new List<KeyValuePair<string, string>>();
-
-                properties.Add(new KeyValuePair<string, string>("Tags", String.Join(',', tags)));
+                
+                properties.Add(new KeyValuePair<string, string>("Tags", String.Join(',', uniqueTags)));
 
                 return properties;
             }
-
-            return null;
+            else
+                return null;
         }
 
         public List<KeyValuePair<string, string>>? GetUniqueTagsBySpanEquipmentId(Guid spanEquipmentId)
@@ -421,6 +442,18 @@ namespace OpenFTTH.Schematic.Business.SchematicBuilder
                     {
                         foreach (var tag in tags)
                             allUniqueTags.Add(tag);
+                    }
+                }
+            }
+
+            if (SpanEquipment.EquipmentTags != null)
+            {
+                foreach (var tag in SpanEquipment.EquipmentTags)
+                {
+                    if (tag.Tags != null)
+                    {
+                        foreach (var equipmentTag in tag.Tags)
+                            allUniqueTags.Add(equipmentTag);
                     }
                 }
             }

@@ -76,7 +76,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandling
 
             List<TerminalEquipmentAZConnectivityViewTerminalStructureInfo> terminalStructureInfos = new();
 
-            int seqNo = 1;
+            int seqNo = 0;
 
             List<SpanEquipmentAZConnectivityViewLineInfo> lineInfos = new();
 

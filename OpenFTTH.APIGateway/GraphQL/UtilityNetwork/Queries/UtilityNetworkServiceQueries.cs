@@ -644,11 +644,17 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
                 if (displayName == null)
                 {
+                    if (spanEquipment.SpanStructures[0].SpanSegments[0] == spanSegment)
+                    {
+                        displayName = $"Kappe";
+                    }
+                    else
+                    {
+                        int fiber = spanEquipmentSpecification.GetFiberNumber(structure.Position);
+                        int tube = spanEquipmentSpecification.GetTubeNumber(structure.Position);
 
-                    int fiber = spanEquipmentSpecification.GetFiberNumber(structure.Position);
-                    int tube = spanEquipmentSpecification.GetTubeNumber(structure.Position);
-
-                    displayName = $"Tube {tube} Fiber {fiber} ({structure.Position})";
+                        displayName = $"Tube {tube} Fiber {fiber} ({structure.Position})";
+                    }
                 }
 
                 if (equipmentTag != null)
@@ -662,11 +668,15 @@ namespace OpenFTTH.APIGateway.GraphQL.UtilityNetwork.Queries
 
                 var displayName = $"Inderrør {structure.Position} ({spanStructureSpecification.Name} {spanStructureSpecification.Color})";
 
-                if (equipmentTag != null)
+                if (spanEquipment.SpanStructures[0].SpanSegments[0] == spanSegment)
+                {
+                    displayName = $"Yderrør ({spanStructureSpecification.Name} {spanStructureSpecification.Color})";
+                }
+
+               if (equipmentTag != null)
                     return new EquipmentDisplayTag(spanSegment.Id, displayName, equipmentTag.Tags, equipmentTag.Comment);
                 else
                     return new EquipmentDisplayTag(spanSegment.Id, displayName, null, null);
-
             }
         }
 
