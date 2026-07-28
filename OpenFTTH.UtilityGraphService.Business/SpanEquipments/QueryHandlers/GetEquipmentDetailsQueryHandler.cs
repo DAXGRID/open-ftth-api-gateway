@@ -205,7 +205,7 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandlers
                         spanEquipment.DownstreamLabel = downLabel;
                     }
 
-                    spanEquipment.TagsByBySpanSegmentId = GetAllTagsFromTrace(traceInfo);
+                    spanEquipment.TagsByBySpanSegmentId = GetAllTagsFromTraceBySpanEquipmentId(traceInfo, spanEquipment);
                 }
 
                 return new LookupCollection<API.Model.Trace.RouteNetworkTraceResult>(traceInfo.RouteNetworkTraces);
@@ -244,13 +244,24 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments.QueryHandlers
             return tagsBySpanId;
         }
 
-        private static Dictionary<Guid, string[]> GetAllTagsFromTrace(SwissArmyKnifeTraceResult traceInfo)
+        private static Dictionary<Guid, string[]> GetAllTagsFromTraceBySpanEquipmentId(SwissArmyKnifeTraceResult traceInfo, SpanEquipmentWithRelatedInfo spanEquipment)
         {
+            HashSet<Guid> segmentIdsToCheck = new HashSet<Guid>();  
+            
+            foreach (var structure in spanEquipment.SpanStructures)
+            {
+                foreach (var segment in structure.SpanSegments)
+                {
+                    segmentIdsToCheck.Add(segment.Id);
+                }
+            }
+
+
             Dictionary<Guid, string[]> tagsBySpanId = new();
 
             foreach (var spanTrace in traceInfo.UtilityNetworkTraceBySpanSegmentId)
             {
-                if (spanTrace.Value.Tags != null)
+                if ((spanTrace.Value.Id == spanEquipment.Id || segmentIdsToCheck.Contains(spanTrace.Value.Id)) && spanTrace.Value.Tags != null)
                 {
                     foreach (var tag in spanTrace.Value.Tags)
                     {

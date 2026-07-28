@@ -275,6 +275,29 @@ namespace OpenFTTH.UtilityGraphService.Business.Trace
                         }
                     }
                 }
+
+                if (segment is IUtilityGraphTerminalRef traceTerminalRef)
+                {
+                    if (traceTerminalRef.TerminalEquipmentId != Guid.Empty)
+                    {
+                        var terminalEquipmentSegmentTags = traceTerminalRef.TerminalEquipment(utilityNetwork).EquipmentTags;
+
+                        if (terminalEquipmentSegmentTags != null)
+                        {
+                            foreach (var terminalEquipmentTag in terminalEquipmentSegmentTags)
+                            {
+                                if (terminalEquipmentTag.TerminalOrSpanId == segment.Id && terminalEquipmentTag.Tags != null)
+                                {
+                                    foreach (var terminalTag in terminalEquipmentTag.Tags)
+                                    {
+                                        if (!tags.Contains(terminalTag))
+                                            tags.Add(terminalTag);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (tags.Count == 0)
