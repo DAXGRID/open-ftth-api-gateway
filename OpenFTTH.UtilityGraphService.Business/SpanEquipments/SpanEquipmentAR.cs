@@ -1,6 +1,6 @@
-﻿using OpenFTTH.Results;
+﻿using OpenFTTH.EventSourcing;
 using OpenFTTH.Events.Core.Infos;
-using OpenFTTH.EventSourcing;
+using OpenFTTH.Results;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Util;
 using OpenFTTH.UtilityGraphService.API.Commands;
@@ -3015,11 +3015,34 @@ namespace OpenFTTH.UtilityGraphService.Business.SpanEquipments
         #endregion
 
         #region Update Tags
-        public Result UpdateTags(CommandContext cmdContext, EquipmentTag[] tags)
+        public Result UpdateTags(CommandContext cmdContext, EquipmentTag[] updatedTags)
         {
+            List<EquipmentTag> newTagList = new List<EquipmentTag>();
+
+            // Add existing tags that is not included in updatedTags
+            if (_spanEquipment.EquipmentTags is not null)
+            {
+                foreach (var existingTag in _spanEquipment.EquipmentTags)
+                {
+                    if (!updatedTags.Any(t => t.TerminalOrSpanId == existingTag.TerminalOrSpanId))
+                    {
+                        newTagList.Add(existingTag);
+                    }
+                }
+            }
+
+            // Add updated tags
+            foreach (var updatedTag in updatedTags)
+            {
+                if (!(updatedTag.Tags == null && String.IsNullOrEmpty(updatedTag.Comment)))
+                {
+                    newTagList.Add(updatedTag);
+                }
+            }
+
             var @event = new TagsUpdated(
                    terminalOrSpanEquipmentId: this.Id,
-                   tags: tags
+                   tags: newTagList.ToArray()
                  )
             {
                 CorrelationId = cmdContext.CorrelationId,
