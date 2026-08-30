@@ -98,7 +98,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
                         results.AddRange(startResults);
                         results.AddRange(endResults);
 
-                        return results.OrderBy(x => x.Distance).Take(maxHits);
+                        return results.OrderBy(x => x.Distance).DistinctBy(x => x.AccessAddress.Id).Take(maxHits);
                     }
                     else
                     {
@@ -182,7 +182,7 @@ namespace OpenFTTH.APIGateway.GraphQL.Addresses.Queries
             var firstNodeInSegment = routeNetworkElementIds.First();
             var lastNodeInSpanSegment = routeNetworkElementIds.Last();
 
-            var firstCoord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher);
+            var firstCoord = await GetNodeCoordinates(firstNodeInSegment, queryDispatcher);
             var lastCoord = await GetNodeCoordinates(lastNodeInSpanSegment, queryDispatcher);
 
             _logger.LogDebug($"Address search info: Get coordinate of span segment: {spanSegmentId} in span equipment: {equipmentQueryResult.Value.SpanEquipment.First().Name} {equipmentQueryResult.Value.SpanEquipment.First().Id} Route node id: {lastNodeInSpanSegment} successfully returned: first: x={firstCoord.Item1} y={firstCoord.Item2} end: x={lastCoord.Item1} y={lastCoord.Item2}.");
