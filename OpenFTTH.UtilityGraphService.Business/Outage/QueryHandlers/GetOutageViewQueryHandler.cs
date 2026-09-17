@@ -1,9 +1,6 @@
-﻿using Baseline;
-using Baseline.ImTools;
-using DAX.ObjectVersioning.Graph;
+﻿using DAX.ObjectVersioning.Graph;
 using OpenFTTH.Results;
 using Marten;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using OpenFTTH.Address.API.Model;
 using OpenFTTH.Address.API.Queries;
 using OpenFTTH.CQRS;
@@ -96,7 +93,7 @@ namespace OpenFTTH.UtilityGraphService.Business.Outage.QueryHandlers
             }
             else if (processingState.IsRackEquipment(equipmentId.Value))
             {
-                foreach (var subRack in processingState.NodeContainer.Racks.FindFirst(r => r.Id == equipmentId.Value).SubrackMounts.OrderBy(s => s.Position).Reverse())
+                foreach (var subRack in processingState.NodeContainer.Racks.First(r => r.Id == equipmentId.Value).SubrackMounts.OrderBy(s => s.Position).Reverse())
                 {
                     AddTerminalEquipmentToOutageList(processingState, subRack.TerminalEquipmentId, rootNode);
                 }

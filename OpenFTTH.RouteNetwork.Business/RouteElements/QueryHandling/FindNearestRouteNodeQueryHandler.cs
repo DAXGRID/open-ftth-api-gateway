@@ -255,12 +255,12 @@ namespace OpenFTTH.RouteNetwork.Business.RouteElements.QueryHandlers
         {
             GraphHolder result = new();
 
-            var nodeA = new Node(Position.Zero);
-            var nodeB = new Node(new Position(10, 10));
+            var nodeA = new Node(Roy_T.AStar.Primitives.Position.Zero);
+            var nodeB = new Node(new Roy_T.AStar.Primitives.Position(10, 10));
 
             foreach (var node in nodeCandidates)
             {
-                result.Nodes.Add(node.Node.Id, new Node(new Position(node.X * 100, node.Y * 100)));
+                result.Nodes.Add(node.Node.Id, new Node(new Roy_T.AStar.Primitives.Position(node.X * 100, node.Y * 100)));
             }
 
             foreach (var grapObject in traceResult)

@@ -142,7 +142,7 @@ namespace OpenFTTH.RouteNetwork.Business.RouteElements.QueryHandlers
             {
                 if (routeNetworkElement is IRouteNode node)
                 {
-                    var shortestPathNode = new Node(new Position((float)node.X, (float)node.Y));
+                    var shortestPathNode = new Node(new Roy_T.AStar.Primitives.Position((float)node.X, (float)node.Y));
                     graph.Nodes.Add(routeNetworkElement.Id, shortestPathNode);
                     graph.NodeToRouteNodeId.Add(shortestPathNode, routeNetworkElement.Id);
                 }
