@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using Roy_T.AStar.Graphs;
 using Roy_T.AStar.Primitives;
 using Roy_T.AStar.Paths;
-using Position = Roy_T.AStar.Primitives.Position;
 
 namespace OpenFTTH.RouteNetwork.Business.RouteElements.QueryHandlers
 {

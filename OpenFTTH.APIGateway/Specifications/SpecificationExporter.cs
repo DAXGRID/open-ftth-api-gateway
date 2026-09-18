@@ -10,6 +10,7 @@ using OpenFTTH.UtilityGraphService.Business.TerminalEquipments;
 using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Projections;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Xml.Linq;
 
