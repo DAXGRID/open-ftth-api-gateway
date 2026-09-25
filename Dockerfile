@@ -27,7 +27,7 @@ WORKDIR /app/OpenFTTH.APIGateway
 RUN dotnet publish -c Release -o out --packages ./packages
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine-extra
 WORKDIR /app
 
 COPY --from=build-env /app/OpenFTTH.APIGateway/out .
