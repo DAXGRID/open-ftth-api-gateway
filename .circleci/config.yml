@@ -9,7 +9,7 @@ executors:
         password: $DOCKER_ACCESSTOKEN
   docker-publisher:
     environment:
-      IMAGE_NAME: openftth/api-gateway
+      IMAGE_NAME: daxgrid/api-gateway
     docker:
       - image: circleci/buildpack-deps:stretch
         auth:
