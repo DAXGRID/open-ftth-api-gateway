@@ -22,9 +22,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Apt update
-          command: apt-get update;
-      - run:
           name: Restore
           command: dotnet restore
       - run:
@@ -35,9 +32,6 @@ jobs:
     executor: dotnet-core-sdk
     steps:
       - checkout
-      - run:
-          name: Apt update
-          command: apt-get update;
       - run:
           name: Test
           command: dotnet test
