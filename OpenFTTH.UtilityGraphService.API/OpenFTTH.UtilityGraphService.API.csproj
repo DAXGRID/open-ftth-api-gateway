@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenFTTH.Results" Version="0.2.0" />
+    <PackageReference Include="OpenFTTH.Results" Version="10.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="3.0.0" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="3.0.0" />
-    <PackageReference Include="OpenFTTH.Core" Version="3.0.0" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="4.1.0" />
-    <PackageReference Include="OpenFTTH.Events" Version="3.2.0" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="10.0.0" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="10.0.0" />
+    <PackageReference Include="OpenFTTH.Core" Version="10.0.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="10.0.0" />
+    <PackageReference Include="OpenFTTH.Events" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
