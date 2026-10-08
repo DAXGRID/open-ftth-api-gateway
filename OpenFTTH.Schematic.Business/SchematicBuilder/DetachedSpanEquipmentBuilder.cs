@@ -1,5 +1,4 @@
-﻿using Baseline;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using OpenFTTH.Core.Address;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;

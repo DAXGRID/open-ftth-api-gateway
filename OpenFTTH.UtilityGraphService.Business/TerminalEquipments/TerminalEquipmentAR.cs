@@ -10,7 +10,6 @@ using OpenFTTH.UtilityGraphService.Business.TerminalEquipments.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Baseline;
 
 namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments
 {
@@ -592,7 +591,7 @@ namespace OpenFTTH.UtilityGraphService.Business.TerminalEquipments
             // Used position as name per default
             string terminalName = position.ToString();
 
-            if (name != null && name.IsNotEmpty())
+            if (name != null && !String.IsNullOrEmpty(name))
                 terminalName = name;
 
             return new TerminalStructure(Guid.NewGuid(), terminalName, terminalStructureSpecification.Id, (ushort)position, terminals.ToArray())

@@ -17,7 +17,6 @@ using OpenFTTH.RouteNetwork.Business;
 using OpenFTTH.RouteNetwork.Business.Interest.Projections;
 using OpenFTTH.RouteNetwork.Business.Interest;
 using OpenFTTH.RouteNetwork.Business.RouteElements.StateHandling;
-using Baseline;
 using OpenFTTH.UtilityGraphService.Business.SpanEquipments.Projections;
 using OpenFTTH.UtilityGraphService.Business.SpanEquipments.Events;
 using OpenFTTH.RouteNetwork.Business.RouteElements.Model;

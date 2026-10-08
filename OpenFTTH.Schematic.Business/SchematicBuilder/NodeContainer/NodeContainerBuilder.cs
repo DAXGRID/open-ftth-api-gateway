@@ -1,5 +1,4 @@
-﻿using LamarCodeGeneration.Frames;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using OpenFTTH.RouteNetwork.API.Model;
 using OpenFTTH.Schematic.API.Model.DiagramLayout;
@@ -10,7 +9,6 @@ using OpenFTTH.Schematic.Business.Layout;
 using OpenFTTH.Schematic.Business.Lines;
 using OpenFTTH.Schematic.Business.QueryHandler;
 using OpenFTTH.UtilityGraphService.API.Model.UtilityNetwork;
-using Remotion.Linq.Clauses.ResultOperators;
 using System;
 using System.Collections.Generic;
 using System.Linq;

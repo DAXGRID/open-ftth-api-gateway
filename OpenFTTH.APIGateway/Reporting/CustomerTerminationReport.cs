@@ -1,5 +1,4 @@
-﻿using Marten.Linq.SoftDeletes;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
 using OpenFTTH.EventSourcing;
