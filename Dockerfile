@@ -30,6 +30,8 @@ RUN dotnet publish -c Release -o out --packages ./packages
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine-extra
 WORKDIR /app
 
+RUN apk add --no-cache icu-libs krb5-libs
+
 COPY --from=build-env /app/OpenFTTH.APIGateway/out .
 ENTRYPOINT ["dotnet", "OpenFTTH.APIGateway.dll"]
 
