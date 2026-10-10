@@ -32,9 +32,8 @@ WORKDIR /app
 
 RUN apk add --no-cache icu-libs krb5-libs
 
-COPY --from=build-env --chown=app:app /app/OpenFTTH.APIGateway/out .
-USER app
+COPY --from=build-env /app/OpenFTTH.APIGateway/out .
 ENTRYPOINT ["dotnet", "OpenFTTH.APIGateway.dll"]
 
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+80
+EXPOSE 80
