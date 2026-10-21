@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
-    <PackageReference Include="OpenFTTH.Results" Version="11.0.0" />
+    <PackageReference Include="OpenFTTH.Results" Version="11.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="Xunit.DependencyInjection" Version="9.9.1" />
