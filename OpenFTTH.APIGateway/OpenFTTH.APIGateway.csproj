@@ -12,14 +12,14 @@
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="8.3.3" />
     <PackageReference Include="GraphQL.SystemReactive" Version="4.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.Events" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.NotificationClient" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.Work.API" Version="11.0.1" />
-    <PackageReference Include="OpenFTTH.Work.Business" Version="11.0.1" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Events" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.NotificationClient" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Work.API" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Work.Business" Version="11.0.2" />
     <PackageReference Include="ProjNet" Version="2.1.0" />
     <PackageReference Include="Serilog" Version="4.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
