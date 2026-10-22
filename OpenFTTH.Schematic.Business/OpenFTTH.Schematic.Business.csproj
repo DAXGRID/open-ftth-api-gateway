@@ -8,10 +8,10 @@
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="OpenFTTH.Address.API" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.Address.Business" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Address.API" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.Address.Business" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.1.0" />
   </ItemGroup>
 
   <ItemGroup>

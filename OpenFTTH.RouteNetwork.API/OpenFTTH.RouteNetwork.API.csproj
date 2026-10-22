@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenFTTH.Results" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.Core" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.CQRS" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.Events" Version="11.0.2" />
-    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.0.2" />
+    <PackageReference Include="OpenFTTH.Results" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.Core" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.CQRS" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.Events" Version="11.1.0" />
+    <PackageReference Include="OpenFTTH.EventSourcing" Version="11.1.0" />
   </ItemGroup>
 
 </Project>
